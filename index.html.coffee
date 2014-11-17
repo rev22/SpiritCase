@@ -645,7 +645,7 @@ htmlcup.html5Page ->
                                     value:"#{spiritcase.factor}"
                                     value:"#{spiritcase.factor}"
                                     width:"3em"
-                                    controller: spiritcase.makeWebmodule "sliderInputZoom", ->
+                                    module: spiritcase.makeWebmodule "sliderInputZoom", ->
                                         spiritcase: @
                                         incButton: (ev,el)@> @spiritcase.zoomIn(); @refresh(el)
                                         decButton: (ev,el)@> @spiritcase.zoomOut(); @refresh(el)

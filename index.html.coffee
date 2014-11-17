@@ -175,8 +175,8 @@ htmlcup.html5Page ->
     @script type:"text/javascript", "window.spiritcase=#{JSON.stringify(params)};"
 
     # Libraries
-    @javaScriptSource "lib/minified-web.js"
-    @javaScriptSource "node_modules/htmlcup/htmlcup.js"
+    @embedJavaScriptSource "lib/minified-web.js"
+    @embedJavaScriptSource "node_modules/htmlcup/htmlcup.js"
     @coffeeScript ->
       # Create a version of htmlcup that can be used in-browser
       htmlcup = htmlcup.extendObject

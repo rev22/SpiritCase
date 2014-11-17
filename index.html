@@ -1,0 +1,2000 @@
+<!DOCTYPE 5>
+<html><head><meta charset="utf-8"><title>Spiritcase Sprite Editor</title><style type="text/css">body { border:0;margin:0;padding:0; }
+#spiritcaseContainer {
+  background: #222;
+  text-align: center;
+  font-size: 22px;
+  font-family: 'Helvetica', 'Times', serif;
+  text-shadow: 0 1px 1px blue;
+}
+.banner {
+  border: 5px solid white;
+  border: 5px solid white rgba(255,255,255,0.9);
+  box-shadow: 0 2px 4px blue;
+  margin: 1em;
+}
+#spiritcaseContainer p {
+  color:white;
+  color:rgba(255,255,255,0.9);
+  margin-top:0.418em;
+  margin-bottom:0.418em;
+  margin-left:auto;
+  margin-right:auto;
+  width:22em;
+  max-width:100%;
+}
+#spiritcaseContainer a {
+  /*
+  color:rgb(200,255,255);
+  color:rgba(200,255,255,0.9);
+  */
+  color:white;
+  color:rgba(255,255,255,0.9);
+  text-decoration:none;
+  display: inline-block;
+  border: 1px solid white;
+  padding: 0 0.2em;
+  border-radius: 0.2em;
+  -moz-border-radius: 0.2em;
+  -webkit-border-radius: 0.2em;
+  -ie-border-radius: 0.2em;
+}
+#spiritcaseContainer a:hover {
+  background-color:rgba(20,70,180,1.0);
+}
+.page {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: 0;
+}
+.centering {
+  display: table;
+  padding: 0;
+}
+.centered {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+.inline-block {
+  display: inline-block;
+}
+.dynamic-section {
+  display: inline-block;
+  vertical-align:middle;
+  max-width:100%;
+}
+.dynamic-section.dynsec-vertical {
+  display: block;
+}
+.flip-lr {
+  -moz-transform:     scaleX(-1);
+  -o-transform:       scaleX(-1);
+  -webkit-transform:  scaleX(-1);
+  transform:          scaleX(-1);
+  filter:             FlipH;
+  -ms-filter:         "FlipH";
+}
+.pixelart {
+  image-rendering:optimizeSpeed;             /* Legal fallback */
+  image-rendering:-moz-crisp-edges;          /* Firefox        */
+  image-rendering:-o-crisp-edges;            /* Opera          */
+  image-rendering:-webkit-optimize-contrast; /* Safari         */
+  image-rendering:optimize-contrast;         /* CSS3 Proposed  */
+  image-rendering:crisp-edges;               /* CSS4 Proposed  */
+  image-rendering:pixelated;                 /* CSS4 Proposed  */
+  -ms-interpolation-mode:nearest-neighbor;   /* IE8+           */
+}
+.coffeecharniaContainer {
+  opacity: 0.2;
+}
+.coffeecharniaContainer:hover {
+  opacity: 0.8;
+}
+  
+  .sliderInputValue {
+      font-size:100%;
+      font-weight:bold;
+      color:white;
+      font-family: sans;
+      text-shadow: 0 0 1px black, 0 0 2px black, 0 0 2px black;
+  }
+  .sliderInputLabel {
+      font-size:75%;
+      font-weight:bold;
+      color:white;
+      font-family: sans;
+      text-shadow: 0 0 1px black, 0 0 2px black, 0 0 2px black;
+  }
+  .sliderInputButton {
+      font-size:150%;
+      font-weight:bold;
+      color:white;
+      font-family: sans;
+      text-align:center;
+  }
+  .sliderInputButton:hover {
+      background:rgba(0,0,0,0.2);
+  }
+  .sliderInputButton:not(:hover) {
+      opacity:0.6;
+      cursor: cross;
+  }</style></head><body style="width:100%;height:100%;overflow:hidden"><div id="spiritcaseContainer" class="centering page"><section class="centered"><section class="dynamic-section dynsec-vertical"><canvas id="icon" width="30" height="22" style="border-color:#777;border-width:1px;border-style:solid;padding:1px"></canvas></section><section class="dynamic-section dynsec-vertical"><canvas id="canvas" width="961" height="705"></canvas></section></section></div><script type="text/javascript">window.spiritcase={"factor":32,"factorX":32,"factorY":32,"sizeX":30,"sizeY":22,"gridSize":1,"checkersSize":8,"borderColor":"#777","icon":{"borderColor":"#777","borderWidth":"1","padding":"1"}};</script><script type="text/javascript" src="lib/minified-web.js"></script><script type="text/javascript" src="node_modules/htmlcup/htmlcup.js"></script><script type="text/javascript">(function () {
+        return htmlcup = htmlcup.extendObject({
+          originalLib: htmlcup,
+          capturedTokens: [],
+          printHtml: function(t) {
+            return this.capturedTokens.push(t);
+          },
+          captureHtml: function(f) {
+            var o, p, r;
+            o = this.capturedTokens;
+            this.capturedTokens = [];
+            f.apply(this);
+            p = this.capturedTokens;
+            this.capturedTokens = o;
+            r = p.join("");
+            this.printHtml(r);
+            return r;
+          },
+          captureFirstTag: function(f) {
+            var div;
+            div = document.createElement("div");
+            div.innerHTML = this.captureHtml(f);
+            return div.firstChild;
+          },
+          stripOuter: function(x) {
+            return x.replace(/^<[^>]*>/, "").replace(/<[^>]*>$/, "");
+          },
+          capturedParts: {},
+          capturePart: function(tagName, stripOuter) {
+            if (stripOuter == null) {
+              stripOuter = this.stripOuter;
+            }
+            return function() {
+              var x;
+              x = arguments;
+              return this.capturedParts[tagName] = stripOuter(this.captureHtml(function() {
+                return this.originalLib[tagName].apply(this, x);
+              }));
+            };
+          },
+          body: function() {
+            return (this.capturePart("body")).apply(this, arguments);
+          },
+          head: function() {
+            var lib, r;
+            lib = this.extendObject({
+              title: function() {
+                return (this.capturePart("title")).apply(this, arguments);
+              },
+              headStyles: [],
+              style: function() {
+                return this.headStyles.push((this.capturePart("style")).apply(this, arguments));
+              }
+            });
+            r = (lib.capturePart("head")).apply(lib, arguments);
+            this.capturedParts.headStyles = lib.headStyles;
+            this.capturedParts.headTitle = lib.capturedParts.title;
+            return r;
+          },
+          html5Page: function() {
+            var r, x;
+            x = arguments;
+            this.captureHtml(function() {
+              return this.originalLib.html5Page.apply(this, x);
+            });
+            r = this.capturedParts;
+            this.capturedParts = {};
+            return r;
+          }
+        });
+      })();
+</script><script type="text/javascript">(function () {
+        var $, colorLib, dynmod, extendObject, extensible, sliderInput, spiritcase;
+        $ = require('minified').$;
+        colorLib = {
+          hex2rgb: function(x) {
+            if (x.length === 6) {
+              return [parseInt(x.substr(0, 2), 16), parseInt(x.substr(2, 2), 16), parseInt(x.substr(4, 2), 16)];
+            }
+            if (x.length === 3) {
+              return [parseInt(x.substr(0, 1), 16) * 0x11, parseInt(x.substr(1, 1), 16) * 0x11, parseInt(x.substr(2, 1), 16) * 0x11];
+            }
+            throw "hex number has odd length: " + x.length;
+          }
+        };
+        sliderInput = (function(x) {
+          x.coffee = "({htmlcup, label, onclick, fillerColor, bgColor, module, value, width })@>\n          control = (name)-> \"javascript:#{module}.#{name}(event,this)\"\n          fillerColor ?= \"#bbb\"\n          background = if bgColor? then \"background:#{bgColor}\" else \"\"\n          value ?= \"100%\"\n          width ?= \"5em\"\n          mouseControls = onmousedown:control(\"mouseDown\"), onmouseup:control(\"mouseUp\"), onmousemove:control(\"mouseMove\"), onmouseout:control(\"mouseOut\")\n          htmlcup.div class:\"sliderInput\", style:\"display:inline-block;position:relative;border:2px solid #{fillerColor}\", mouseControls, ->\n              @div style:\"position:absolute;left:0;top:0;bottom:0;right:0;z-index:-1\", ->\n                  @div style:\"position:absolute;left:0;top:0;bottom:0;width:33%;background:#{fillerColor}\"\n              @div style:\"display:inline-table\", ->\n                  @div class:\"sliderInputButton\", style:\"display:table-cell;width:1.5em;font-weight:bold\", onclick:control(\"decButton\"), \"-\"\n                  @div style:\"display:table-cell;width:#{width};max-width:#{width};text-align:center;overflow:visible;position:relative;background:#{bgColor}\", mouseControls, ->\n                      @span class:\"sliderInputLabel\", style:\"position:absolute;left:0;top:0\", ->\n                          @span label\n                      @div class:\"sliderInputValue\", style:\"position:absolute;bottom:0;right:0\", value\n                  @div class:\"sliderInputButton\", style:\"display:table-cell;width:1.5em\", onclick:control(\"incButton\"), \"+\"\n  \n      ";
+          return x;
+        })(function(_arg) {
+          var background, bgColor, control, fillerColor, htmlcup, label, module, mouseControls, onclick, value, width;
+          htmlcup = _arg.htmlcup, label = _arg.label, onclick = _arg.onclick, fillerColor = _arg.fillerColor, bgColor = _arg.bgColor, module = _arg.module, value = _arg.value, width = _arg.width;
+          control = function(name) {
+            return "javascript:" + module + "." + name + "(event,this)";
+          };
+          if (fillerColor == null) {
+            fillerColor = "#bbb";
+          }
+          background = bgColor != null ? "background:" + bgColor : "";
+          if (value == null) {
+            value = "100%";
+          }
+          if (width == null) {
+            width = "5em";
+          }
+          mouseControls = {
+            onmousedown: control("mouseDown"),
+            onmouseup: control("mouseUp"),
+            onmousemove: control("mouseMove"),
+            onmouseout: control("mouseOut")
+          };
+          return htmlcup.div({
+            "class": "sliderInput",
+            style: "display:inline-block;position:relative;border:2px solid " + fillerColor
+          }, mouseControls, function() {
+            this.div({
+              style: "position:absolute;left:0;top:0;bottom:0;right:0;z-index:-1"
+            }, function() {
+              return this.div({
+                style: "position:absolute;left:0;top:0;bottom:0;width:33%;background:" + fillerColor
+              });
+            });
+            return this.div({
+              style: "display:inline-table"
+            }, function() {
+              this.div({
+                "class": "sliderInputButton",
+                style: "display:table-cell;width:1.5em;font-weight:bold",
+                onclick: control("decButton")
+              }, "-");
+              this.div({
+                style: "display:table-cell;width:" + width + ";max-width:" + width + ";text-align:center;overflow:visible;position:relative;background:" + bgColor
+              }, mouseControls, function() {
+                this.span({
+                  "class": "sliderInputLabel",
+                  style: "position:absolute;left:0;top:0"
+                }, function() {
+                  return this.span(label);
+                });
+                return this.div({
+                  "class": "sliderInputValue",
+                  style: "position:absolute;bottom:0;right:0"
+                }, value);
+              });
+              return this.div({
+                "class": "sliderInputButton",
+                style: "display:table-cell;width:1.5em",
+                onclick: control("incButton")
+              }, "+");
+            });
+          });
+        });
+        extensible = {
+          extendObject: extendObject = function() {
+            var k, r, v, x, _i, _len;
+            r = {};
+            for (k in this) {
+              v = this[k];
+              r[k] = v;
+            }
+            for (_i = 0, _len = arguments.length; _i < _len; _i++) {
+              x = arguments[_i];
+              for (k in x) {
+                v = x[k];
+                r[k] = v;
+              }
+            }
+            return r;
+          }
+        };
+        dynmod = extensible.extendObject({
+          symCall: function(object, method, pkg) {
+            if (pkg == null) {
+              pkg = this;
+            }
+            return function() {
+              return (object[method] != null ? object : pkg)[method].apply(object, arguments);
+            };
+          }
+        });
+        spiritcase = window.spiritcase;
+        icon = extensible.extendObject(spiritcase.icon, {
+          sizeX: spiritcase.sizeX,
+          sizeY: spiritcase.sizeY,
+          el: document.getElementById("icon"),
+          getData: function() {
+            sizeX = this.sizeX, sizeY = this.sizeY;
+            return this.el.getContext("2d").getImageData(0, 0, sizeX, sizeY);
+          },
+          setImage: (function(x) {
+            x.coffee = "(imageData)@>\n            c = @el.getContext \"2d\"\n            c.putImageData(imageData, 0, 0)    \n            @\n            unless @el.width is imageData.width and @el.height is imageData.height\n                @el.width = imageData.width\n                @el.height = imageData.height\n            c = @el.getContext \"2d\"\n            c.putImageData(imageData, 0, 0)    \n            @\n        ";
+            return x;
+          })(function(imageData) {
+            var c;
+            c = this.el.getContext("2d");
+            c.putImageData(imageData, 0, 0);
+            this;
+            if (!(this.el.width === imageData.width && this.el.height === imageData.height)) {
+              this.el.width = imageData.width;
+              this.el.height = imageData.height;
+            }
+            c = this.el.getContext("2d");
+            c.putImageData(imageData, 0, 0);
+            return this;
+          }),
+          redraw: (function(x) {
+            x.coffee = "@>\n          icon = @\n          @el.setAttribute \"style\", \"border-color:#{icon.borderColor};border-width:#{icon.borderWidth}px;border-style:solid;padding:#{icon.padding}px\"\n          @\n      ";
+            return x;
+          })(function() {
+            var icon;
+            icon = this;
+            this.el.setAttribute("style", "border-color:" + icon.borderColor + ";border-width:" + icon.borderWidth + "px;border-style:solid;padding:" + icon.padding + "px");
+            return this;
+          })
+        });
+        window.spiritcase = spiritcase = extensible.extendObject(spiritcase, {
+          icon: icon
+        }, {
+          el: document.getElementById("canvas"),
+          icon: icon,
+          redraw: (function(x) {
+            x.coffee = "@>\n          { gridSize, factor, factorY, sizeY, factorX, sizeX, checkersSize } = @\n          canvasSizeX = factorX * sizeX + gridSize\n          canvasSizeY = factorY * sizeY + gridSize\n          @el.width = canvasSizeX if canvasSizeX isnt @el.width\n          @el.height = canvasSizeY if canvasSizeY isnt @el.height\n          iconData = @icon.getData()\n          ctx = @el.getContext \"2d\"\n          if checkersSize > 0 and checkersSize * 2 <= factor\n            x_s = sizeX * factorX\n            y_s = sizeY * factorY\n            x_i = 0\n            y_i = 0\n            y = 0\n            while y < y_s\n              x = 0\n              x_i = 0\n              while x < x_s\n                ctx.fillStyle = \"#{ [ \"000\", \"222\" ][ (x_i ^ y_i) & 1] }\"\n                # ctx.fillStyle = \"#f00\"\n                ctx.fillRect x, y, checkersSize, checkersSize\n                x += checkersSize\n                x_i++\n              y += checkersSize\n              y_i++\n          true then (data = @imageData?) then\n            x_s = sizeX * factorX\n            y_s = sizeY * factorY\n            x_i = 0\n            y_i = 0\n            y = 0\n            while y < y_s\n              x = 0\n              x_i = 0\n              while x < x_s\n                p = @pixelColor(x_i, y_i)\n                # ctx.fillStyle = (0x1000000 + (c[0] << 16) + (c[1] << 8) + c[2]).toString(16).substring(1) # '#330000' # @pixelColor(x_i, y_i)\n                ctx.fillStyle = \"rgba(#{p[0]},#{p[1]},#{p[2]},#{p[3]/255})\"\n                ctx.fillRect x, y, factorX, factorY\n                x += factorX\n                x_i++\n              y += factorY\n              y_i++\n          if gridSize > 0\n            x = 0\n            while x <= sizeX\n              ctx.fillStyle = \"#{@borderColor}\"\n              ctx.fillRect(x * factorX, 0, gridSize, sizeY * factorY)\n              x++\n            y = 0\n            while y <= sizeY\n              ctx.fillStyle = \"#{@borderColor}\"\n              ctx.fillRect(0, y * factorY, sizeX * factorX, gridSize)\n              y++\n          return\n        ";
+            return x;
+          })(function() {
+            var canvasSizeX, canvasSizeY, checkersSize, ctx, data, factor, factorX, factorY, gridSize, iconData, p, sizeX, sizeY, x, x_i, x_s, y, y_i, y_s;
+            gridSize = this.gridSize, factor = this.factor, factorY = this.factorY, sizeY = this.sizeY, factorX = this.factorX, sizeX = this.sizeX, checkersSize = this.checkersSize;
+            canvasSizeX = factorX * sizeX + gridSize;
+            canvasSizeY = factorY * sizeY + gridSize;
+            if (canvasSizeX !== this.el.width) {
+              this.el.width = canvasSizeX;
+            }
+            if (canvasSizeY !== this.el.height) {
+              this.el.height = canvasSizeY;
+            }
+            iconData = this.icon.getData();
+            ctx = this.el.getContext("2d");
+            if (checkersSize > 0 && checkersSize * 2 <= factor) {
+              x_s = sizeX * factorX;
+              y_s = sizeY * factorY;
+              x_i = 0;
+              y_i = 0;
+              y = 0;
+              while (y < y_s) {
+                x = 0;
+                x_i = 0;
+                while (x < x_s) {
+                  ctx.fillStyle = "" + ["000", "222"][(x_i ^ y_i) & 1];
+                  ctx.fillRect(x, y, checkersSize, checkersSize);
+                  x += checkersSize;
+                  x_i++;
+                }
+                y += checkersSize;
+                y_i++;
+              }
+            }
+            if (true) {
+              if ((data = this.imageData != null)) {
+                x_s = sizeX * factorX;
+                y_s = sizeY * factorY;
+                x_i = 0;
+                y_i = 0;
+                y = 0;
+                while (y < y_s) {
+                  x = 0;
+                  x_i = 0;
+                  while (x < x_s) {
+                    p = this.pixelColor(x_i, y_i);
+                    ctx.fillStyle = "rgba(" + p[0] + "," + p[1] + "," + p[2] + "," + (p[3] / 255) + ")";
+                    ctx.fillRect(x, y, factorX, factorY);
+                    x += factorX;
+                    x_i++;
+                  }
+                  y += factorY;
+                  y_i++;
+                }
+              }
+            }
+            if (gridSize > 0) {
+              x = 0;
+              while (x <= sizeX) {
+                ctx.fillStyle = "" + this.borderColor;
+                ctx.fillRect(x * factorX, 0, gridSize, sizeY * factorY);
+                x++;
+              }
+              y = 0;
+              while (y <= sizeY) {
+                ctx.fillStyle = "" + this.borderColor;
+                ctx.fillRect(0, y * factorY, sizeX * factorX, gridSize);
+                y++;
+              }
+            }
+          }),
+          load: (function(x) {
+            x.coffee = "(imageData)@>\n            @icon.setImage(imageData)\n            @imageData = imageData\n            @redraw()\n            unless @sizeX is imageData.width and @sizeY is imageData.height\n                @sizeX = imageData.width\n                @sizeY = imageData.height\n            @imageData = imageData\n            @redraw()\n        ";
+            return x;
+          })(function(imageData) {
+            this.icon.setImage(imageData);
+            this.imageData = imageData;
+            this.redraw();
+            if (!(this.sizeX === imageData.width && this.sizeY === imageData.height)) {
+              this.sizeX = imageData.width;
+              this.sizeY = imageData.height;
+            }
+            this.imageData = imageData;
+            return this.redraw();
+          }),
+          pixelColor: (function(x) {
+            x.coffee = "(x,y)@>\n                { imageData: d } = @\n                i = (d.width * y + x) * 4\n                b = d.data\n                [ b[i], b[i+1], b[i+2], b[i+3] ]\n        ";
+            return x;
+          })(function(x, y) {
+            var b, d, i;
+            d = this.imageData;
+            i = (d.width * y + x) * 4;
+            b = d.data;
+            return [b[i], b[i + 1], b[i + 2], b[i + 3]];
+          }),
+          zoomIn: (function(x) {
+            x.coffee = "@>\n          @factorX = @factorY = ++@factor\n          @redraw()\n        ";
+            return x;
+          })(function() {
+            this.factorX = this.factorY = ++this.factor;
+            return this.redraw();
+          }),
+          zoomOut: (function(x) {
+            x.coffee = "@>\n          @factorX = @factorY = --@factor\n          @redraw()\n        ";
+            return x;
+          })(function() {
+            this.factorX = this.factorY = --this.factor;
+            return this.redraw();
+          }),
+          view: {},
+          lib: {
+            htmlcup: window.htmlcup,
+            document: document,
+            window: window,
+            setTimeout: setTimeout,
+            FileReader: FileReader,
+            Math: Math,
+            color: colorLib,
+            sliderInput: sliderInput,
+            $: $
+          },
+          setDialog: (function(x) {
+            x.coffee = "(x)@>\n            d = @lib.htmlcup.captureFirstTag ->\n              @div class:\"spiritcaseDialog\", ->\n                # @div style:\"width:0\", ->\n                    @div style:\"display:inline-block\", ->\n                        x.call @\n                    @div style:\"display:inline-block\", onclick:\"deleteNode(this.parentNode)\", class:\"spiritcaseDeleteDialog\", \"×\"\n            c = @view.dialogs.firstChild then @lib.window.deleteNode c\n            @view.dialogs.appendChild d\n\n        ";
+            return x;
+          })(function(x) {
+            var c, d;
+            d = this.lib.htmlcup.captureFirstTag(function() {
+              return this.div({
+                "class": "spiritcaseDialog"
+              }, function() {
+                this.div({
+                  style: "display:inline-block"
+                }, function() {
+                  return x.call(this);
+                });
+                return this.div({
+                  style: "display:inline-block",
+                  onclick: "deleteNode(this.parentNode)",
+                  "class": "spiritcaseDeleteDialog"
+                }, "×");
+              });
+            });
+            if (c = this.view.dialogs.firstChild) {
+              this.lib.window.deleteNode(c);
+            }
+            return this.view.dialogs.appendChild(d);
+          }),
+          loadButtonClick: (function(x) {
+            x.coffee = "@>\n            spiritcase = @\n            @setDialog ->\n                @label \"Load file: \"\n                @input type:\"file\", onchange:\"javascript:spiritcase.loadFile(event)\"\n\n        ";
+            return x;
+          })(function() {
+            var spiritcase;
+            spiritcase = this;
+            return this.setDialog(function() {
+              this.label("Load file: ");
+              return this.input({
+                type: "file",
+                onchange: "javascript:spiritcase.loadFile(event)"
+              });
+            });
+          }),
+          saveButtonClick: (function(x) {
+            x.coffee = "@>\n            @load @imageData\n            uri = @icon.el.toDataURL()\n            spiritcase = @\n            @setDialog ->\n                @label \"Download: \"\n                @a download:\"file\", href:uri, style:\"font-size:150%\", \"file.png\"\n                \n        ";
+            return x;
+          })(function() {
+            var spiritcase, uri;
+            this.load(this.imageData);
+            uri = this.icon.el.toDataURL();
+            spiritcase = this;
+            return this.setDialog(function() {
+              this.label("Download: ");
+              return this.a({
+                download: "file",
+                href: uri,
+                style: "font-size:150%"
+              }, "file.png");
+            });
+          }),
+          nextTick: (function(x) {
+            x.coffee = "(x)@>\n            { setTimeout } = @lib\n            setTimeout (=> x.call @), 0\n\n        ";
+            return x;
+          })(function(x) {
+            var setTimeout;
+            setTimeout = this.lib.setTimeout;
+            return setTimeout(((function(_this) {
+              return function() {
+                return x.call(_this);
+              };
+            })(this)), 0);
+          }),
+          loadDataUrl: (function(x) {
+            x.coffee = "(d)@>\n                              img = @lib.document.createElement 'img'\n                              img.src = d\n                              @nextTick ->\n                                  canvas = @lib.document.createElement 'canvas'\n                                  canvas.width = img.width\n                                  canvas.height = img.height\n                                  context = canvas.getContext '2d'\n                                  context.drawImage(img, 0, 0)\n                                  @load context.getImageData(0, 0, canvas.width, canvas.height)\n\n        ";
+            return x;
+          })(function(d) {
+            var img;
+            img = this.lib.document.createElement('img');
+            img.src = d;
+            return this.nextTick(function() {
+              var canvas, context;
+              canvas = this.lib.document.createElement('canvas');
+              canvas.width = img.width;
+              canvas.height = img.height;
+              context = canvas.getContext('2d');
+              context.drawImage(img, 0, 0);
+              return this.load(context.getImageData(0, 0, canvas.width, canvas.height));
+            });
+          }),
+          loadFile: (function(x) {
+            x.coffee = "(event)@>\n            for file in event.target.files\n                                  do (file)=>\n                                      r = new @lib.FileReader\n                                      r.onload = (event)=>\n                                           @loadDataUrl event.target.result\n                                      r.readAsDataURL(file)\n        ";
+            return x;
+          })(function(event) {
+            var file, _i, _len, _ref, _results;
+            _ref = event.target.files;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              file = _ref[_i];
+              _results.push((function(_this) {
+                return function(file) {
+                  var r;
+                  r = new _this.lib.FileReader;
+                  r.onload = function(event) {
+                    return _this.loadDataUrl(event.target.result);
+                  };
+                  return r.readAsDataURL(file);
+                };
+              })(this)(file));
+            }
+            return _results;
+          }),
+          withColorinput: (function(x) {
+            x.coffee = "(input)@>\n            @colorinput =\n                input: input\n                spiritcase: @\n                onfocus: @>\n                    @spiritcase.setDialog ->\n                        color = (n)=>\n                            @div style:\"font-size:150%;background:##{n};color:#786;width:1.5em;display:inline-block\", onclick:\"javascript:spiritcase.setToolColor('#{n}')\", \"#{n}\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                          @label \"Opacity:\"\n                          @button label:\"squarebutton\", \"+\"\n                          @input type:\"text\", value:\"100%\", size:\"5\", style:\"font-size:125%;text-align:center\"\n                          @button label:\"squarebutton\", \"-\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                            color \"000\"\n                            color \"fff\"\n                            color \"f00\"\n                            color \"0f0\"\n                            color \"00f\"\n                            color \"ff0\"\n                            color \"f0f\"\n                            color \"0ff\"\n                            # @button \"Add\", onclick:\"javascript:spiritcase.colorinput.saveCurrentColor()\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                            @button \"Pick\", onclick:\"javascript:spiritcase.setColorPickerTool()\"\n                editingValue: false\n                setColor: (c)@>\n                        @input.setAttribute \"style\", \"background:##{c}\"\n                        unless @editingValue\n                            @input.value = \"##{c}\"\n                oninput: @>\n                    v = @input.value\n                    m = /^\\s*#?((?:[0-9a-fA-F]{3}){1,2})\\s*$/.exec v then\n                        try\n                            @editingValue = true\n                            @spiritcase.setToolColor m[1]\n                        finally\n                            @editingValue = false\n                lib: @lib\n        ";
+            return x;
+          })(function(input) {
+            return this.colorinput = {
+              input: input,
+              spiritcase: this,
+              onfocus: (function(x) {
+                x.coffee = "@>\n                    @spiritcase.setDialog ->\n                        color = (n)=>\n                            @div style:\"font-size:150%;background:##{n};color:#786;width:1.5em;display:inline-block\", onclick:\"javascript:spiritcase.setToolColor('#{n}')\", \"#{n}\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                          @label \"Opacity:\"\n                          @button label:\"squarebutton\", \"+\"\n                          @input type:\"text\", value:\"100%\", size:\"5\", style:\"font-size:125%;text-align:center\"\n                          @button label:\"squarebutton\", \"-\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                            color \"000\"\n                            color \"fff\"\n                            color \"f00\"\n                            color \"0f0\"\n                            color \"00f\"\n                            color \"ff0\"\n                            color \"f0f\"\n                            color \"0ff\"\n                            # @button \"Add\", onclick:\"javascript:spiritcase.colorinput.saveCurrentColor()\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                            @button \"Pick\", onclick:\"javascript:spiritcase.setColorPickerTool()\"\n                ";
+                return x;
+              })(function() {
+                return this.spiritcase.setDialog(function() {
+                  var color;
+                  color = (function(_this) {
+                    return function(n) {
+                      return _this.div({
+                        style: "font-size:150%;background:#" + n + ";color:#786;width:1.5em;display:inline-block",
+                        onclick: "javascript:spiritcase.setToolColor('" + n + "')"
+                      }, "" + n);
+                    };
+                  })(this);
+                  this.div({
+                    "class": "spiritcaseToolbarGroup"
+                  }, function() {
+                    this.label("Opacity:");
+                    this.button({
+                      label: "squarebutton"
+                    }, "+");
+                    this.input({
+                      type: "text",
+                      value: "100%",
+                      size: "5",
+                      style: "font-size:125%;text-align:center"
+                    });
+                    return this.button({
+                      label: "squarebutton"
+                    }, "-");
+                  });
+                  this.div({
+                    "class": "spiritcaseToolbarGroup"
+                  }, function() {
+                    color("000");
+                    color("fff");
+                    color("f00");
+                    color("0f0");
+                    color("00f");
+                    color("ff0");
+                    color("f0f");
+                    return color("0ff");
+                  });
+                  return this.div({
+                    "class": "spiritcaseToolbarGroup"
+                  }, function() {
+                    return this.button("Pick", {
+                      onclick: "javascript:spiritcase.setColorPickerTool()"
+                    });
+                  });
+                });
+              }),
+              editingValue: false,
+              setColor: (function(x) {
+                x.coffee = "(c)@>\n                        @input.setAttribute \"style\", \"background:##{c}\"\n                        unless @editingValue\n                            @input.value = \"##{c}\"\n                ";
+                return x;
+              })(function(c) {
+                this.input.setAttribute("style", "background:#" + c);
+                if (!this.editingValue) {
+                  return this.input.value = "#" + c;
+                }
+              }),
+              oninput: (function(x) {
+                x.coffee = "@>\n                    v = @input.value\n                    m = /^\\s*#?((?:[0-9a-fA-F]{3}){1,2})\\s*$/.exec v then\n                        try\n                            @editingValue = true\n                            @spiritcase.setToolColor m[1]\n                        finally\n                            @editingValue = false\n                ";
+                return x;
+              })(function() {
+                var m, v;
+                v = this.input.value;
+                if (m = /^\s*#?((?:[0-9a-fA-F]{3}){1,2})\s*$/.exec(v)) {
+                  try {
+                    this.editingValue = true;
+                    return this.spiritcase.setToolColor(m[1]);
+                  } finally {
+                    this.editingValue = false;
+                  }
+                }
+              }),
+              lib: this.lib
+            };
+          }),
+          toolColor: [0, 0, 0],
+          toolAlpha: 1,
+          setToolColor: (function(x) {
+            x.coffee = "(c)@>\n            @toolColor = @lib.color.hex2rgb c\n            @colorinput.setColor(c)\n            @\n        ";
+            return x;
+          })(function(c) {
+            this.toolColor = this.lib.color.hex2rgb(c);
+            this.colorinput.setColor(c);
+            return this;
+          }),
+          setColorPickerTool: (function(x) {
+            x.coffee = "@>";
+            return x;
+          })(function() {}),
+          setToolColor: (function(x) {
+            x.coffee = "(c)@>\n            @toolColor = @lib.color.hex2rgb c\n            @colorinput.setColor(c)\n            @\n\n        ";
+            return x;
+          })(function(c) {
+            this.toolColor = this.lib.color.hex2rgb(c);
+            this.colorinput.setColor(c);
+            return this;
+          }),
+          pencilButtonClick: (function(x) {
+            x.coffee = "@>\n          @tool =\n              spiritcase: @\n              employ: (x,y)@>\n                  x = x|0\n                  y = y|0\n                  return if x is @x and y is @y\n                  @x = x\n                  @y = y\n                  @spiritcase.setPixel x, y, @spiritcase.toolColor, @spiritcase.toolAlpha\n                  @spiritcase.redrawPixel x, y\n              done: @>\n                  @x = @y = null\n\n        ";
+            return x;
+          })(function() {
+            return this.tool = {
+              spiritcase: this,
+              employ: (function(x) {
+                x.coffee = "(x,y)@>\n                  x = x|0\n                  y = y|0\n                  return if x is @x and y is @y\n                  @x = x\n                  @y = y\n                  @spiritcase.setPixel x, y, @spiritcase.toolColor, @spiritcase.toolAlpha\n                  @spiritcase.redrawPixel x, y\n              ";
+                return x;
+              })(function(x, y) {
+                x = x | 0;
+                y = y | 0;
+                if (x === this.x && y === this.y) {
+                  return;
+                }
+                this.x = x;
+                this.y = y;
+                this.spiritcase.setPixel(x, y, this.spiritcase.toolColor, this.spiritcase.toolAlpha);
+                return this.spiritcase.redrawPixel(x, y);
+              }),
+              done: (function(x) {
+                x.coffee = "@>\n                  @x = @y = null\n\n        ";
+                return x;
+              })(function() {
+                return this.x = this.y = null;
+              })
+            };
+          }),
+          setPixel: (function(x) {
+            x.coffee = "(x,y,color,alpha)@>\n                { imageData: d } = @\n                nalpha = 1 - alpha\n                i = (d.width * y + x) * 4\n                b = d.data\n                rnd = @lib.Math.round\n                if false\n                    b[i] = rnd(color[0] * alpha + b[i] * nalpha)\n                    i++ \n                    b[i] = rnd(color[1] * alpha + b[i] * nalpha)\n                    i++\n                    b[i] = rnd(color[2] * alpha + b[i] * nalpha)\n                else\n                    calpha = alpha\n                    palpha = b[i+3]/255\n                    nalpha *= palpha\n                    alpha = 1 - nalpha\n                    b[i] = rnd(color[0] * alpha + b[i] * nalpha)\n                    i++ \n                    b[i] = rnd(color[1] * alpha + b[i] * nalpha)\n                    i++\n                    b[i] = rnd(color[2] * alpha + b[i] * nalpha)\n                    i++\n                    b[i] = rnd(255 * (1 - (1 - palpha) * (1 - calpha)))\n                \n        ";
+            return x;
+          })(function(x, y, color, alpha) {
+            var b, calpha, d, i, nalpha, palpha, rnd;
+            d = this.imageData;
+            nalpha = 1 - alpha;
+            i = (d.width * y + x) * 4;
+            b = d.data;
+            rnd = this.lib.Math.round;
+            if (false) {
+              b[i] = rnd(color[0] * alpha + b[i] * nalpha);
+              i++;
+              b[i] = rnd(color[1] * alpha + b[i] * nalpha);
+              i++;
+              return b[i] = rnd(color[2] * alpha + b[i] * nalpha);
+            } else {
+              calpha = alpha;
+              palpha = b[i + 3] / 255;
+              nalpha *= palpha;
+              alpha = 1 - nalpha;
+              b[i] = rnd(color[0] * alpha + b[i] * nalpha);
+              i++;
+              b[i] = rnd(color[1] * alpha + b[i] * nalpha);
+              i++;
+              b[i] = rnd(color[2] * alpha + b[i] * nalpha);
+              i++;
+              return b[i] = rnd(255 * (1 - (1 - palpha) * (1 - calpha)));
+            }
+          }),
+          redrawPixel: (function(x) {
+            x.coffee = "(x,y)@>\n          { gridSize, factor, factorY, sizeY, factorX, sizeX, checkersSize } = @\n          ctx = @el.getContext \"2d\"\n          p = @pixelColor(x, y)\n          # ctx.fillStyle = (0x1000000 + (c[0] << 16) + (c[1] << 8) + c[2]).toString(16).substring(1) # '#330000' # @pixelColor(x_i, y_i)\n          ctx.fillStyle = \"rgba(#{p[0]},#{p[1]},#{p[2]},#{p[3]/255})\"\n          ctx.fillRect x * factorX + gridSize, y * factorY + gridSize, factorX - gridSize, factorY - gridSize\n          @\n\n        ";
+            return x;
+          })(function(x, y) {
+            var checkersSize, ctx, factor, factorX, factorY, gridSize, p, sizeX, sizeY;
+            gridSize = this.gridSize, factor = this.factor, factorY = this.factorY, sizeY = this.sizeY, factorX = this.factorX, sizeX = this.sizeX, checkersSize = this.checkersSize;
+            ctx = this.el.getContext("2d");
+            p = this.pixelColor(x, y);
+            ctx.fillStyle = "rgba(" + p[0] + "," + p[1] + "," + p[2] + "," + (p[3] / 255) + ")";
+            ctx.fillRect(x * factorX + gridSize, y * factorY + gridSize, factorX - gridSize, factorY - gridSize);
+            return this;
+          }),
+          mousedown: 0,
+          employMouse: (function(x) {
+            x.coffee = "(el, event)@>\n          { gridSize, factor, factorY, sizeY, factorX, sizeX, checkersSize } = @\n          h = gridSize / 2\n          x = event.clientX - el.offsetLeft - gridSize\n          y = event.clientY - el.offsetTop - gridSize\n          @tool?.employ(x / factorX, y / factorY)\n\n        ";
+            return x;
+          })(function(el, event) {
+            var checkersSize, factor, factorX, factorY, gridSize, h, sizeX, sizeY, x, y, _ref;
+            gridSize = this.gridSize, factor = this.factor, factorY = this.factorY, sizeY = this.sizeY, factorX = this.factorX, sizeX = this.sizeX, checkersSize = this.checkersSize;
+            h = gridSize / 2;
+            x = event.clientX - el.offsetLeft - gridSize;
+            y = event.clientY - el.offsetTop - gridSize;
+            return (_ref = this.tool) != null ? _ref.employ(x / factorX, y / factorY) : void 0;
+          }),
+          doneMouse: (function(x) {
+            x.coffee = "(el, event)@>\n          @tool?.done?()\n\n        ";
+            return x;
+          })(function(el, event) {
+            var _ref;
+            return (_ref = this.tool) != null ? typeof _ref.done === "function" ? _ref.done() : void 0 : void 0;
+          }),
+          setup: (function(x) {
+            x.coffee = "@>\n          @el.spiritcase = @\n          @imageData = @icon.getData()\n            # width: @sizeX\n            # height: @sizeY\n            # data: do=>\n            #   m = @sizeX * @sizeY * 4\n            #   x = [ ]\n            #   x.push 0 while m-- > 0\n            #   x\n\n          @redraw()\n          @pencilButtonClick()\n\n          @el.onmousemove = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            if @spiritcase.mousedown > 0\n                @spiritcase.employMouse @, event\n          @el.onmouseup = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event\n            unless @spiritcase.mousedown <= 0\n              @spiritcase.mousedown--\n              unless @spiritcase.mousedown > 0\n                @spiritcase.doneMouse()\n          @el.onmousedown = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.mousedown++\n            @spiritcase.employMouse @, event\n          @el.onmouseout = (event)@>\n            @spiritcase.mousedown = 0\n            @spiritcase.doneMouse()\n          @\n        ";
+            return x;
+          })(function() {
+            this.el.spiritcase = this;
+            this.imageData = this.icon.getData();
+            this.redraw();
+            this.pencilButtonClick();
+            this.el.onmousemove = (function(x) {
+              x.coffee = "(event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            if @spiritcase.mousedown > 0\n                @spiritcase.employMouse @, event\n          ";
+              return x;
+            })(function(event) {
+              event.stopPropagation();
+              event.preventDefault();
+              if (this.spiritcase.mousedown > 0) {
+                return this.spiritcase.employMouse(this, event);
+              }
+            });
+            this.el.onmouseup = (function(x) {
+              x.coffee = "(event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event\n            unless @spiritcase.mousedown <= 0\n              @spiritcase.mousedown--\n              unless @spiritcase.mousedown > 0\n                @spiritcase.doneMouse()\n          ";
+              return x;
+            })(function(event) {
+              event.stopPropagation();
+              event.preventDefault();
+              this.spiritcase.employMouse(this, event);
+              if (!(this.spiritcase.mousedown <= 0)) {
+                this.spiritcase.mousedown--;
+                if (!(this.spiritcase.mousedown > 0)) {
+                  return this.spiritcase.doneMouse();
+                }
+              }
+            });
+            this.el.onmousedown = (function(x) {
+              x.coffee = "(event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.mousedown++\n            @spiritcase.employMouse @, event\n          ";
+              return x;
+            })(function(event) {
+              event.stopPropagation();
+              event.preventDefault();
+              this.spiritcase.mousedown++;
+              return this.spiritcase.employMouse(this, event);
+            });
+            this.el.onmouseout = (function(x) {
+              x.coffee = "(event)@>\n            @spiritcase.mousedown = 0\n            @spiritcase.doneMouse()\n          ";
+              return x;
+            })(function(event) {
+              this.spiritcase.mousedown = 0;
+              return this.spiritcase.doneMouse();
+            });
+            return this;
+          }),
+          makeWebmodule: (function(x) {
+            x.coffee = "(name, build)@>\n            @webmodule ?= { }\n            @webmodule[name] = build.call @\n            \"spiritcase.webmodule.#{name}\"\n        \n\n      ";
+            return x;
+          })(function(name, build) {
+            if (this.webmodule == null) {
+              this.webmodule = {};
+            }
+            this.webmodule[name] = build.call(this);
+            return "spiritcase.webmodule." + name;
+          })
+        });
+        return spiritcase.setup();
+      })();
+</script><script type="text/javascript">(function () {
+        document.body.appendChild((function() {
+          return spiritcase.view.toolbar = htmlcup.captureFirstTag(function() {
+            var style;
+            style = "position:absolute;\ntop:0;\ncolor:yellow;\nwidth:100%;";
+            return this.div({
+              style: style
+            }, {
+              "class": "spiritcaseToolbar"
+            }, function() {
+              this.style(".spiritcaseToolbar {\n    opacity:0.50;\n}\n.spiritcaseToolbar label {\n  font-size: 125%;\n  color:white;\n}\n.spiritcaseToolbarGroup {\n  display:inline-block;\n  padding:0 1em;\n}\nbutton.squarebutton {\n  width: 1.5em;\n  max-width: 1.5em;\n  text-align: center;\n}\n.spiritcaseToolbar:hover {\n    opacity:0.80;\n}\n#spiritcaseColorInput {\n  font-size:125%;\n  text-align:center;\n}\n.spiritcaseToolbar select, .spiritcaseToolbar button { font-size:inherit; text-align:center;   }\n.spiritcaseToolbar .button { display:inline-block; }\n.spiritcaseToolbar button, .spiritcaseToolbar .button,  .spiritcaseToolbar input, .spiritcaseToolbar select:not(:focus):not(:hover) {\n    color:white; background:black;\n}\n.spiritcaseToolbar button:hover, .spiritcaseToolbar .button:hover,  .spiritcaseToolbar input:hover, .spiritcaseToolbar select:hover {\n    color:black; background:white;\n}\n/* select option:not(:checked) { color:red !important; background:black !important; } */\n/* option:active, option[selected], option:checked, option:hover, option:focus { background:#248 !important; } */\n.spiritcaseToolbar button, .spiritcaseToolbar .button { min-width:5%; font-size:150%; border: 2px outset grey; }\n.spiritcaseToolbar button:active, .spiritcaseToolbar .button.button-on { border: 2px inset grey; background:#248; }\n.spiritcaseToolbar      .button input[type=\"checkbox\"] { display:none; }");
+              return this.div({
+                style: "text-align:center;width:100%"
+              }, function() {
+                this.div({
+                  id: "spiritcaseToolbar",
+                  style: "display:inline-block;text-align:initial"
+                }, function() {
+                  this.button({
+                    id: "spiritcaseLoadButton",
+                    onclick: "javascript:spiritcase.loadButtonClick(this)"
+                  }, "Load");
+                  this.button({
+                    id: "spiritcaseSaveButton",
+                    onclick: "javascript:spiritcase.saveButtonClick(this)"
+                  }, "Save");
+                  this.button({
+                    id: "spiritcasePencilButton",
+                    onclick: "javascript:spiritcase.pencilButtonClick(this)"
+                  }, "Pencil");
+                  this.button({
+                    id: "spiritcaseEraseButton",
+                    onclick: "javascript:spiritcase.eraseButtonClick(this)"
+                  }, "Erase");
+                  this.button({
+                    id: "spiritcaseEraseButton",
+                    onclick: "javascript:spiritcase.undoButtonClick(this)"
+                  }, "Undo");
+                  this.div({
+                    "class": "spiritcaseToolbarGroup",
+                    style: "font-size:initial;text-align:initial"
+                  }, function() {
+                    return spiritcase.lib.sliderInput({
+                      htmlcup: this,
+                      label: "Zoom",
+                      value: "" + spiritcase.factor,
+                      value: "" + spiritcase.factor,
+                      width: "3em",
+                      controller: spiritcase.makeWebmodule("sliderInputZoom", function() {
+                        return {
+                          spiritcase: this,
+                          incButton: (function(x) {
+                            x.coffee = "(ev,el)@> @spiritcase.zoomIn(); @refresh(el)";
+                            return x;
+                          })(function(ev, el) {
+                            this.spiritcase.zoomIn();
+                            return this.refresh(el);
+                          }),
+                          decButton: (function(x) {
+                            x.coffee = "(ev,el)@> @spiritcase.zoomOut(); @refresh(el)";
+                            return x;
+                          })(function(ev, el) {
+                            this.spiritcase.zoomOut();
+                            return this.refresh(el);
+                          }),
+                          refresh: (function(x) {
+                            x.coffee = "(el)@>\n                                            # @alert @spiritcase.factor\n                                            @spiritcase.lib.window.aeto = el\n                                            { $ } = @\n                                            el = $(el).up(\".sliderInput\")[0]\n                                            $(\".sliderInputValue\", el)[0].innerHTML = \"#{@spiritcase.factor}\"\n                                        ";
+                            return x;
+                          })(function(el) {
+                            var $;
+                            this.spiritcase.lib.window.aeto = el;
+                            $ = this.$;
+                            el = $(el).up(".sliderInput")[0];
+                            return $(".sliderInputValue", el)[0].innerHTML = "" + this.spiritcase.factor;
+                          }),
+                          $: this.lib.$
+                        };
+                      })
+                    });
+                  });
+                  return this.div({
+                    "class": "spiritcaseToolbarGroup"
+                  }, function() {
+                    return this.input({
+                      id: "spiritcaseColorInput",
+                      type: "text",
+                      placeholder: "Color",
+                      size: "7",
+                      onfocus: "javascript:spiritcase.withColorinput(this).onfocus(event)",
+                      oninput: "javascript:spiritcase.withColorinput(this).oninput(event)"
+                    });
+                  });
+                });
+                return this.div({
+                  id: "spiritcaseDialogs"
+                }, function() {});
+              });
+            });
+          });
+        })());
+        return spiritcase.view.dialogs = document.getElementById('spiritcaseDialogs');
+      })();
+</script><script type="text/javascript">(function () {
+        var setupDrop, spiritcase;
+        window.setWindowEventListener = (function(listeners) {
+          return function(name, cb, flag) {
+            var old;
+            if ((old = listeners[name]) != null) {
+              window.removeEventListener(name, old);
+            }
+            return window.addEventListener(name, listeners[name] = cb, flag);
+          };
+        })({});
+        spiritcase = window.spiritcase;
+        if (File && FileList && FileReader && Blob) {
+          setupDrop = function(element, withImageData) {
+            var withDataUrl;
+            withDataUrl = function(d) {
+              var img, nextTick;
+              img = document.createElement('img');
+              img.src = d;
+              nextTick = function(x) {
+                return setTimeout(x, 0);
+              };
+              return nextTick(function() {
+                var canvas, context;
+                canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                context = canvas.getContext('2d');
+                context.drawImage(img, 0, 0);
+                return withImageData(context.getImageData(0, 0, canvas.width, canvas.height));
+              });
+            };
+            setWindowEventListener("dragover", function(event) {
+              event.stopPropagation();
+              event.preventDefault();
+              return event.dataTransfer.dropEffect = 'copy';
+            });
+            return setWindowEventListener("drop", function(event) {
+              var file, _i, _len, _ref, _results;
+              event.stopPropagation();
+              event.preventDefault();
+              _ref = event.dataTransfer.files;
+              _results = [];
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                file = _ref[_i];
+                _results.push((function(file) {
+                  var r;
+                  r = new FileReader;
+                  r.onload = function(event) {
+                    return withDataUrl(event.target.result);
+                  };
+                  return r.readAsDataURL(file);
+                })(file));
+              }
+              return _results;
+            });
+          };
+          return setupDrop(window, function(imageData) {
+            return spiritcase.load(imageData);
+          });
+        }
+      })();
+</script><script type="text/javascript">(function () {
+        window.deleteNode = function(x) {
+          return x.parentNode.removeChild(x);
+        };
+        window.assert = function(c, msg) {
+          if (!c) {
+            return alert(msg);
+          }
+        };
+        return window.jsLoad = function(sym, src, callback) {
+          var x, y;
+          if ((!sym) || !(window[sym] != null)) {
+            x = document.createElement('script');
+            x.type = 'text/javascript';
+            x.src = src;
+            y = 1;
+            x.onload = x.onreadystatechange = function() {
+              if (sym) {
+                assert(window[sym] != null, "Symbol " + sym + " was not defined after loading library");
+              }
+              if (y && !this.readyState || this.readyState === 'complete') {
+                y = 0;
+                deleteNode(x);
+                if (callback) {
+                  return callback();
+                }
+              }
+            };
+            return document.getElementsByTagName('head')[0].appendChild(x);
+          }
+        };
+      })();
+</script><script type="text/javascript">(function () {
+        var coffeecharniaLayout, withAce, withCoffee;
+        coffeecharniaLayout = function(_arg) {
+          var body, footer, header, innerStyle, minheight, minwidth, style;
+          header = _arg.header, body = _arg.body, footer = _arg.footer, minheight = _arg.minheight, minwidth = _arg.minwidth, style = _arg.style, innerStyle = _arg.innerStyle;
+          return htmlcup.captureFirstTag(function() {
+            return this.div({
+              id: "coffeecharniaConsole",
+              "class": "coffeecharniaContainer",
+              style: "" + style
+            }, function() {
+              return this.div({
+                style: "height:100%;display:table;width:100%;max-width:100%;table-layout:fixed"
+              }, function() {
+                if (innerStyle != null) {
+                  this.style(innerStyle);
+                }
+                if (false) {
+                  header.call(this, {
+                    style: "display:table-row;min-height:1em;overflow:auto;max-height:5em",
+                    "class": "consoleHeader"
+                  });
+                } else if (false) {
+                  this.div({
+                    style: "display:table-row;min-height:1em;background:pink"
+                  }, function() {
+                    return this.div({
+                      style: "max-height:5em;overflow-y:scroll;overflow-x:hidden;position:relative;display:block"
+                    }, function() {
+                      return this.div({
+                        style: "float:left;width:100%",
+                        contentEditable: "true"
+                      }, function() {
+                        var x, _i, _results;
+                        _results = [];
+                        for (x = _i = 0; _i <= 25; x = ++_i) {
+                          _results.push(this.div("x"));
+                        }
+                        return _results;
+                      });
+                    });
+                  });
+                } else {
+                  this.div({
+                    style: "display:table-row;min-height:1em"
+                  }, function() {
+                    return this.div({
+                      style: "max-height:5em;overflow:hidden;position:relative;display:block"
+                    }, function() {
+                      return this.div({
+                        style: "float:left;width:100%"
+                      }, function() {
+                        return header != null ? header.call(this, {
+                          "class": "consoleHeader"
+                        }) : void 0;
+                      });
+                    });
+                  });
+                }
+                if (false) {
+                  this.div({
+                    style: "position:relative;height:100%;overflow:hidden;display:table-row"
+                  }, function() {
+                    return this.div({
+                      style: "position:relative;width:100%;height:100%;min-height:" + minheight
+                    }, function() {
+                      return this.div({
+                        style: "position:absolute;top:0;right:0;left:0;bottom:0;overflow:auto"
+                      }, function() {
+                        return this.div({
+                          style: "width:200%;max-width:50em;min-width:100%;height:100%;overflow:hidden"
+                        }, function() {
+                          return this.div({
+                            style: "position:relative;width:100%;height:100%;display:table"
+                          }, function() {
+                            return body.call(this);
+                          });
+                        });
+                      });
+                    });
+                  });
+                } else {
+                  this.div({
+                    style: "position:relative;height:100%;overflow:hidden;display:table-row"
+                  }, function() {
+                    return this.div({
+                      style: "position:relative;width:100%;height:100%;min-height:" + minheight
+                    }, function() {
+                      return this.div({
+                        style: "position:absolute;top:0;right:0;left:0;bottom:0;overflow:auto"
+                      }, function() {
+                        return body.call(this);
+                      });
+                    });
+                  });
+                }
+                return footer.call(this, {
+                  id: "footer",
+                  style: "display:table-row"
+                });
+              });
+            });
+          });
+        };
+        (function(x) {
+          return document.body.appendChild(coffeecharniaLayout(x));
+        })({
+          style: "position:absolute;overflow:auto;width:50%;height:50%;bottom:0;right:0;background:black;color:#ddd",
+          innerStyle: "div,pre { padding: 0; margin:0; }\na { color: #ffb }\na:visited { color: #eec }\na:hover { color: white }",
+          minheight: "7em",
+          minwidth: "60em",
+          head: function() {
+            this.meta({
+              charset: "utf-8"
+            });
+            return this.style("body { background:black; color: #ddd; }\na { color:#5af; }\na:visited { color:#49f; }\na:hover { color:#6cf; }\nselect, textarea { border: 1px solid #555; }");
+          },
+          header: function(opts) {
+            this.style("div.thisHeader, .thisHeader div { text-align:center; }");
+            return this.div(opts, function() {
+              this.style(".coffeecharniaContainer select { min-width:5em; max-width:30%; width:18em; }\n.coffeecharniaContainer select, .coffeecharniaContainer button { font-size:inherit; text-align:center;   }\n.coffeecharniaContainer .button { display:inline-block; }\n.coffeecharniaContainer button, .coffeecharniaContainer .button, .coffeecharniaContainer input, .coffeecharniaContainer select:not(:focus):not(:hover) { color:white; background:black; }\n/* select option:not(:checked) { color:red !important; background:black !important; } */\n/* option:active, option[selected], option:checked, option:hover, option:focus { background:#248 !important; } */\n.coffeecharniaContainer button, .coffeecharniaContainer .button { min-width:5%; font-size:220%; border: 2px outset grey; }\n.coffeecharniaContainer button:active, .coffeecharniaContainer .button.button-on { border: 2px inset grey; background:#248; }\n.coffeecharniaContainer .button input[type=\"checkbox\"] { display:none; }\n.coffeecharniaContainer .arrow { font-weight:bold;  }\n.coffeecharniaContainer .editArea { height:100%;width:100%;box-sizing:border-box; }");
+              if (false) {
+                return this.div({
+                  "class": "thisHeader"
+                }, function() {
+                  return this.div(function() {
+                    this.span("CoffeeCharnia");
+                    return this.button({
+                      id: "runButton"
+                    }, "▶");
+                  });
+                  this.select({
+                    disabled: "1"
+                  }, function() {
+                    this.option("HTML");
+                    return this.option("PHP");
+                  });
+                  this.button({
+                    id: "fromButton",
+                    "class": "arrow"
+                  }, "«");
+                  this.label({
+                    id: "autoButton",
+                    "class": "button button-on"
+                  }, function() {
+                    this.input({
+                      type: "checkbox",
+                      checked: "1",
+                      onchange: 'this.parentNode.setAttribute("class", "button button-" + (this.checked ? "on" : "off"))'
+                    });
+                    return this.span({
+                      id: "autoButtonText"
+                    }, "Auto");
+                  });
+                  this.button({
+                    id: "toButton",
+                    "class": "arrow"
+                  }, "»");
+                  return this.select({
+                    disabled: "1"
+                  }, function() {
+                    this.option("CoffeeScript (htmlcup)");
+                    return this.option("Reflective CoffeeScript (htmlcup)");
+                  });
+                });
+              }
+            });
+          },
+          body: function(opts) {
+            this.style(".coffeecharniaContainer textarea { background: black; color: #ddd; }\n.coffeecharniaContainer button { opacity: 0.4; }\n.coffeecharniaContainer button:hover, .coffeecharniaContainer button:focus, .coffeecharniaContainer button:active { opacity: 1; }");
+            return this.div({
+              style: "position:absolute;top:0;right:0;left:0;bottom:0;overflow:hidden"
+            }, function() {
+              this.button({
+                id: "runButton",
+                style: "right:0;top:0;position:absolute;z-index:1000000"
+              }, "▶");
+              return this.textarea({
+                id: "coffeeArea",
+                "class": "editArea"
+              }, "# Welcome to CoffeeCharnia!\n");
+            });
+          },
+          footer: function(opts) {
+            this.style(".coffeecharniaContainer div.thisFooter, .coffeecharniaContainer .thisFooter div { text-align:center; }");
+            return this.div({
+              "class": "thisFooter"
+            }, opts, function() {
+              this.style("#resultFooter {\n  /* overflow:auto; */\n  vertical-align: middle;\n}\n#resultDatum {\n  text-align:initial;\n  vertical-align:initial;\n  display:inline-block;\n}");
+              this.div({
+                id: "resultFooter",
+                style: "display:none"
+              }, function() {
+                return this.div({
+                  id: "resultDatum"
+                }, function() {});
+              });
+              return this.div({
+                id: "introFooter"
+              }, function() {
+                this.b("CoffeeCharnia");
+                this.span(function() {
+                  this.span(": ");
+                  return this.i("A Reflective Coffescript Console/Editor!");
+                });
+                this.printHtml(" &bull; ");
+                return this.a({
+                  href: "https://github.com/rev22/reflective-coffeescript"
+                }, "Reflective Coffeescript");
+              });
+            });
+          }
+        });
+        withAce = function(cb) {
+          return jsLoad('ace', "https://github.com/ajaxorg/ace-builds/raw/master/src-min-noconflict/ace.js", cb);
+        };
+        withCoffee = function(cb) {
+          return jsLoad('CoffeeScript', "coffee-script.js", cb);
+        };
+        return withAce(function() {
+          return withCoffee(function() {
+            var app, camelcapBookmarklet, globalLibs, inject;
+            globalLibs = {
+              aceRefcoffeeMode: {
+                setup: (function(x) {
+                  x.coffee = "({ace, console, CoffeeScript})@>\n                  ace.define \"ace/mode/refcoffee_highlight_rules\", [\n                    \"require\"\n                    \"exports\"\n                    \"module\"\n                    \"ace/mode/coffee_highlight_rules\"\n                  ], (req, exports, module)->\n                    RefcoffeeHighlightRules = ->\n                      @$rules.start = [\n                          {\n                            stateName: \"litdoc\"\n                            token: \"string\"\n                            regex: \"''''\"\n                          }\n                      ].concat @$rules.start\n\n                      @$rules.start = for x in @$rules.start\n                        if x?.regex? and typeof x.regex is 'string'\n                          x.regex = x.regex.replace /\\[\\\\-=\\]>/, \"[\\\\-=@]>\"\n                        x\n                      \n                      @normalizeRules()\n                      return\n                    \"use strict\"\n                    makeClass = (p)-> c = p.constructor; c:: = p; c\n                    CoffeeHighlightRules = req(\"./coffee_highlight_rules\").CoffeeHighlightRules\n                    exports.RefcoffeeHighlightRules = makeClass\n                      constructor: ->\n                        CoffeeHighlightRules.call @\n                        RefcoffeeHighlightRules.call @\n                        return\n                      __proto__: CoffeeHighlightRules::\n                    return\n                    \n                  ace.define \"ace/mode/refcoffee\", [\n                    \"require\"\n                    \"exports\"\n                    \"module\"\n                    \"ace/mode/coffee\"\n                    \"ace/mode/refcoffee_highlight_rules\"\n                  ], (req, exports, module)->\n                    WorkerClient = undefined\n                    CoffeeMode = req(\"ace/mode/coffee\").Mode\n                    makeClass = (p)-> c = p.constructor; c:: = p; c\n                    Rules = req(\"./refcoffee_highlight_rules\").RefcoffeeHighlightRules\n                    Mode = makeClass\n                      __proto__: CoffeeMode::\n                      constructor: ->\n                        CoffeeMode.call @\n                        @HighlightRules = Rules\n                        # @$outdent = new Outdent()\n                        # @foldingRules = new FoldMode()\n                        return\n                    \"use strict\"\n                    (->\n                      @$id = \"ace/mode/refcoffee\"\n                      @createWorker = (session)-> null\n                      return\n                    ).call Mode::\n                    exports.Mode = Mode\n                    return\n\n        ";
+                  return x;
+                })(function(_arg) {
+                  var CoffeeScript, ace, console;
+                  ace = _arg.ace, console = _arg.console, CoffeeScript = _arg.CoffeeScript;
+                  ace.define("ace/mode/refcoffee_highlight_rules", ["require", "exports", "module", "ace/mode/coffee_highlight_rules"], function(req, exports, module) {
+                    var CoffeeHighlightRules, RefcoffeeHighlightRules, makeClass;
+                    RefcoffeeHighlightRules = function() {
+                      var x;
+                      this.$rules.start = [
+                        {
+                          stateName: "litdoc",
+                          token: "string",
+                          regex: "''''"
+                        }
+                      ].concat(this.$rules.start);
+                      this.$rules.start = (function() {
+                        var _i, _len, _ref, _results;
+                        _ref = this.$rules.start;
+                        _results = [];
+                        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                          x = _ref[_i];
+                          if (((x != null ? x.regex : void 0) != null) && typeof x.regex === 'string') {
+                            x.regex = x.regex.replace(/\[\\-=\]>/, "[\\-=@]>");
+                          }
+                          _results.push(x);
+                        }
+                        return _results;
+                      }).call(this);
+                      this.normalizeRules();
+                    };
+                    "use strict";
+                    makeClass = function(p) {
+                      var c;
+                      c = p.constructor;
+                      c.prototype = p;
+                      return c;
+                    };
+                    CoffeeHighlightRules = req("./coffee_highlight_rules").CoffeeHighlightRules;
+                    exports.RefcoffeeHighlightRules = makeClass({
+                      constructor: function() {
+                        CoffeeHighlightRules.call(this);
+                        RefcoffeeHighlightRules.call(this);
+                      },
+                      __proto__: CoffeeHighlightRules.prototype
+                    });
+                  });
+                  return ace.define("ace/mode/refcoffee", ["require", "exports", "module", "ace/mode/coffee", "ace/mode/refcoffee_highlight_rules"], function(req, exports, module) {
+                    var CoffeeMode, Mode, Rules, WorkerClient, makeClass;
+                    WorkerClient = void 0;
+                    CoffeeMode = req("ace/mode/coffee").Mode;
+                    makeClass = function(p) {
+                      var c;
+                      c = p.constructor;
+                      c.prototype = p;
+                      return c;
+                    };
+                    Rules = req("./refcoffee_highlight_rules").RefcoffeeHighlightRules;
+                    Mode = makeClass({
+                      __proto__: CoffeeMode.prototype,
+                      constructor: function() {
+                        CoffeeMode.call(this);
+                        this.HighlightRules = Rules;
+                      }
+                    });
+                    "use strict";
+                    (function() {
+                      this.$id = "ace/mode/refcoffee";
+                      this.createWorker = function(session) {
+                        return null;
+                      };
+                    }).call(Mode.prototype);
+                    exports.Mode = Mode;
+                  });
+                })
+              }
+            };
+            window.DynmodPrinter = {
+              pkgInfo: {
+                version: "DynmodPrinter 0.2.7-coffeecharnia",
+                description: "Generic printer, for data and reflective code",
+                copyright: "Copyright (c) 2014 Michele Bini",
+                license: "MIT"
+              },
+              pkgTest: (function(x) {
+                x.coffee = "@>\n            testPrint = (v, r)=>\n              r2 = @print(v)\n              if r isnt r2\n                throw \"Expected representation: '#{r}', obtained: '#{r2}'\"\n            testPrint [ ], \"[ ]\"\n            testPrint [ { } ], \"[ { } ]\"\n            testPrint new @Date(\"2014-05-12T23:04:24.627Z\"), 'new Date(\"2014-05-12T23:04:24.627Z\")'\n          ";
+                return x;
+              })(function() {
+                var testPrint;
+                testPrint = (function(_this) {
+                  return function(v, r) {
+                    var r2;
+                    r2 = _this.print(v);
+                    if (r !== r2) {
+                      throw "Expected representation: '" + r + "', obtained: '" + r2 + "'";
+                    }
+                  };
+                })(this);
+                testPrint([], "[ ]");
+                testPrint([{}], "[ { } ]");
+                return testPrint(new this.Date("2014-05-12T23:04:24.627Z"), 'new Date("2014-05-12T23:04:24.627Z")');
+              }),
+              Date: Date,
+              Array: Array,
+              RegExp: RegExp,
+              columns: 74,
+              console: console,
+              window: window,
+              global: window,
+              globalName: "window",
+              symbolicPackages: true,
+              newline: (function(x) {
+                x.coffee = "@> true";
+                return x;
+              })(function() {
+                return true;
+              }),
+              limitLines: (function(x) {
+                x.coffee = "(maxLines)@>\n            lines: 0\n            maxLines: maxLines\n            newline: @> @lines++ < @maxLines\n            __proto__: @\n          ";
+                return x;
+              })(function(maxLines) {
+                return {
+                  lines: 0,
+                  maxLines: maxLines,
+                  newline: (function(x) {
+                    x.coffee = "@> @lines++ < @maxLines";
+                    return x;
+                  })(function() {
+                    return this.lines++ < this.maxLines;
+                  }),
+                  __proto__: this
+                };
+              }),
+              print: (function(x) {
+                x.coffee = "(x, prev, depth = 0, ind = \"\")@>\n              p = arguments.callee\n              depth = depth + 1\n              print = (y)=> p.call @, y, { prev, x }, depth\n              clean = (x)->\n                if /^[(]([(@][^\\n]*)[)]$/.test x\n                  x.substring(1, x.length - 1)\n                else\n                  x\n              if x == null\n                ind + \"null\"\n              else if x == @global\n                ind + @globalName\n              else if x == undefined\n                ind + \"undefined\"\n              else\n                t = typeof x\n                if t is \"boolean\"\n                  ind + if x then \"true\" else \"false\"\n                else if t is \"number\"\n                  ind + @printNumber x\n                else if t is \"string\"\n                  if x.length > 8 and /\\n/.test x\n                    l = x.split(\"\\n\")\n                    l = (x.replace /\\\"\\\"\\\"/g, '\\\"\\\"\\\"' for x in l)\n                    l.unshift ind + '\"\"\"'\n                    l.push     ind + '\"\"\"'\n                    l.join(ind + \"\\n\")\n                  else\n                    ind + '\"' + x.replace(/\\\"/g, \"\\\\\\\"\") + '\"'\n                else if t is \"function\"\n                  ni = ind + \"  \"\n                  if x.coffee?\n                    # YAY a reflective function!!!\n                    s = x.coffee\n                    if depth is 1 or /\\n/.test s\n                      lines = s.split \"\\n\"\n                      if lines.length > 1\n                        if (mn = lines[1].match(/^[ \\t]+/))?\n                          mn = mn[0].length\n                          id = mn - ni.length\n                          if id > 0\n                            x = new @RegExp(\"[ \\\\t]{#{id}}\")\n                            lines = (line.replace x, \"\" for line in lines)\n                          else if id < 0\n                            ni = @Array(-id + 1).join(\" \")\n                            lines = (ni + line for line in lines)                \n                      lines.join(\"\\n\")\n                    else\n                      ind + \"(\" + s + \")\"\n                  else\n                    ind + x.toString().replace(/\\n/g, '\\n' + ni)\n                else if (c = (do (p = prev, c = 1)-> (return c if p.x == x; p = p.prev; c++) while p?; 0))\n                  # Report cyclic structures\n                  \"<cycle-#{c}+#{depth - c - 1}>\"\n                else if t isnt \"object\"\n                  # print object of odd type\n                  \"<#{t}>\"\n                else if @Array.isArray x\n                  if x.length is 0\n                    \"[ ]\"\n                  else\n                    cl = 2\n                    hasLines = false\n                    xxxx = for xx in x\n                      break unless @newline()\n                      xx = print xx\n                      hasLines = true if /\\n/.test xx\n                      cl += 2 + xx.length\n                      xx\n                    if not hasLines and depth * 2 + cl + 1 < @columns\n                      \"[ \" + xxxx.join(\", \") + \" ]\"\n                    else\n                      ni = ind + \"  \"\n                      l = [ ind + \"[\" ]\n                      for xx in xxxx\n                        l.push ni + clean(xx).replace(/\\n/g, '\\n' + ni)\n                      l.push ind + \"]\"\n                      l.join \"\\n\"\n                else\n                  l = [ ]\n                  @window?.document?   and   x.id?   and   typeof x.id is \"string\"   and   x is @window.document.getElementById x.id   then\n                    return \"#{ind}window.document.getElementById '#{ x.id.replace(/\\'/, \"\\\\'\") }'\"\n                  @symbolicPackages and depth > 1 and (packageVersion = x.pkgInfo?.version)? then\n                    return ind + \"dynmodArchive.load '\" + packageVersion.replace(/\\ .*/, \"\") + \"'\"\n                  ind = \"\"\n                  if x instanceof @Date\n                    return \"new Date(\\\"#{x.toISOString()}\\\")\"\n                  keys = (k for k of x)\n                  if keys.length is 0\n                    return \"{ }\"\n                  unless (!prev? or typeof prev.x is \"object\" and !@Array.isArray prev.x)\n                    l = [ \"do->\" ]\n                    ind = \"  \"\n                  ni = ind + \"  \"\n                  # keys = (h)@> (x for x of h).sort()\n                  for k in keys\n                    break unless @newline()\n                    v = x[k]\n                    if @global[k] is v\n                      # l.push ind + k + \": eval \" + \"'\" + k + \"'\"\n                      l.push \"#{ind}#{k}: #{@globalName}.#{k}\"\n                    else\n                      v = clean(print v).replace(/\\n/g, '\\n' + ni)\n                      if !/\\n/.test(v) and  ind.length + k.toString().length + 2 + v.length < @columns\n                        l.push ind + k + \": \" + v\n                      else\n                        l.push ind + k + \":\"\n                        l.push ni + v\n                  if l.length\n                    l.join \"\\n\"\n                  else\n                    \"{ }\"\n          ";
+                return x;
+              })(function(x, prev, depth, ind) {
+                var c, cl, clean, hasLines, id, k, keys, l, line, lines, mn, ni, p, packageVersion, print, s, t, v, xx, xxxx, _i, _j, _len, _len1, _ref, _ref1;
+                if (depth == null) {
+                  depth = 0;
+                }
+                if (ind == null) {
+                  ind = "";
+                }
+                p = arguments.callee;
+                depth = depth + 1;
+                print = (function(_this) {
+                  return function(y) {
+                    return p.call(_this, y, {
+                      prev: prev,
+                      x: x
+                    }, depth);
+                  };
+                })(this);
+                clean = function(x) {
+                  if (/^[(]([(@][^\n]*)[)]$/.test(x)) {
+                    return x.substring(1, x.length - 1);
+                  } else {
+                    return x;
+                  }
+                };
+                if (x === null) {
+                  return ind + "null";
+                } else if (x === this.global) {
+                  return ind + this.globalName;
+                } else if (x === void 0) {
+                  return ind + "undefined";
+                } else {
+                  t = typeof x;
+                  if (t === "boolean") {
+                    return ind + (x ? "true" : "false");
+                  } else if (t === "number") {
+                    return ind + this.printNumber(x);
+                  } else if (t === "string") {
+                    if (x.length > 8 && /\n/.test(x)) {
+                      l = x.split("\n");
+                      l = (function() {
+                        var _i, _len, _results;
+                        _results = [];
+                        for (_i = 0, _len = l.length; _i < _len; _i++) {
+                          x = l[_i];
+                          _results.push(x.replace(/\"\"\"/g, '\"\"\"'));
+                        }
+                        return _results;
+                      })();
+                      l.unshift(ind + '"""');
+                      l.push(ind + '"""');
+                      return l.join(ind + "\n");
+                    } else {
+                      return ind + '"' + x.replace(/\"/g, "\\\"") + '"';
+                    }
+                  } else if (t === "function") {
+                    ni = ind + "  ";
+                    if (x.coffee != null) {
+                      s = x.coffee;
+                      if (depth === 1 || /\n/.test(s)) {
+                        lines = s.split("\n");
+                        if (lines.length > 1) {
+                          if ((mn = lines[1].match(/^[ \t]+/)) != null) {
+                            mn = mn[0].length;
+                            id = mn - ni.length;
+                            if (id > 0) {
+                              x = new this.RegExp("[ \\t]{" + id + "}");
+                              lines = (function() {
+                                var _i, _len, _results;
+                                _results = [];
+                                for (_i = 0, _len = lines.length; _i < _len; _i++) {
+                                  line = lines[_i];
+                                  _results.push(line.replace(x, ""));
+                                }
+                                return _results;
+                              })();
+                            } else if (id < 0) {
+                              ni = this.Array(-id + 1).join(" ");
+                              lines = (function() {
+                                var _i, _len, _results;
+                                _results = [];
+                                for (_i = 0, _len = lines.length; _i < _len; _i++) {
+                                  line = lines[_i];
+                                  _results.push(ni + line);
+                                }
+                                return _results;
+                              })();
+                            }
+                          }
+                        }
+                        return lines.join("\n");
+                      } else {
+                        return ind + "(" + s + ")";
+                      }
+                    } else {
+                      return ind + x.toString().replace(/\n/g, '\n' + ni);
+                    }
+                  } else if ((c = (function(p, c) {
+                    while (p != null) {
+                      if (p.x === x) {
+                        return c;
+                      }
+                      p = p.prev;
+                      c++;
+                    }
+                    return 0;
+                  })(prev, 1))) {
+                    return "<cycle-" + c + "+" + (depth - c - 1) + ">";
+                  } else if (t !== "object") {
+                    return "<" + t + ">";
+                  } else if (this.Array.isArray(x)) {
+                    if (x.length === 0) {
+                      return "[ ]";
+                    } else {
+                      cl = 2;
+                      hasLines = false;
+                      xxxx = (function() {
+                        var _i, _len, _results;
+                        _results = [];
+                        for (_i = 0, _len = x.length; _i < _len; _i++) {
+                          xx = x[_i];
+                          if (!this.newline()) {
+                            break;
+                          }
+                          xx = print(xx);
+                          if (/\n/.test(xx)) {
+                            hasLines = true;
+                          }
+                          cl += 2 + xx.length;
+                          _results.push(xx);
+                        }
+                        return _results;
+                      }).call(this);
+                      if (!hasLines && depth * 2 + cl + 1 < this.columns) {
+                        return "[ " + xxxx.join(", ") + " ]";
+                      } else {
+                        ni = ind + "  ";
+                        l = [ind + "["];
+                        for (_i = 0, _len = xxxx.length; _i < _len; _i++) {
+                          xx = xxxx[_i];
+                          l.push(ni + clean(xx).replace(/\n/g, '\n' + ni));
+                        }
+                        l.push(ind + "]");
+                        return l.join("\n");
+                      }
+                    }
+                  } else {
+                    l = [];
+                    if ((((_ref = this.window) != null ? _ref.document : void 0) != null) && (x.id != null) && typeof x.id === "string" && x === this.window.document.getElementById(x.id)) {
+                      return "" + ind + "window.document.getElementById '" + (x.id.replace(/\'/, "\\'")) + "'";
+                    }
+                    if (this.symbolicPackages && depth > 1 && ((packageVersion = (_ref1 = x.pkgInfo) != null ? _ref1.version : void 0) != null)) {
+                      return ind + "dynmodArchive.load '" + packageVersion.replace(/\ .*/, "") + "'";
+                    }
+                    ind = "";
+                    if (x instanceof this.Date) {
+                      return "new Date(\"" + (x.toISOString()) + "\")";
+                    }
+                    keys = (function() {
+                      var _results;
+                      _results = [];
+                      for (k in x) {
+                        _results.push(k);
+                      }
+                      return _results;
+                    })();
+                    if (keys.length === 0) {
+                      return "{ }";
+                    }
+                    if (!((prev == null) || typeof prev.x === "object" && !this.Array.isArray(prev.x))) {
+                      l = ["do->"];
+                      ind = "  ";
+                    }
+                    ni = ind + "  ";
+                    for (_j = 0, _len1 = keys.length; _j < _len1; _j++) {
+                      k = keys[_j];
+                      if (!this.newline()) {
+                        break;
+                      }
+                      v = x[k];
+                      if (this.global[k] === v) {
+                        l.push("" + ind + k + ": " + this.globalName + "." + k);
+                      } else {
+                        v = clean(print(v)).replace(/\n/g, '\n' + ni);
+                        if (!/\n/.test(v) && ind.length + k.toString().length + 2 + v.length < this.columns) {
+                          l.push(ind + k + ": " + v);
+                        } else {
+                          l.push(ind + k + ":");
+                          l.push(ni + v);
+                        }
+                      }
+                    }
+                    if (l.length) {
+                      return l.join("\n");
+                    } else {
+                      return "{ }";
+                    }
+                  }
+                }
+              }),
+              printNumber: (function(x) {
+                x.coffee = "(x)@> \"#{x}\"";
+                return x;
+              })(function(x) {
+                return "" + x;
+              })
+            };
+            window.app = window.coffeecharnia = app = {
+              libs: {
+                CoffeeScript: window.CoffeeScript,
+                aceRefcoffeeMode: globalLibs.aceRefcoffeeMode,
+                ace: window.ace,
+                DynmodPrinter: DynmodPrinter
+              },
+              "eval": window["eval"],
+              setTimeout: window.setTimeout,
+              getInputSelection: window.getInputSelection,
+              global: window["eval"]('window'),
+              window: window,
+              view: (function(x) {
+                var r, v, _i, _len, _ref;
+                r = {};
+                _ref = x.split(",");
+                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                  v = _ref[_i];
+                  r[v] = document.getElementById(v);
+                }
+                return r;
+              })("coffeeArea,runButton,introFooter,resultFooter,resultDatum,coffeecharniaConsole"),
+              accumulator: [],
+              printHtml: (function(x) {
+                x.coffee = "(s)@>\n            @accumulator.push s\n\n          ";
+                return x;
+              })(function(s) {
+                return this.accumulator.push(s);
+              }),
+              isConverting: false,
+              evalCoffeescript: (function(x) {
+                x.coffee = "(x)@>\n            @eval(@libs.CoffeeScript.compile x, bare:true)\n\n          ";
+                return x;
+              })(function(x) {
+                return this["eval"](this.libs.CoffeeScript.compile(x, {
+                  bare: true
+                }));
+              }),
+              evalWithSourceMap: (function(x) {
+                x.coffee = "(x)@>\n            # This technique does not seem to work properly on Chromium 22\n            { js, sourceMapV3, file_name } = @libs.CoffeeScript.compile x, sourceMap: 1\n            @lastSourceMap = \"\"\n            @eval(js)\n\n          ";
+                return x;
+              })(function(x) {
+                var file_name, js, sourceMapV3, _ref;
+                _ref = this.libs.CoffeeScript.compile(x, {
+                  sourceMap: 1
+                }), js = _ref.js, sourceMapV3 = _ref.sourceMapV3, file_name = _ref.file_name;
+                this.lastSourceMap = "";
+                return this["eval"](js);
+              }),
+              preQuote: (function(x) {
+                x.coffee = "(x)@> \"<pre>#{ x.replace /</g, \"&lt;\" }</pre>\"";
+                return x;
+              })(function(x) {
+                return "<pre>" + (x.replace(/</g, "&lt;")) + "</pre>";
+              }),
+              printVal: (function(x) {
+                x.coffee = "(x)@>\n            @preQuote(@libs.DynmodPrinter.limitLines(1000).print(x))\n            # x.toString()\n\n          ";
+                return x;
+              })(function(x) {
+                return this.preQuote(this.libs.DynmodPrinter.limitLines(1000).print(x));
+              }),
+              recalculateTextareaSize: (function(x) {
+                x.coffee = "@>\n            { setTimeout } = @\n            setTimeout (=>\n              editor = @view.coffeeArea.transformed\n              editor.resize()\n              editor.renderer.scrollCursorIntoView()\n            ), 0\n          \n          ";
+                return x;
+              })(function() {
+                var setTimeout;
+                setTimeout = this.setTimeout;
+                return setTimeout(((function(_this) {
+                  return function() {
+                    var editor;
+                    editor = _this.view.coffeeArea.transformed;
+                    editor.resize();
+                    return editor.renderer.scrollCursorIntoView();
+                  };
+                })(this)), 0);
+              }),
+              runButtonClick: (function(x) {
+                x.coffee = "@>\n            x = @view.coffeeArea.value\n            isError = null\n            val = if true\n              @evalCoffeescript x catch error\n                isError = true\n                val = error.stack ? error?.toString() ? error ? \"Undefined error\"\n            else\n              @evalWithSourceMap x\n            { coffeecharniaConsole: console, introFooter, resultFooter, resultDatum } = @view\n            if val?\n              introFooter.setAttribute \"style\", \"display:none\"\n              # resultFooter.setAttribute \"style\", \"max-height:#{console.getBoundingClientRect().height / 2.6 | 0}px\"\n              resultFooter.setAttribute \"style\", \"\"\n              if isError\n                resultDatum.innerHTML = @preQuote val\n              else\n                resultDatum.innerHTML = @printVal val              \n            else\n              introFooter.setAttribute \"style\", \"\"\n              resultFooter.setAttribute \"style\", \"display:none\"\n              resultDatum.innerHTML = \"\"\n            (@aceEditor())? then\n              @recalculateTextareaSize()\n            else\n              { setTimeout } = @\n              if true\n                # Keep it Simple!\n                setTimeout (=> @view.coffeeArea.scrollTop += 999999), 0\n                return \n              fixUp = =>\n                area = @view.coffeeArea\n                area.focus()\n                (pos = area.selectionEnd)? then\n                  pos--\n                  area.setSelectionRange?(pos, pos)\n              setTimeout fixUp, 0\n          ";
+                return x;
+              })(function() {
+                var console, error, fixUp, introFooter, isError, resultDatum, resultFooter, setTimeout, val, x, _ref;
+                x = this.view.coffeeArea.value;
+                isError = null;
+                val = (function() {
+                  var _ref, _ref1, _ref2;
+                  if (true) {
+                    try {
+                      return this.evalCoffeescript(x);
+                    } catch (_error) {
+                      error = _error;
+                      isError = true;
+                      return val = (_ref = (_ref1 = (_ref2 = error.stack) != null ? _ref2 : error != null ? error.toString() : void 0) != null ? _ref1 : error) != null ? _ref : "Undefined error";
+                    }
+                  } else {
+                    return this.evalWithSourceMap(x);
+                  }
+                }).call(this);
+                _ref = this.view, console = _ref.coffeecharniaConsole, introFooter = _ref.introFooter, resultFooter = _ref.resultFooter, resultDatum = _ref.resultDatum;
+                if (val != null) {
+                  introFooter.setAttribute("style", "display:none");
+                  resultFooter.setAttribute("style", "");
+                  if (isError) {
+                    resultDatum.innerHTML = this.preQuote(val);
+                  } else {
+                    resultDatum.innerHTML = this.printVal(val);
+                  }
+                } else {
+                  introFooter.setAttribute("style", "");
+                  resultFooter.setAttribute("style", "display:none");
+                  resultDatum.innerHTML = "";
+                }
+                if ((this.aceEditor()) != null) {
+                  return this.recalculateTextareaSize();
+                } else {
+                  setTimeout = this.setTimeout;
+                  if (true) {
+                    setTimeout(((function(_this) {
+                      return function() {
+                        return _this.view.coffeeArea.scrollTop += 999999;
+                      };
+                    })(this)), 0);
+                    return;
+                  }
+                  fixUp = (function(_this) {
+                    return function() {
+                      var area, pos;
+                      area = _this.view.coffeeArea;
+                      area.focus();
+                      if ((pos = area.selectionEnd) != null) {
+                        pos--;
+                        return typeof area.setSelectionRange === "function" ? area.setSelectionRange(pos, pos) : void 0;
+                      }
+                    };
+                  })(this);
+                  return setTimeout(fixUp, 0);
+                }
+              }),
+              setup: (function(x) {
+                x.coffee = "@>\n            # @fs.readFileSync = (x)=> @readFileSync(x)\n            # @fs.writeFileSync = (x)=> @readFileSync(x)\n            # @ace? and @setupAce()\n            app = @\n            @view.runButton.onclick = => @runButtonClick()\n            area = @view.coffeeArea\n            area.focus()\n            (pos = area.value.length)? then area.setSelectionRange?(pos, pos)\n            area.setupTransform = (editor)->\n              area.transformed = editor\n              app.aceRefcoffeeMode (mode)->\n                editor.getSession().setMode(mode)\n              editor.setTheme(\"ace/theme/merbivore\")\n            window.onkeydown = (event)->\n              return app.handleEnterKey?(event) if event.keyCode and event.keyCode is 13\n              true\n\n          ";
+                return x;
+              })(function() {
+                var app, area, pos;
+                app = this;
+                this.view.runButton.onclick = (function(_this) {
+                  return function() {
+                    return _this.runButtonClick();
+                  };
+                })(this);
+                area = this.view.coffeeArea;
+                area.focus();
+                if ((pos = area.value.length) != null) {
+                  if (typeof area.setSelectionRange === "function") {
+                    area.setSelectionRange(pos, pos);
+                  }
+                }
+                area.setupTransform = function(editor) {
+                  area.transformed = editor;
+                  app.aceRefcoffeeMode(function(mode) {
+                    return editor.getSession().setMode(mode);
+                  });
+                  return editor.setTheme("ace/theme/merbivore");
+                };
+                return window.onkeydown = function(event) {
+                  if (event.keyCode && event.keyCode === 13) {
+                    return typeof app.handleEnterKey === "function" ? app.handleEnterKey(event) : void 0;
+                  }
+                  return true;
+                };
+              }),
+              getSelection: (function(x) {
+                x.coffee = "@>\n            (t = @view.coffeeArea.transformed)? then\n              t.getSelection()\n            else\n              @getInputSelection(@view)\n\n          ";
+                return x;
+              })(function() {
+                var t;
+                if ((t = this.view.coffeeArea.transformed) != null) {
+                  return t.getSelection();
+                } else {
+                  return this.getInputSelection(this.view);
+                }
+              }),
+              aceEditor: (function(x) {
+                x.coffee = "@>\n            @view.coffeeArea.transformed\n    \n          ";
+                return x;
+              })(function() {
+                return this.view.coffeeArea.transformed;
+              }),
+              handleEnterKey: (function(x) {
+                x.coffee = "(event)@>\n            app.captured = event\n            if event.shiftKey\n              return true\n            if event.ctrlKey\n                  @runButtonClick()\n                  return false\n            (editor = @aceEditor())? then\n              alert = @alert\n              cursorPosition = editor.getCursorPosition()\n              doc = editor.session.doc\n              lines = doc.getLength()\n              # lines - 1 <= cursorPosition.row then\n              line = doc.getLine(cursorPosition.row)\n              !/\\S/.test(line) then\n                      line.length is cursorPosition.column then\n                          @runButtonClick()\n                          return false\n            else\n              area = @view.coffeeArea\n              (end = area.selectionEnd)? then\n                text = area.value\n                text.length > 0 and text.length <= end and text[text.length - 1] is \"\\n\" then\n                    @runButtonClick()\n                    return false\n            true\n\n          ";
+                return x;
+              })(function(event) {
+                var alert, area, cursorPosition, doc, editor, end, line, lines, text;
+                app.captured = event;
+                if (event.shiftKey) {
+                  return true;
+                }
+                if (event.ctrlKey) {
+                  this.runButtonClick();
+                  return false;
+                }
+                if ((editor = this.aceEditor()) != null) {
+                  alert = this.alert;
+                  cursorPosition = editor.getCursorPosition();
+                  doc = editor.session.doc;
+                  lines = doc.getLength();
+                  line = doc.getLine(cursorPosition.row);
+                  if (!/\S/.test(line)) {
+                    if (line.length === cursorPosition.column) {
+                      this.runButtonClick();
+                      return false;
+                    }
+                  }
+                } else {
+                  area = this.view.coffeeArea;
+                  if ((end = area.selectionEnd) != null) {
+                    text = area.value;
+                    if (text.length > 0 && text.length <= end && text[text.length - 1] === "\n") {
+                      this.runButtonClick();
+                      return false;
+                    }
+                  }
+                }
+                return true;
+              }),
+              aceRefcoffeeMode: (function(x) {
+                x.coffee = "(cb)@>\n            cb? then\n              ace = @libs.ace\n              ace.config.loadModule \"ace/mode/coffee\", =>\n                @libs.aceRefcoffeeMode.setup ace: @libs.ace, CoffeeScript: @libs.CoffeeScript\n                cb \"ace/mode/refcoffee\"\n            else\n              try\n                @libs.aceRefcoffeeMode.setup ace: @libs.ace, CoffeeScript: @libs.CoffeeScript\n                @libs.ace.require(\"ace/mode/refcoffee\")\n                \"ace/mode/refcoffee\"\n              catch e\n                \"ace/mode/coffee\"\n\n          # ace: ace ? null\n          # setupAce: @> @ace.edit(@view.coffeeArea)\n\n          ";
+                return x;
+              })(function(cb) {
+                var ace, e;
+                if (cb != null) {
+                  ace = this.libs.ace;
+                  return ace.config.loadModule("ace/mode/coffee", (function(_this) {
+                    return function() {
+                      _this.libs.aceRefcoffeeMode.setup({
+                        ace: _this.libs.ace,
+                        CoffeeScript: _this.libs.CoffeeScript
+                      });
+                      return cb("ace/mode/refcoffee");
+                    };
+                  })(this));
+                } else {
+                  try {
+                    this.libs.aceRefcoffeeMode.setup({
+                      ace: this.libs.ace,
+                      CoffeeScript: this.libs.CoffeeScript
+                    });
+                    this.libs.ace.require("ace/mode/refcoffee");
+                    return "ace/mode/refcoffee";
+                  } catch (_error) {
+                    e = _error;
+                    return "ace/mode/coffee";
+                  }
+                }
+              }),
+              Error: Error,
+              files: {}
+            };
+            app.setup();
+            if (false) {
+              if (typeof ace !== "undefined" && ace !== null) {
+                ace.options = {
+                  mode: "coffee",
+                  theme: "cobalt",
+                  gutter: "true"
+                };
+              }
+            }
+            inject = function(options, callback) {
+              var baseUrl, load;
+              baseUrl = options.baseUrl || "../../src-noconflict";
+              load = function(path, callback) {
+                var head, s;
+                head = document.getElementsByTagName("head")[0];
+                s = document.createElement("script");
+                s.src = baseUrl + "/" + path;
+                head.appendChild(s);
+                s.onload = s.onreadystatechange = function(_, isAbort) {
+                  if (isAbort || !s.readyState || s.readyState === "loaded" || s.readyState === "complete") {
+                    s = s.onload = s.onreadystatechange = null;
+                    if (!isAbort) {
+                      callback();
+                    }
+                  }
+                };
+              };
+              if (typeof ace !== "undefined" && ace !== null) {
+                ace.config.loadModule("ace/ext/textarea", function() {
+                  var areas, event, i;
+                  if (false) {
+                    event = ace.require("ace/lib/event");
+                    areas = document.getElementsByTagName("textarea");
+                    i = 0;
+                    while (i < areas.length) {
+                      event.addListener(areas[i], "click", function(e) {
+                        if (e.detail === 3) {
+                          ace.transformTextarea(e.target, options.ace);
+                        }
+                      });
+                      i++;
+                    }
+                  }
+                  callback && callback();
+                });
+              }
+            };
+            camelcapBookmarklet = function(ace) {
+              if (document.getElementById("ccapcss")) {
+                return;
+              }
+              return ace.require(["ace/layer/text"], function(_arg) {
+                var Text, orig, patched, x;
+                Text = _arg.Text;
+                if (document.getElementById("ccapcss")) {
+                  return;
+                }
+                orig = Text.prototype.$renderToken;
+                patched = (function(rgx) {
+                  return function(builder, col, token, value) {
+                    var match, p, q, s, type, type_c;
+                    if (match = rgx.exec(value)) {
+                      type = token.type;
+                      type_c = type + ".ccap";
+                      p = 0;
+                      while (true) {
+                        q = rgx.lastIndex - 1;
+                        s = value.substring(p, q);
+                        col = orig.call(this, builder, col, {
+                          type: type,
+                          value: s
+                        }, s);
+                        s = value.substring(q, p = q + 1);
+                        col = orig.call(this, builder, col, {
+                          type: type_c,
+                          value: s
+                        }, s);
+                        if (!(match = rgx.exec(value))) {
+                          break;
+                        }
+                      }
+                      s = value.substring(p);
+                      return orig.call(this, builder, col, {
+                        type: type,
+                        value: s
+                      }, s);
+                    } else {
+                      return orig.apply(this, arguments);
+                    }
+                  };
+                })(new RegExp("[a-z][0-9]*[A-Z]", "g"));
+                Text.prototype.$renderToken = patched;
+                x = document.createElement("style");
+                x.id = "ccapcss";
+                x.innerHTML = ".ace_ccap { font-weight: bold; }";
+                return document.head.appendChild(x);
+              });
+            };
+            if (typeof ace !== "undefined" && ace !== null) {
+              camelcapBookmarklet(ace);
+            }
+            return inject({}, function() {
+              var a, x, _fn, _i, _len, _ref;
+              _ref = ((function() {
+                var _j, _len, _ref, _results;
+                _ref = document.getElementsByClassName("editArea");
+                _results = [];
+                for (_j = 0, _len = _ref.length; _j < _len; _j++) {
+                  x = _ref[_j];
+                  _results.push(x);
+                }
+                return _results;
+              })()).reverse();
+              _fn = function(a, e) {
+                e = ace.require("ace/ext/textarea").transformTextarea(a);
+                e.navigateFileEnd();
+                a.setupTransform(e);
+                a.onchange = function() {
+                  e.setValue(this.value, -1);
+                };
+                e.on("change", function() {
+                  a.value = e.getValue();
+                  if (typeof a.oninput === "function") {
+                    a.oninput();
+                  }
+                });
+                e.on("blur", function() {
+                  a.value = e.getValue();
+                  if (typeof a.onblur === "function") {
+                    a.onblur();
+                  }
+                });
+                return e.on("focus", function() {
+                  if (typeof a.onfocus === "function") {
+                    a.onfocus();
+                  }
+                });
+              };
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                a = _ref[_i];
+                _fn(a, ace.require("ace/ext/textarea").transformTextarea(a));
+              }
+            });
+          });
+        });
+      })();
+</script></body></html>

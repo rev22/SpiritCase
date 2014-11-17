@@ -1,0 +1,7 @@
+{
+  "devDependencies": {
+    "coffeemake":"*",
+    "reflective-coffeescript":"*",
+    "htmlcup":"*"
+  }
+}

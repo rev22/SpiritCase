@@ -27,7 +27,7 @@ htmlcup.html5Page ->
     @title title
     @style type: "text/css",
       """
-      input, button { padding: 0; }
+      input, button { margin-top: 0; margin-bottom:0; }
       body { border:0;margin:0;padding:0; }
       #spiritcaseContainer {
         background: #222;
@@ -121,35 +121,37 @@ htmlcup.html5Page ->
       .coffeecharniaContainer:hover {
         opacity: 0.8;
       }
-        
-        .sliderInputValue {
-            font-size:100%;
-            font-weight:bold;
-            color:white;
-            font-family: sans;
-            text-shadow: 0 0 1px black, 0 0 2px black, 0 0 2px black;
-        }
-        .sliderInputLabel {
-            font-size:75%;
-            font-weight:bold;
-            color:white;
-            font-family: sans;
-            text-shadow: 0 0 1px black, 0 0 2px black, 0 0 2px black;
-        }
-        .sliderInputButton {
-            font-size:150%;
-            font-weight:bold;
-            color:white;
-            font-family: sans;
-            text-align:center;
-        }
-        .sliderInputButton:hover {
-            background:rgba(0,0,0,0.2);
-        }
-        .sliderInputButton:not(:hover) {
-            opacity:0.6;
-            cursor: cross;
-        }
+      .spiritcaseDialog {
+        padding-top:1em;
+      }
+      .sliderInputValue {
+          font-size:100%;
+          font-weight:bold;
+          color:white;
+          font-family: sans;
+          text-shadow: 0 0 1px black, 0 0 2px black, 0 0 2px black;
+      }
+      .sliderInputLabel {
+          font-size:75%;
+          font-weight:bold;
+          color:white;
+          font-family: sans;
+          text-shadow: 0 0 1px black, 0 0 2px black, 0 0 2px black;
+      }
+      .sliderInputButton {
+          font-size:150%;
+          font-weight:bold;
+          color:white;
+          font-family: sans;
+          text-align:center;
+      }
+      .sliderInputButton:hover {
+          background:rgba(0,0,0,0.2);
+      }
+      .sliderInputButton:not(:hover) {
+          opacity:0.6;
+          cursor: cross;
+      }
       """
   factorY = factorX = factor = 32
   sizeX = Math.floor(960 / factor)
@@ -237,16 +239,17 @@ htmlcup.html5Page ->
               x.length == 3 then
                   return [ parseInt(x.substr(0, 1), 16)*0x11, parseInt(x.substr(1, 1), 16)*0x11, parseInt(x.substr(2, 1), 16)*0x11 ]
               throw "hex number has odd length: #{x.length}"
-      sliderInput = ({htmlcup, label, onclick, fillerColor, bgColor, module, value, width, noBar })@>
+      sliderInput = ({htmlcup, label, onclick, fillerColor, bgColor, module, value, width, noBar, bar })@>
           control = (name)-> "javascript:#{module}.#{name}(event,this)"
-          fillerColor ?= "#bbb"
+          fillerColor ?= "#888"
           background = if bgColor? then "background:#{bgColor}" else ""
           value ?= "100%"
           width ?= "5em"
+          bar ?= 0
           mouseControls = onmousedown:control("mouseDown"), onmouseup:control("mouseUp"), onmousemove:control("mouseMove"), onmouseout:control("mouseOut")
           htmlcup.div class:"sliderInput", style:"display:inline-block;position:relative;border:1px solid #{fillerColor}", mouseControls, ->
               noBar or @div style:"position:absolute;left:0;top:0;bottom:0;right:0;z-index:-1", ->
-                  @div style:"position:absolute;left:0;top:0;bottom:0;width:33%;background:#{fillerColor}"
+                  @div class:"sliderInputBar", style:"position:absolute;left:0;top:0;bottom:0;width:#{bar * 100}%;background:#{fillerColor}"
               @div style:"display:inline-table", ->
                   @div class:"sliderInputButton", style:"display:table-cell;width:1.5em;font-weight:bold", onclick:control("decButton"), "-"
                   @div style:"display:table-cell;width:#{width};max-width:#{width};text-align:center;overflow:visible;position:relative;background:#{bgColor}", mouseControls, ->
@@ -426,14 +429,39 @@ htmlcup.html5Page ->
                 input: input
                 spiritcase: @
                 onfocus: @>
+                    { spiritcase }   = @
+                    { sliderInput }  = @spiritcase.lib
                     @spiritcase.setDialog ->
                         color = (n)=>
                             @div style:"font-size:150%;background:##{n};color:#786;width:1.5em;display:inline-block", onclick:"javascript:spiritcase.setToolColor('#{n}')", "#{n}"
                         @div class:"spiritcaseToolbarGroup", ->
-                          @label "Opacity:"
-                          @button label:"squarebutton", "+"
-                          @input type:"text", value:"100%", size:"5", style:"font-size:125%;text-align:center"
-                          @button label:"squarebutton", "-"
+                          sliderInput
+                                    htmlcup: @
+                                    label: "Opacity"
+                                    value: "#{spiritcase.toolAlpha*100 + 0.5 | 0}%"
+                                    bar: spiritcase.toolAlpha
+                                    # width:"3em"
+                                    # noBar: true
+                                    module: spiritcase.makeWebmodule "sliderInputZoom", ->
+                                        spiritcase: @
+                                        mouseDown:  (ev,el)@>
+                                        mouseUp:    (ev,el)@>
+                                        mouseMove:  (ev,el)@>
+                                        mouseOut:   (ev,el)@>
+                                        incButton: (ev,el)@>
+                                          @spiritcase.toolAlpha = 1.05 * @spiritcase.toolAlpha + 0.01
+                                          @spiritcase.toolAlpha > 1 then @spiritcase.toolAlpha = 1
+                                          @refresh(el)
+                                        decButton: (ev,el)@>
+                                          @spiritcase.toolAlpha = @spiritcase.toolAlpha / 1.05 - 0.01
+                                          @spiritcase.toolAlpha < 0 then @spiritcase.toolAlpha = 0
+                                          @refresh(el)
+                                        refresh: (el)@>
+                                            { $ } = @
+                                            el = $(el).up(".sliderInput")[0]
+                                            $(".sliderInputValue", el)[0].innerHTML = "#{@spiritcase.toolAlpha*100 + 0.5 | 0}%"
+                                            $(".sliderInputBar", el).set("$width", "#{@spiritcase.toolAlpha*100}%")
+                                        $: @lib.$
                         @div class:"spiritcaseToolbarGroup", ->
                             color "000"
                             color "fff"
@@ -646,16 +674,17 @@ htmlcup.html5Page ->
                                     htmlcup: @
                                     label: "Zoom"
                                     value:"#{spiritcase.factor}"
-                                    value:"#{spiritcase.factor}"
                                     width:"3em"
                                     noBar: true
                                     module: spiritcase.makeWebmodule "sliderInputZoom", ->
                                         spiritcase: @
+                                        mouseDown:  (ev,el)@>
+                                        mouseUp:    (ev,el)@>
+                                        mouseMove:  (ev,el)@>
+                                        mouseOut:   (ev,el)@>
                                         incButton: (ev,el)@> @spiritcase.zoomIn(); @refresh(el)
                                         decButton: (ev,el)@> @spiritcase.zoomOut(); @refresh(el)
                                         refresh: (el)@>
-                                            # @alert @spiritcase.factor
-                                            @spiritcase.lib.window.aeto = el
                                             { $ } = @
                                             el = $(el).up(".sliderInput")[0]
                                             $(".sliderInputValue", el)[0].innerHTML = "#{@spiritcase.factor}"

@@ -1453,7 +1453,7 @@
           return jsLoad('ace', "https://github.com/ajaxorg/ace-builds/raw/master/src-min-noconflict/ace.js", cb);
         };
         withCoffee = function(cb) {
-          return jsLoad('CoffeeScript', "coffee-script.js", cb);
+          return jsLoad('CoffeeScript', "lib/coffee-script.js", cb);
         };
         return withAce(function() {
           return withCoffee(function() {

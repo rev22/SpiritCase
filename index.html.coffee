@@ -872,7 +872,7 @@ htmlcup.html5Page ->
               @a href:"https://github.com/rev22/reflective-coffeescript", "Reflective Coffeescript"
 
       withAce = (cb)-> jsLoad 'ace', "https://github.com/ajaxorg/ace-builds/raw/master/src-min-noconflict/ace.js", cb
-      withCoffee = (cb)-> jsLoad 'CoffeeScript', "coffee-script.js", cb
+      withCoffee = (cb)-> jsLoad 'CoffeeScript', "lib/coffee-script.js", cb
       withAce -> withCoffee ->
         globalLibs =
           aceRefcoffeeMode:

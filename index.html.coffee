@@ -27,6 +27,7 @@ htmlcup.html5Page ->
     @title title
     @style type: "text/css",
       """
+      input, button { padding: 0; }
       body { border:0;margin:0;padding:0; }
       #spiritcaseContainer {
         background: #222;
@@ -236,15 +237,15 @@ htmlcup.html5Page ->
               x.length == 3 then
                   return [ parseInt(x.substr(0, 1), 16)*0x11, parseInt(x.substr(1, 1), 16)*0x11, parseInt(x.substr(2, 1), 16)*0x11 ]
               throw "hex number has odd length: #{x.length}"
-      sliderInput = ({htmlcup, label, onclick, fillerColor, bgColor, module, value, width })@>
+      sliderInput = ({htmlcup, label, onclick, fillerColor, bgColor, module, value, width, noBar })@>
           control = (name)-> "javascript:#{module}.#{name}(event,this)"
           fillerColor ?= "#bbb"
           background = if bgColor? then "background:#{bgColor}" else ""
           value ?= "100%"
           width ?= "5em"
           mouseControls = onmousedown:control("mouseDown"), onmouseup:control("mouseUp"), onmousemove:control("mouseMove"), onmouseout:control("mouseOut")
-          htmlcup.div class:"sliderInput", style:"display:inline-block;position:relative;border:2px solid #{fillerColor}", mouseControls, ->
-              @div style:"position:absolute;left:0;top:0;bottom:0;right:0;z-index:-1", ->
+          htmlcup.div class:"sliderInput", style:"display:inline-block;position:relative;border:1px solid #{fillerColor}", mouseControls, ->
+              noBar or @div style:"position:absolute;left:0;top:0;bottom:0;right:0;z-index:-1", ->
                   @div style:"position:absolute;left:0;top:0;bottom:0;width:33%;background:#{fillerColor}"
               @div style:"display:inline-table", ->
                   @div class:"sliderInputButton", style:"display:table-cell;width:1.5em;font-weight:bold", onclick:control("decButton"), "-"
@@ -604,6 +605,7 @@ htmlcup.html5Page ->
                       .spiritcaseToolbarGroup {
                         display:inline-block;
                         padding:0 1em;
+                        vertical-align:text-top;
                       }
                       button.squarebutton {
                         width: 1.5em;
@@ -632,12 +634,13 @@ htmlcup.html5Page ->
                       .spiritcaseToolbar      .button input[type="checkbox"] { display:none; }
                   @div style:"text-align:center;width:100%", ->
                       @div id:"spiritcaseToolbar", style:"display:inline-block;text-align:initial", ->
-                          @button id:"spiritcaseLoadButton",    onclick:"javascript:spiritcase.loadButtonClick(this)",    "Load"
-                          @button id:"spiritcaseSaveButton",    onclick:"javascript:spiritcase.saveButtonClick(this)",    "Save"
-                          @button id:"spiritcasePencilButton",  onclick:"javascript:spiritcase.pencilButtonClick(this)",  "Pencil"
-                          # @button id:"spiritcaseBrushButton",   onclick:"javascript:spiritcase.brushButtonClick(this)",   "Brush"
-                          @button id:"spiritcaseEraseButton",   onclick:"javascript:spiritcase.eraseButtonClick(this)",   "Erase"
-                          @button id:"spiritcaseEraseButton",   onclick:"javascript:spiritcase.undoButtonClick(this)",    "Undo"
+                          @div class:"spiritcaseToolbarGroup", style:"font-size:initial;text-align:initial", ->
+                            @button id:"spiritcaseLoadButton",    onclick:"javascript:spiritcase.loadButtonClick(this)",    "Load"
+                            @button id:"spiritcaseSaveButton",    onclick:"javascript:spiritcase.saveButtonClick(this)",    "Save"
+                            @button id:"spiritcasePencilButton",  onclick:"javascript:spiritcase.pencilButtonClick(this)",  "Pencil"
+                            # @button id:"spiritcaseBrushButton",   onclick:"javascript:spiritcase.brushButtonClick(this)",   "Brush"
+                            @button id:"spiritcaseEraseButton",   onclick:"javascript:spiritcase.eraseButtonClick(this)",   "Erase"
+                            @button id:"spiritcaseEraseButton",   onclick:"javascript:spiritcase.undoButtonClick(this)",    "Undo"
                           @div class:"spiritcaseToolbarGroup", style:"font-size:initial;text-align:initial", ->
                             spiritcase.lib.sliderInput
                                     htmlcup: @
@@ -645,6 +648,7 @@ htmlcup.html5Page ->
                                     value:"#{spiritcase.factor}"
                                     value:"#{spiritcase.factor}"
                                     width:"3em"
+                                    noBar: true
                                     module: spiritcase.makeWebmodule "sliderInputZoom", ->
                                         spiritcase: @
                                         incButton: (ev,el)@> @spiritcase.zoomIn(); @refresh(el)

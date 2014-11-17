@@ -1,5 +1,6 @@
 <!DOCTYPE 5>
-<html><head><meta charset="utf-8"><title>Spiritcase Sprite Editor</title><style type="text/css">body { border:0;margin:0;padding:0; }
+<html><head><meta charset="utf-8"><title>Spiritcase Sprite Editor</title><style type="text/css">input, button { padding: 0; }
+body { border:0;margin:0;padding:0; }
 #spiritcaseContainer {
   background: #222;
   text-align: center;
@@ -416,11 +417,11 @@
           }
         };
         sliderInput = (function(x) {
-          x.coffee = "({htmlcup, label, onclick, fillerColor, bgColor, module, value, width })@>\n          control = (name)-> \"javascript:#{module}.#{name}(event,this)\"\n          fillerColor ?= \"#bbb\"\n          background = if bgColor? then \"background:#{bgColor}\" else \"\"\n          value ?= \"100%\"\n          width ?= \"5em\"\n          mouseControls = onmousedown:control(\"mouseDown\"), onmouseup:control(\"mouseUp\"), onmousemove:control(\"mouseMove\"), onmouseout:control(\"mouseOut\")\n          htmlcup.div class:\"sliderInput\", style:\"display:inline-block;position:relative;border:2px solid #{fillerColor}\", mouseControls, ->\n              @div style:\"position:absolute;left:0;top:0;bottom:0;right:0;z-index:-1\", ->\n                  @div style:\"position:absolute;left:0;top:0;bottom:0;width:33%;background:#{fillerColor}\"\n              @div style:\"display:inline-table\", ->\n                  @div class:\"sliderInputButton\", style:\"display:table-cell;width:1.5em;font-weight:bold\", onclick:control(\"decButton\"), \"-\"\n                  @div style:\"display:table-cell;width:#{width};max-width:#{width};text-align:center;overflow:visible;position:relative;background:#{bgColor}\", mouseControls, ->\n                      @span class:\"sliderInputLabel\", style:\"position:absolute;left:0;top:0\", ->\n                          @span label\n                      @div class:\"sliderInputValue\", style:\"position:absolute;bottom:0;right:0\", value\n                  @div class:\"sliderInputButton\", style:\"display:table-cell;width:1.5em\", onclick:control(\"incButton\"), \"+\"\n  \n      ";
+          x.coffee = "({htmlcup, label, onclick, fillerColor, bgColor, module, value, width, noBar })@>\n          control = (name)-> \"javascript:#{module}.#{name}(event,this)\"\n          fillerColor ?= \"#bbb\"\n          background = if bgColor? then \"background:#{bgColor}\" else \"\"\n          value ?= \"100%\"\n          width ?= \"5em\"\n          mouseControls = onmousedown:control(\"mouseDown\"), onmouseup:control(\"mouseUp\"), onmousemove:control(\"mouseMove\"), onmouseout:control(\"mouseOut\")\n          htmlcup.div class:\"sliderInput\", style:\"display:inline-block;position:relative;border:1px solid #{fillerColor}\", mouseControls, ->\n              noBar or @div style:\"position:absolute;left:0;top:0;bottom:0;right:0;z-index:-1\", ->\n                  @div style:\"position:absolute;left:0;top:0;bottom:0;width:33%;background:#{fillerColor}\"\n              @div style:\"display:inline-table\", ->\n                  @div class:\"sliderInputButton\", style:\"display:table-cell;width:1.5em;font-weight:bold\", onclick:control(\"decButton\"), \"-\"\n                  @div style:\"display:table-cell;width:#{width};max-width:#{width};text-align:center;overflow:visible;position:relative;background:#{bgColor}\", mouseControls, ->\n                      @span class:\"sliderInputLabel\", style:\"position:absolute;left:0;top:0\", ->\n                          @span label\n                      @div class:\"sliderInputValue\", style:\"position:absolute;bottom:0;right:0\", value\n                  @div class:\"sliderInputButton\", style:\"display:table-cell;width:1.5em\", onclick:control(\"incButton\"), \"+\"\n  \n      ";
           return x;
         })(function(_arg) {
-          var background, bgColor, control, fillerColor, htmlcup, label, module, mouseControls, onclick, value, width;
-          htmlcup = _arg.htmlcup, label = _arg.label, onclick = _arg.onclick, fillerColor = _arg.fillerColor, bgColor = _arg.bgColor, module = _arg.module, value = _arg.value, width = _arg.width;
+          var background, bgColor, control, fillerColor, htmlcup, label, module, mouseControls, noBar, onclick, value, width;
+          htmlcup = _arg.htmlcup, label = _arg.label, onclick = _arg.onclick, fillerColor = _arg.fillerColor, bgColor = _arg.bgColor, module = _arg.module, value = _arg.value, width = _arg.width, noBar = _arg.noBar;
           control = function(name) {
             return "javascript:" + module + "." + name + "(event,this)";
           };
@@ -442,9 +443,9 @@
           };
           return htmlcup.div({
             "class": "sliderInput",
-            style: "display:inline-block;position:relative;border:2px solid " + fillerColor
+            style: "display:inline-block;position:relative;border:1px solid " + fillerColor
           }, mouseControls, function() {
-            this.div({
+            noBar || this.div({
               style: "position:absolute;left:0;top:0;bottom:0;right:0;z-index:-1"
             }, function() {
               return this.div({
@@ -1050,7 +1051,7 @@
             }, {
               "class": "spiritcaseToolbar"
             }, function() {
-              this.style(".spiritcaseToolbar {\n    opacity:0.50;\n}\n.spiritcaseToolbar label {\n  font-size: 125%;\n  color:white;\n}\n.spiritcaseToolbarGroup {\n  display:inline-block;\n  padding:0 1em;\n}\nbutton.squarebutton {\n  width: 1.5em;\n  max-width: 1.5em;\n  text-align: center;\n}\n.spiritcaseToolbar:hover {\n    opacity:0.80;\n}\n#spiritcaseColorInput {\n  font-size:125%;\n  text-align:center;\n}\n.spiritcaseToolbar select, .spiritcaseToolbar button { font-size:inherit; text-align:center;   }\n.spiritcaseToolbar .button { display:inline-block; }\n.spiritcaseToolbar button, .spiritcaseToolbar .button,  .spiritcaseToolbar input, .spiritcaseToolbar select:not(:focus):not(:hover) {\n    color:white; background:black;\n}\n.spiritcaseToolbar button:hover, .spiritcaseToolbar .button:hover,  .spiritcaseToolbar input:hover, .spiritcaseToolbar select:hover {\n    color:black; background:white;\n}\n/* select option:not(:checked) { color:red !important; background:black !important; } */\n/* option:active, option[selected], option:checked, option:hover, option:focus { background:#248 !important; } */\n.spiritcaseToolbar button, .spiritcaseToolbar .button { min-width:5%; font-size:150%; border: 2px outset grey; }\n.spiritcaseToolbar button:active, .spiritcaseToolbar .button.button-on { border: 2px inset grey; background:#248; }\n.spiritcaseToolbar      .button input[type=\"checkbox\"] { display:none; }");
+              this.style(".spiritcaseToolbar {\n    opacity:0.50;\n}\n.spiritcaseToolbar label {\n  font-size: 125%;\n  color:white;\n}\n.spiritcaseToolbarGroup {\n  display:inline-block;\n  padding:0 1em;\n  vertical-align:text-top;\n}\nbutton.squarebutton {\n  width: 1.5em;\n  max-width: 1.5em;\n  text-align: center;\n}\n.spiritcaseToolbar:hover {\n    opacity:0.80;\n}\n#spiritcaseColorInput {\n  font-size:125%;\n  text-align:center;\n}\n.spiritcaseToolbar select, .spiritcaseToolbar button { font-size:inherit; text-align:center;   }\n.spiritcaseToolbar .button { display:inline-block; }\n.spiritcaseToolbar button, .spiritcaseToolbar .button,  .spiritcaseToolbar input, .spiritcaseToolbar select:not(:focus):not(:hover) {\n    color:white; background:black;\n}\n.spiritcaseToolbar button:hover, .spiritcaseToolbar .button:hover,  .spiritcaseToolbar input:hover, .spiritcaseToolbar select:hover {\n    color:black; background:white;\n}\n/* select option:not(:checked) { color:red !important; background:black !important; } */\n/* option:active, option[selected], option:checked, option:hover, option:focus { background:#248 !important; } */\n.spiritcaseToolbar button, .spiritcaseToolbar .button { min-width:5%; font-size:150%; border: 2px outset grey; }\n.spiritcaseToolbar button:active, .spiritcaseToolbar .button.button-on { border: 2px inset grey; background:#248; }\n.spiritcaseToolbar      .button input[type=\"checkbox\"] { display:none; }");
               return this.div({
                 style: "text-align:center;width:100%"
               }, function() {
@@ -1058,26 +1059,31 @@
                   id: "spiritcaseToolbar",
                   style: "display:inline-block;text-align:initial"
                 }, function() {
-                  this.button({
-                    id: "spiritcaseLoadButton",
-                    onclick: "javascript:spiritcase.loadButtonClick(this)"
-                  }, "Load");
-                  this.button({
-                    id: "spiritcaseSaveButton",
-                    onclick: "javascript:spiritcase.saveButtonClick(this)"
-                  }, "Save");
-                  this.button({
-                    id: "spiritcasePencilButton",
-                    onclick: "javascript:spiritcase.pencilButtonClick(this)"
-                  }, "Pencil");
-                  this.button({
-                    id: "spiritcaseEraseButton",
-                    onclick: "javascript:spiritcase.eraseButtonClick(this)"
-                  }, "Erase");
-                  this.button({
-                    id: "spiritcaseEraseButton",
-                    onclick: "javascript:spiritcase.undoButtonClick(this)"
-                  }, "Undo");
+                  this.div({
+                    "class": "spiritcaseToolbarGroup",
+                    style: "font-size:initial;text-align:initial"
+                  }, function() {
+                    this.button({
+                      id: "spiritcaseLoadButton",
+                      onclick: "javascript:spiritcase.loadButtonClick(this)"
+                    }, "Load");
+                    this.button({
+                      id: "spiritcaseSaveButton",
+                      onclick: "javascript:spiritcase.saveButtonClick(this)"
+                    }, "Save");
+                    this.button({
+                      id: "spiritcasePencilButton",
+                      onclick: "javascript:spiritcase.pencilButtonClick(this)"
+                    }, "Pencil");
+                    this.button({
+                      id: "spiritcaseEraseButton",
+                      onclick: "javascript:spiritcase.eraseButtonClick(this)"
+                    }, "Erase");
+                    return this.button({
+                      id: "spiritcaseEraseButton",
+                      onclick: "javascript:spiritcase.undoButtonClick(this)"
+                    }, "Undo");
+                  });
                   this.div({
                     "class": "spiritcaseToolbarGroup",
                     style: "font-size:initial;text-align:initial"
@@ -1088,6 +1094,7 @@
                       value: "" + spiritcase.factor,
                       value: "" + spiritcase.factor,
                       width: "3em",
+                      noBar: true,
                       module: spiritcase.makeWebmodule("sliderInputZoom", function() {
                         return {
                           spiritcase: this,

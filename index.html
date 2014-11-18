@@ -408,6 +408,9 @@ body { border:0;margin:0;padding:0; }
         var $, colorLib, dynmod, extendObject, extensible, sliderInput, spiritcase;
         $ = require('minified').$;
         colorLib = {
+          rgb2hex: function(c) {
+            return (0x1000000 + (c[0] << 16) + (c[1] << 8) + c[2]).toString(16).substring(1);
+          },
           hex2rgb: function(x) {
             if (x.length === 6) {
               return [parseInt(x.substr(0, 2), 16), parseInt(x.substr(2, 2), 16), parseInt(x.substr(4, 2), 16)];
@@ -590,7 +593,7 @@ body { border:0;margin:0;padding:0; }
           el: document.getElementById("canvas"),
           icon: icon,
           redraw: (function(x) {
-            x.coffee = "@>\n          { gridSize, factor, factorY, sizeY, factorX, sizeX, checkersSize } = @\n          canvasSizeX = factorX * sizeX + gridSize\n          canvasSizeY = factorY * sizeY + gridSize\n          @el.width = canvasSizeX if canvasSizeX isnt @el.width\n          @el.height = canvasSizeY if canvasSizeY isnt @el.height\n          iconData = @icon.getData()\n          ctx = @el.getContext \"2d\"\n          if checkersSize > 0 and checkersSize * 2 <= factor\n            x_s = sizeX * factorX\n            y_s = sizeY * factorY\n            x_i = 0\n            y_i = 0\n            y = 0\n            while y < y_s\n              x = 0\n              x_i = 0\n              while x < x_s\n                ctx.fillStyle = \"#{ [ \"000\", \"222\" ][ (x_i ^ y_i) & 1] }\"\n                # ctx.fillStyle = \"#f00\"\n                ctx.fillRect x, y, checkersSize, checkersSize\n                x += checkersSize\n                x_i++\n              y += checkersSize\n              y_i++\n          true then (data = @imageData?) then\n            x_s = sizeX * factorX\n            y_s = sizeY * factorY\n            x_i = 0\n            y_i = 0\n            y = 0\n            while y < y_s\n              x = 0\n              x_i = 0\n              while x < x_s\n                p = @pixelColor(x_i, y_i)\n                # ctx.fillStyle = (0x1000000 + (c[0] << 16) + (c[1] << 8) + c[2]).toString(16).substring(1) # '#330000' # @pixelColor(x_i, y_i)\n                ctx.fillStyle = \"rgba(#{p[0]},#{p[1]},#{p[2]},#{p[3]/255})\"\n                ctx.fillRect x, y, factorX, factorY\n                x += factorX\n                x_i++\n              y += factorY\n              y_i++\n          if gridSize > 0\n            x = 0\n            while x <= sizeX\n              ctx.fillStyle = \"#{@borderColor}\"\n              ctx.fillRect(x * factorX, 0, gridSize, sizeY * factorY)\n              x++\n            y = 0\n            while y <= sizeY\n              ctx.fillStyle = \"#{@borderColor}\"\n              ctx.fillRect(0, y * factorY, sizeX * factorX, gridSize)\n              y++\n          return\n        ";
+            x.coffee = "@>\n          { gridSize, factor, factorY, sizeY, factorX, sizeX, checkersSize } = @\n          canvasSizeX = factorX * sizeX + gridSize\n          canvasSizeY = factorY * sizeY + gridSize\n          @el.width = canvasSizeX if canvasSizeX isnt @el.width\n          @el.height = canvasSizeY if canvasSizeY isnt @el.height\n          iconData = @icon.getData()\n          ctx = @el.getContext \"2d\"\n          if checkersSize > 0 and checkersSize * 2 <= factor\n            x_s = sizeX * factorX\n            y_s = sizeY * factorY\n            x_i = 0\n            y_i = 0\n            y = 0\n            while y < y_s\n              x = 0\n              x_i = 0\n              while x < x_s\n                ctx.fillStyle = \"#{ [ \"000\", \"222\" ][ (x_i ^ y_i) & 1] }\"\n                # ctx.fillStyle = \"#f00\"\n                ctx.fillRect x, y, checkersSize, checkersSize\n                x += checkersSize\n                x_i++\n              y += checkersSize\n              y_i++\n          true then (data = @imageData?) then\n            x_s = sizeX * factorX\n            y_s = sizeY * factorY\n            x_i = 0\n            y_i = 0\n            y = 0\n            while y < y_s\n              x = 0\n              x_i = 0\n              while x < x_s\n                p = @pixelColor(x_i, y_i)\n                ctx.fillStyle = \"rgba(#{p[0]},#{p[1]},#{p[2]},#{p[3]/255})\"\n                ctx.fillRect x, y, factorX, factorY\n                x += factorX\n                x_i++\n              y += factorY\n              y_i++\n          if gridSize > 0\n            x = 0\n            while x <= sizeX\n              ctx.fillStyle = \"#{@borderColor}\"\n              ctx.fillRect(x * factorX, 0, gridSize, sizeY * factorY)\n              x++\n            y = 0\n            while y <= sizeY\n              ctx.fillStyle = \"#{@borderColor}\"\n              ctx.fillRect(0, y * factorY, sizeX * factorX, gridSize)\n              y++\n          return\n        ";
             return x;
           })(function() {
             var canvasSizeX, canvasSizeY, checkersSize, ctx, data, factor, factorX, factorY, gridSize, iconData, p, sizeX, sizeY, x, x_i, x_s, y, y_i, y_s;
@@ -662,9 +665,12 @@ body { border:0;margin:0;padding:0; }
             }
           }),
           load: (function(x) {
-            x.coffee = "(imageData)@>\n            @icon.setImage(imageData)\n            @imageData = imageData\n            @redraw()\n            unless @sizeX is imageData.width and @sizeY is imageData.height\n                @sizeX = imageData.width\n                @sizeY = imageData.height\n            @imageData = imageData\n            @redraw()\n        ";
+            x.coffee = "(imageData)@>\n            @addFrame?()\n            @icon.setImage(imageData)\n            @imageData = imageData\n            @redraw()\n            unless @sizeX is imageData.width and @sizeY is imageData.height\n                @sizeX = imageData.width\n                @sizeY = imageData.height\n            @imageData = imageData\n            @redraw()\n        ";
             return x;
           })(function(imageData) {
+            if (typeof this.addFrame === "function") {
+              this.addFrame();
+            }
             this.icon.setImage(imageData);
             this.imageData = imageData;
             this.redraw();
@@ -820,14 +826,14 @@ body { border:0;margin:0;padding:0; }
             return _results;
           }),
           withColorinput: (function(x) {
-            x.coffee = "(input)@>\n            @colorinput =\n                input: input\n                spiritcase: @\n                onfocus: @>\n                    { spiritcase }   = @\n                    { sliderInput }  = @spiritcase.lib\n                    @spiritcase.setDialog ->\n                        color = (n)=>\n                            @div style:\"font-size:150%;background:##{n};color:#786;width:1.5em;display:inline-block\", onclick:\"javascript:spiritcase.setToolColor('#{n}')\", \"#{n}\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                          sliderInput.build\n                                    htmlcup: @\n                                    label: \"Opacity\"\n                                    value: \"#{spiritcase.toolAlpha*100 + 0.5 | 0}%\"\n                                    bar: spiritcase.toolAlpha\n                                    width:\"4em\"\n                                    # noBar: true\n                                    buildModule: (sliderInput)-> spiritcase.makeWebmodule \"sliderInputOpacity\", ->\n                                        spiritcase: @\n                                        __proto__: sliderInput\n                                        incScale: 1.035\n                                        incDelta: 0.008\n                                        incButton: (ev,el)@>\n                                          @spiritcase.toolAlpha = @spiritcase.toolAlpha * @incScale + @incDelta\n                                          @spiritcase.toolAlpha > 1 then @spiritcase.toolAlpha = 1\n                                          @refresh(el)\n                                        decButton: (ev,el)@>\n                                          @spiritcase.toolAlpha = @spiritcase.toolAlpha / @incScale - @incDelta\n                                          @spiritcase.toolAlpha < 0 then @spiritcase.toolAlpha = 0\n                                          @refresh(el)\n                                        refresh: (el)@>\n                                          @setView el,\n                                            text: \"#{@spiritcase.toolAlpha*100 + 0.5 | 0}%\"\n                                            bar: @spiritcase.toolAlpha\n                                        $: @lib.$\n                          colorComponentSlider = ({ i, label, barColor })=> sliderInput.build\n                                    htmlcup: @\n                                    label: label\n                                    barColor: barColor\n                                    value: \"#{(spiritcase.toolColor[i]/255)*100 + 0.5 | 0}%\"\n                                    bar: spiritcase.toolColor[i]/255\n                                    width:\"4em\"\n                                    # noBar: true\n                                    buildModule: (sliderInput)-> spiritcase.makeWebmodule \"sliderInput#{label}\", ->\n                                        spiritcase: @\n                                        __proto__: sliderInput\n                                        colorComponentIndex: i\n                                        getComponent: @> @spiritcase.toolColor[@colorComponentIndex]/255\n                                        setComponent: (v)@> @spiritcase.toolColor[@colorComponentIndex] = v*255\n                                        incScale: 1.035\n                                        incDelta: 0.008\n                                        incButton: (ev,el)@>\n                                          c = @getComponent() * @incScale + @incDelta\n                                          c > 1 then c = 1\n                                          @setComponent(c)\n                                          @refresh(el)\n                                        decButton: (ev,el)@>\n                                          c = @getComponent() / @incScale - @incDelta\n                                          c < 0 then c = 0\n                                          @setComponent(c)\n                                          @refresh(el)\n                                        refresh: (el)@>\n                                          c = @getComponent()\n                                          @setView el,\n                                            text: \"#{c*100 + 0.5 | 0}%\"\n                                            bar: c\n                                        $: @lib.$\n                          colorComponentSlider i:0, label: \"Red\",    barColor: \"red\"\n                          colorComponentSlider i:1, label: \"Green\",  barColor: \"green\"\n                          colorComponentSlider i:2, label: \"Blue\",   barColor: \"blue\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                            color \"000\"\n                            color \"fff\"\n                            color \"f00\"\n                            color \"0f0\"\n                            color \"00f\"\n                            color \"ff0\"\n                            color \"f0f\"\n                            color \"0ff\"\n                            # @button \"Add\", onclick:\"javascript:spiritcase.colorinput.saveCurrentColor()\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                            @button \"Pick\", onclick:\"javascript:spiritcase.setColorPickerTool()\"\n                editingValue: false\n                setColor: (c)@>\n                        @input.setAttribute \"style\", \"background:##{c}\"\n                        unless @editingValue\n                            @input.value = \"##{c}\"\n                oninput: @>\n                    v = @input.value\n                    m = /^\\s*#?((?:[0-9a-fA-F]{3}){1,2})\\s*$/.exec v then\n                        try\n                            @editingValue = true\n                            @spiritcase.setToolColor m[1]\n                        finally\n                            @editingValue = false\n                lib: @lib\n        ";
+            x.coffee = "(input)@>\n            @colorinput =\n                input: input\n                spiritcase: @\n                onfocus: @>\n                    { spiritcase }   = @\n                    { sliderInput }  = @spiritcase.lib\n                    @spiritcase.setDialog ->\n                        color = (n)=>\n                            @div style:\"font-size:150%;background:##{n};color:#786;width:1.5em;display:inline-block\", onclick:\"javascript:spiritcase.setToolColorHex('#{n}')\", \"#{n}\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                          sliderInput.build\n                                    htmlcup: @\n                                    label: \"Opacity\"\n                                    value: \"#{spiritcase.toolAlpha*100 + 0.5 | 0}%\"\n                                    bar: spiritcase.toolAlpha\n                                    width:\"4em\"\n                                    # noBar: true\n                                    buildModule: (sliderInput)-> spiritcase.makeWebmodule \"sliderInputOpacity\", ->\n                                        spiritcase: @\n                                        __proto__: sliderInput\n                                        incScale: 1.035\n                                        incDelta: 0.008\n                                        incButton: (ev,el)@>\n                                          @spiritcase.toolAlpha = @spiritcase.toolAlpha * @incScale + @incDelta\n                                          @spiritcase.toolAlpha > 1 then @spiritcase.toolAlpha = 1\n                                          @refresh(el)\n                                        decButton: (ev,el)@>\n                                          @spiritcase.toolAlpha = @spiritcase.toolAlpha / @incScale - @incDelta\n                                          @spiritcase.toolAlpha < 0 then @spiritcase.toolAlpha = 0\n                                          @refresh(el)\n                                        refresh: (el)@>\n                                          @setView el,\n                                            text: \"#{@spiritcase.toolAlpha*100 + 0.5 | 0}%\"\n                                            bar: @spiritcase.toolAlpha\n                                        $: @lib.$\n                          colorComponentSlider = ({ i, label, barColor })=> sliderInput.build\n                                    htmlcup: @\n                                    label: label\n                                    barColor: barColor\n                                    value: \"#{(spiritcase.toolColor[i]/255)*100 + 0.5 | 0}%\"\n                                    bar: spiritcase.toolColor[i]/255\n                                    width:\"4em\"\n                                    # noBar: true\n                                    buildModule: (sliderInput)-> spiritcase.makeWebmodule \"sliderInput#{label}\", ->\n                                        spiritcase: @\n                                        __proto__: sliderInput\n                                        colorComponentIndex: i\n                                        getComponent: @> @spiritcase.toolColor[@colorComponentIndex]/255\n                                        setComponent: (v)@>\n                                          c = @spiritcase.toolColor\n                                          c[@colorComponentIndex] = v*255 + 0.5 | 0\n                                          @spiritcase.setToolColor c\n                                        incScale: 1.035\n                                        incDelta: 0.008\n                                        incButton: (ev,el)@>\n                                          c = @getComponent() * @incScale + @incDelta\n                                          c > 1 then c = 1\n                                          @setComponent(c)\n                                          @refresh(el)\n                                        decButton: (ev,el)@>\n                                          c = @getComponent() / @incScale - @incDelta\n                                          c < 0 then c = 0\n                                          @setComponent(c)\n                                          @refresh(el)\n                                        refresh: (el)@>\n                                          c = @getComponent()\n                                          @setView el,\n                                            text: \"#{c*100 + 0.5 | 0}%\"\n                                            bar: c\n                                        $: @lib.$\n                          colorComponentSlider i:0, label: \"Red\",    barColor: \"red\"\n                          colorComponentSlider i:1, label: \"Green\",  barColor: \"green\"\n                          colorComponentSlider i:2, label: \"Blue\",   barColor: \"blue\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                            color \"000\"\n                            color \"fff\"\n                            color \"f00\"\n                            color \"0f0\"\n                            color \"00f\"\n                            color \"ff0\"\n                            color \"f0f\"\n                            color \"0ff\"\n                            # @button \"Add\", onclick:\"javascript:spiritcase.colorinput.saveCurrentColor()\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                            @button \"Pick\", onclick:\"javascript:spiritcase.setColorPickerTool()\"\n                editingValue: false\n                setColor: (c)@>\n                        @input.setAttribute \"style\", \"background:##{c}\"\n                        unless @editingValue\n                            @input.value = \"##{c}\"\n                oninput: @>\n                    v = @input.value\n                    m = /^\\s*#?((?:[0-9a-fA-F]{3}){1,2})\\s*$/.exec v then\n                        try\n                            @editingValue = true\n                            @spiritcase.setToolColorHex m[1]\n                        finally\n                            @editingValue = false\n                lib: @lib\n        ";
             return x;
           })(function(input) {
             return this.colorinput = {
               input: input,
               spiritcase: this,
               onfocus: (function(x) {
-                x.coffee = "@>\n                    { spiritcase }   = @\n                    { sliderInput }  = @spiritcase.lib\n                    @spiritcase.setDialog ->\n                        color = (n)=>\n                            @div style:\"font-size:150%;background:##{n};color:#786;width:1.5em;display:inline-block\", onclick:\"javascript:spiritcase.setToolColor('#{n}')\", \"#{n}\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                          sliderInput.build\n                                    htmlcup: @\n                                    label: \"Opacity\"\n                                    value: \"#{spiritcase.toolAlpha*100 + 0.5 | 0}%\"\n                                    bar: spiritcase.toolAlpha\n                                    width:\"4em\"\n                                    # noBar: true\n                                    buildModule: (sliderInput)-> spiritcase.makeWebmodule \"sliderInputOpacity\", ->\n                                        spiritcase: @\n                                        __proto__: sliderInput\n                                        incScale: 1.035\n                                        incDelta: 0.008\n                                        incButton: (ev,el)@>\n                                          @spiritcase.toolAlpha = @spiritcase.toolAlpha * @incScale + @incDelta\n                                          @spiritcase.toolAlpha > 1 then @spiritcase.toolAlpha = 1\n                                          @refresh(el)\n                                        decButton: (ev,el)@>\n                                          @spiritcase.toolAlpha = @spiritcase.toolAlpha / @incScale - @incDelta\n                                          @spiritcase.toolAlpha < 0 then @spiritcase.toolAlpha = 0\n                                          @refresh(el)\n                                        refresh: (el)@>\n                                          @setView el,\n                                            text: \"#{@spiritcase.toolAlpha*100 + 0.5 | 0}%\"\n                                            bar: @spiritcase.toolAlpha\n                                        $: @lib.$\n                          colorComponentSlider = ({ i, label, barColor })=> sliderInput.build\n                                    htmlcup: @\n                                    label: label\n                                    barColor: barColor\n                                    value: \"#{(spiritcase.toolColor[i]/255)*100 + 0.5 | 0}%\"\n                                    bar: spiritcase.toolColor[i]/255\n                                    width:\"4em\"\n                                    # noBar: true\n                                    buildModule: (sliderInput)-> spiritcase.makeWebmodule \"sliderInput#{label}\", ->\n                                        spiritcase: @\n                                        __proto__: sliderInput\n                                        colorComponentIndex: i\n                                        getComponent: @> @spiritcase.toolColor[@colorComponentIndex]/255\n                                        setComponent: (v)@> @spiritcase.toolColor[@colorComponentIndex] = v*255\n                                        incScale: 1.035\n                                        incDelta: 0.008\n                                        incButton: (ev,el)@>\n                                          c = @getComponent() * @incScale + @incDelta\n                                          c > 1 then c = 1\n                                          @setComponent(c)\n                                          @refresh(el)\n                                        decButton: (ev,el)@>\n                                          c = @getComponent() / @incScale - @incDelta\n                                          c < 0 then c = 0\n                                          @setComponent(c)\n                                          @refresh(el)\n                                        refresh: (el)@>\n                                          c = @getComponent()\n                                          @setView el,\n                                            text: \"#{c*100 + 0.5 | 0}%\"\n                                            bar: c\n                                        $: @lib.$\n                          colorComponentSlider i:0, label: \"Red\",    barColor: \"red\"\n                          colorComponentSlider i:1, label: \"Green\",  barColor: \"green\"\n                          colorComponentSlider i:2, label: \"Blue\",   barColor: \"blue\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                            color \"000\"\n                            color \"fff\"\n                            color \"f00\"\n                            color \"0f0\"\n                            color \"00f\"\n                            color \"ff0\"\n                            color \"f0f\"\n                            color \"0ff\"\n                            # @button \"Add\", onclick:\"javascript:spiritcase.colorinput.saveCurrentColor()\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                            @button \"Pick\", onclick:\"javascript:spiritcase.setColorPickerTool()\"\n                ";
+                x.coffee = "@>\n                    { spiritcase }   = @\n                    { sliderInput }  = @spiritcase.lib\n                    @spiritcase.setDialog ->\n                        color = (n)=>\n                            @div style:\"font-size:150%;background:##{n};color:#786;width:1.5em;display:inline-block\", onclick:\"javascript:spiritcase.setToolColorHex('#{n}')\", \"#{n}\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                          sliderInput.build\n                                    htmlcup: @\n                                    label: \"Opacity\"\n                                    value: \"#{spiritcase.toolAlpha*100 + 0.5 | 0}%\"\n                                    bar: spiritcase.toolAlpha\n                                    width:\"4em\"\n                                    # noBar: true\n                                    buildModule: (sliderInput)-> spiritcase.makeWebmodule \"sliderInputOpacity\", ->\n                                        spiritcase: @\n                                        __proto__: sliderInput\n                                        incScale: 1.035\n                                        incDelta: 0.008\n                                        incButton: (ev,el)@>\n                                          @spiritcase.toolAlpha = @spiritcase.toolAlpha * @incScale + @incDelta\n                                          @spiritcase.toolAlpha > 1 then @spiritcase.toolAlpha = 1\n                                          @refresh(el)\n                                        decButton: (ev,el)@>\n                                          @spiritcase.toolAlpha = @spiritcase.toolAlpha / @incScale - @incDelta\n                                          @spiritcase.toolAlpha < 0 then @spiritcase.toolAlpha = 0\n                                          @refresh(el)\n                                        refresh: (el)@>\n                                          @setView el,\n                                            text: \"#{@spiritcase.toolAlpha*100 + 0.5 | 0}%\"\n                                            bar: @spiritcase.toolAlpha\n                                        $: @lib.$\n                          colorComponentSlider = ({ i, label, barColor })=> sliderInput.build\n                                    htmlcup: @\n                                    label: label\n                                    barColor: barColor\n                                    value: \"#{(spiritcase.toolColor[i]/255)*100 + 0.5 | 0}%\"\n                                    bar: spiritcase.toolColor[i]/255\n                                    width:\"4em\"\n                                    # noBar: true\n                                    buildModule: (sliderInput)-> spiritcase.makeWebmodule \"sliderInput#{label}\", ->\n                                        spiritcase: @\n                                        __proto__: sliderInput\n                                        colorComponentIndex: i\n                                        getComponent: @> @spiritcase.toolColor[@colorComponentIndex]/255\n                                        setComponent: (v)@>\n                                          c = @spiritcase.toolColor\n                                          c[@colorComponentIndex] = v*255 + 0.5 | 0\n                                          @spiritcase.setToolColor c\n                                        incScale: 1.035\n                                        incDelta: 0.008\n                                        incButton: (ev,el)@>\n                                          c = @getComponent() * @incScale + @incDelta\n                                          c > 1 then c = 1\n                                          @setComponent(c)\n                                          @refresh(el)\n                                        decButton: (ev,el)@>\n                                          c = @getComponent() / @incScale - @incDelta\n                                          c < 0 then c = 0\n                                          @setComponent(c)\n                                          @refresh(el)\n                                        refresh: (el)@>\n                                          c = @getComponent()\n                                          @setView el,\n                                            text: \"#{c*100 + 0.5 | 0}%\"\n                                            bar: c\n                                        $: @lib.$\n                          colorComponentSlider i:0, label: \"Red\",    barColor: \"red\"\n                          colorComponentSlider i:1, label: \"Green\",  barColor: \"green\"\n                          colorComponentSlider i:2, label: \"Blue\",   barColor: \"blue\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                            color \"000\"\n                            color \"fff\"\n                            color \"f00\"\n                            color \"0f0\"\n                            color \"00f\"\n                            color \"ff0\"\n                            color \"f0f\"\n                            color \"0ff\"\n                            # @button \"Add\", onclick:\"javascript:spiritcase.colorinput.saveCurrentColor()\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                            @button \"Pick\", onclick:\"javascript:spiritcase.setColorPickerTool()\"\n                ";
                 return x;
               })(function() {
                 var sliderInput, spiritcase;
@@ -839,7 +845,7 @@ body { border:0;margin:0;padding:0; }
                     return function(n) {
                       return _this.div({
                         style: "font-size:150%;background:#" + n + ";color:#786;width:1.5em;display:inline-block",
-                        onclick: "javascript:spiritcase.setToolColor('" + n + "')"
+                        onclick: "javascript:spiritcase.setToolColorHex('" + n + "')"
                       }, "" + n);
                     };
                   })(this);
@@ -918,10 +924,13 @@ body { border:0;margin:0;padding:0; }
                                   return this.spiritcase.toolColor[this.colorComponentIndex] / 255;
                                 }),
                                 setComponent: (function(x) {
-                                  x.coffee = "(v)@> @spiritcase.toolColor[@colorComponentIndex] = v*255";
+                                  x.coffee = "(v)@>\n                                          c = @spiritcase.toolColor\n                                          c[@colorComponentIndex] = v*255 + 0.5 | 0\n                                          @spiritcase.setToolColor c\n                                        ";
                                   return x;
                                 })(function(v) {
-                                  return this.spiritcase.toolColor[this.colorComponentIndex] = v * 255;
+                                  var c;
+                                  c = this.spiritcase.toolColor;
+                                  c[this.colorComponentIndex] = v * 255 + 0.5 | 0;
+                                  return this.spiritcase.setToolColor(c);
                                 }),
                                 incScale: 1.035,
                                 incDelta: 0.008,
@@ -1015,7 +1024,7 @@ body { border:0;margin:0;padding:0; }
                 }
               }),
               oninput: (function(x) {
-                x.coffee = "@>\n                    v = @input.value\n                    m = /^\\s*#?((?:[0-9a-fA-F]{3}){1,2})\\s*$/.exec v then\n                        try\n                            @editingValue = true\n                            @spiritcase.setToolColor m[1]\n                        finally\n                            @editingValue = false\n                ";
+                x.coffee = "@>\n                    v = @input.value\n                    m = /^\\s*#?((?:[0-9a-fA-F]{3}){1,2})\\s*$/.exec v then\n                        try\n                            @editingValue = true\n                            @spiritcase.setToolColorHex m[1]\n                        finally\n                            @editingValue = false\n                ";
                 return x;
               })(function() {
                 var m, v;
@@ -1023,7 +1032,7 @@ body { border:0;margin:0;padding:0; }
                 if (m = /^\s*#?((?:[0-9a-fA-F]{3}){1,2})\s*$/.exec(v)) {
                   try {
                     this.editingValue = true;
-                    return this.spiritcase.setToolColor(m[1]);
+                    return this.spiritcase.setToolColorHex(m[1]);
                   } finally {
                     this.editingValue = false;
                   }
@@ -1034,7 +1043,11 @@ body { border:0;margin:0;padding:0; }
           }),
           toolColor: [0, 0, 0],
           toolAlpha: 1,
-          setToolColor: (function(x) {
+          setColorPickerTool: (function(x) {
+            x.coffee = "@>";
+            return x;
+          })(function() {}),
+          setToolColorHex: (function(x) {
             x.coffee = "(c)@>\n            @toolColor = @lib.color.hex2rgb c\n            @colorinput.setColor(c)\n            @\n        ";
             return x;
           })(function(c) {
@@ -1042,16 +1055,12 @@ body { border:0;margin:0;padding:0; }
             this.colorinput.setColor(c);
             return this;
           }),
-          setColorPickerTool: (function(x) {
-            x.coffee = "@>";
-            return x;
-          })(function() {}),
           setToolColor: (function(x) {
-            x.coffee = "(c)@>\n            @toolColor = @lib.color.hex2rgb c\n            @colorinput.setColor(c)\n            @\n\n        ";
+            x.coffee = "(c)@>\n            @toolColor = c\n            @colorinput.setColor(@lib.color.rgb2hex(c))\n            @\n\n        ";
             return x;
           })(function(c) {
-            this.toolColor = this.lib.color.hex2rgb(c);
-            this.colorinput.setColor(c);
+            this.toolColor = c;
+            this.colorinput.setColor(this.lib.color.rgb2hex(c));
             return this;
           }),
           pencilButtonClick: (function(x) {
@@ -1137,11 +1146,16 @@ body { border:0;margin:0;padding:0; }
             return (_ref = this.tool) != null ? _ref.employ(x / factorX, y / factorY) : void 0;
           }),
           doneMouse: (function(x) {
-            x.coffee = "(el, event)@>\n          @tool?.done?()\n\n        ";
+            x.coffee = "(el, event)@>\n          @tool?.done?()\n          @scheduleCheckpoint()\n\n        ";
             return x;
           })(function(el, event) {
             var _ref;
-            return (_ref = this.tool) != null ? typeof _ref.done === "function" ? _ref.done() : void 0 : void 0;
+            if ((_ref = this.tool) != null) {
+              if (typeof _ref.done === "function") {
+                _ref.done();
+              }
+            }
+            return this.scheduleCheckpoint();
           }),
           setup: (function(x) {
             x.coffee = "@>\n          @el.spiritcase = @\n          @imageData = @icon.getData()\n            # width: @sizeX\n            # height: @sizeY\n            # data: do=>\n            #   m = @sizeX * @sizeY * 4\n            #   x = [ ]\n            #   x.push 0 while m-- > 0\n            #   x\n\n          @redraw()\n          @pencilButtonClick()\n\n          @el.onmousemove = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            if @spiritcase.mousedown > 0\n                @spiritcase.employMouse @, event\n          @el.onmouseup = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event\n            unless @spiritcase.mousedown <= 0\n              @spiritcase.mousedown--\n              unless @spiritcase.mousedown > 0\n                @spiritcase.doneMouse()\n          @el.onmousedown = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.mousedown++\n            @spiritcase.employMouse @, event\n          @el.onmouseout = (event)@>\n            @spiritcase.mousedown = 0\n            @spiritcase.doneMouse()\n          @\n        ";
@@ -1194,7 +1208,7 @@ body { border:0;margin:0;padding:0; }
             return this;
           }),
           makeWebmodule: (function(x) {
-            x.coffee = "(name, build)@>\n            @webmodule ?= { }\n            @webmodule[name] = build.call @\n            \"spiritcase.webmodule.#{name}\"\n        \n\n      ";
+            x.coffee = "(name, build)@>\n            @webmodule ?= { }\n            @webmodule[name] = build.call @\n            \"spiritcase.webmodule.#{name}\"\n\n        ";
             return x;
           })(function(name, build) {
             if (this.webmodule == null) {
@@ -1202,6 +1216,118 @@ body { border:0;margin:0;padding:0; }
             }
             this.webmodule[name] = build.call(this);
             return "spiritcase.webmodule." + name;
+          }),
+          maxCheckpoints: 40,
+          checkpoints: [],
+          checkpointsCounter: 0,
+          checkpoint: (function(x) {
+            x.coffee = "@>\n          { Date } = @lib.window\n          canvas = @getAsCanvas()\n          @lastCheckpoint =\n                      time: new Date\n                      canvas: canvas\n                      counter: @checkpointsCounter++\n          @checkpoints.push @lastCheckpoint\n          if @checkpoints.length > @maxCheckpoints\n            for x in @checkpoints\n              x.generation = (x.generation ? 0) + 1\n            rest = @checkpoints.splice(@checkpoints / 2)\n            compressed = [ ]\n            for k,v of rest\n              if k & 1\n                compressed.push v\n            @checkpoints = @checkpoints.concat compressed\n        ";
+            return x;
+          })(function() {
+            var Date, canvas, compressed, k, rest, v, x, _i, _len, _ref, _ref1;
+            Date = this.lib.window.Date;
+            canvas = this.getAsCanvas();
+            this.lastCheckpoint = {
+              time: new Date,
+              canvas: canvas,
+              counter: this.checkpointsCounter++
+            };
+            this.checkpoints.push(this.lastCheckpoint);
+            if (this.checkpoints.length > this.maxCheckpoints) {
+              _ref = this.checkpoints;
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                x = _ref[_i];
+                x.generation = ((_ref1 = x.generation) != null ? _ref1 : 0) + 1;
+              }
+              rest = this.checkpoints.splice(this.checkpoints / 2);
+              compressed = [];
+              for (k in rest) {
+                v = rest[k];
+                if (k & 1) {
+                  compressed.push(v);
+                }
+              }
+              return this.checkpoints = this.checkpoints.concat(compressed);
+            }
+          }),
+          scheduleCheckpointDelay: 3000,
+          scheduleCheckpoint: (function(x) {
+            x.coffee = "@>\n          return if @checkpointTimeout\n          { setTimeout } = @lib.window\n          @checkpointTimeout = setTimeout (=> @checkpointTimeout = null; @checkpoint()), @scheduleCheckpointDelay\n            \n        ";
+            return x;
+          })(function() {
+            var setTimeout;
+            if (this.checkpointTimeout) {
+              return;
+            }
+            setTimeout = this.lib.window.setTimeout;
+            return this.checkpointTimeout = setTimeout(((function(_this) {
+              return function() {
+                _this.checkpointTimeout = null;
+                return _this.checkpoint();
+              };
+            })(this)), this.scheduleCheckpointDelay);
+          }),
+          undoButtonClick: (function(x) {
+            x.coffee = "@>\n          { $ } = @lib\n          @setDialog ->\n            @label \"History: \"\n            @span class:\"undoHistory\"\n          $(\".undoHistory\").add (x.canvas for x in @checkpoints.concat([]).reverse())\n\n        ";
+            return x;
+          })(function() {
+            var $, x;
+            $ = this.lib.$;
+            this.setDialog(function() {
+              this.label("History: ");
+              return this.span({
+                "class": "undoHistory"
+              });
+            });
+            return $(".undoHistory").add((function() {
+              var _i, _len, _ref, _results;
+              _ref = this.checkpoints.concat([]).reverse();
+              _results = [];
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                x = _ref[_i];
+                _results.push(x.canvas);
+              }
+              return _results;
+            }).call(this));
+          }),
+          getAsCanvas: (function(x) {
+            x.coffee = "@>\n          { document } = @lib.window\n          { imageData } = @\n          canvas = document.createElement \"canvas\"\n          canvas.height = imageData.height\n          canvas.width = imageData.width\n          ctx = canvas.getContext \"2d\"\n          ctx.putImageData imageData, 0, 0\n          canvas\n\n        ";
+            return x;
+          })(function() {
+            var canvas, ctx, document, imageData;
+            document = this.lib.window.document;
+            imageData = this.imageData;
+            canvas = document.createElement("canvas");
+            canvas.height = imageData.height;
+            canvas.width = imageData.width;
+            ctx = canvas.getContext("2d");
+            ctx.putImageData(imageData, 0, 0);
+            return canvas;
+          }),
+          frames: [],
+          addFrame: (function(x) {
+            x.coffee = "@>\n            @frames.push @getAsCanvas()\n            @framesButtonClick()\n        ";
+            return x;
+          })(function() {
+            this.frames.push(this.getAsCanvas());
+            return this.framesButtonClick();
+          }),
+          framesButtonClick: (function(x) {
+            x.coffee = "@>\n            { $ } = @lib\n            @setDialog ->\n                @label \"Frames: \"\n                @span class:\"framesList\"\n                @button onclick:\"javascript:spiritcase.addFrame()\", \"Add\"\n            $(\".framesList\").add @frames\n        \n    \n      ";
+            return x;
+          })(function() {
+            var $;
+            $ = this.lib.$;
+            this.setDialog(function() {
+              this.label("Frames: ");
+              this.span({
+                "class": "framesList"
+              });
+              return this.button({
+                onclick: "javascript:spiritcase.addFrame()"
+              }, "Add");
+            });
+            return $(".framesList").add(this.frames);
           })
         });
         return spiritcase.setup();
@@ -1244,10 +1370,14 @@ body { border:0;margin:0;padding:0; }
                       id: "spiritcaseEraseButton",
                       onclick: "javascript:spiritcase.eraseButtonClick(this)"
                     }, "Erase");
-                    return this.button({
+                    this.button({
                       id: "spiritcaseEraseButton",
                       onclick: "javascript:spiritcase.undoButtonClick(this)"
                     }, "Undo");
+                    return this.button({
+                      id: "spiritcaseFramesButton",
+                      onclick: "javascript:spiritcase.framesButtonClick(this)"
+                    }, "Frames");
                   });
                   this.div({
                     "class": "spiritcaseToolbarGroup",

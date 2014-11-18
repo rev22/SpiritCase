@@ -233,6 +233,7 @@ htmlcup.html5Page ->
     @coffeeScript ->
       $ = require('minified').$
       colorLib =
+          rgb2hex: (c)-> (0x1000000 + (c[0] << 16) + (c[1] << 8) + c[2]).toString(16).substring(1)
           hex2rgb: (x)->
               x.length == 6 then
                   return [ parseInt(x.substr(0, 2), 16), parseInt(x.substr(2, 2), 16), parseInt(x.substr(4, 2), 16) ]
@@ -339,7 +340,6 @@ htmlcup.html5Page ->
               x_i = 0
               while x < x_s
                 p = @pixelColor(x_i, y_i)
-                # ctx.fillStyle = (0x1000000 + (c[0] << 16) + (c[1] << 8) + c[2]).toString(16).substring(1) # '#330000' # @pixelColor(x_i, y_i)
                 ctx.fillStyle = "rgba(#{p[0]},#{p[1]},#{p[2]},#{p[3]/255})"
                 ctx.fillRect x, y, factorX, factorY
                 x += factorX
@@ -359,6 +359,7 @@ htmlcup.html5Page ->
               y++
           return
         load: (imageData)@>
+            @addFrame?()
             @icon.setImage(imageData)
             @imageData = imageData
             @redraw()
@@ -445,7 +446,7 @@ htmlcup.html5Page ->
                     { sliderInput }  = @spiritcase.lib
                     @spiritcase.setDialog ->
                         color = (n)=>
-                            @div style:"font-size:150%;background:##{n};color:#786;width:1.5em;display:inline-block", onclick:"javascript:spiritcase.setToolColor('#{n}')", "#{n}"
+                            @div style:"font-size:150%;background:##{n};color:#786;width:1.5em;display:inline-block", onclick:"javascript:spiritcase.setToolColorHex('#{n}')", "#{n}"
                         @div class:"spiritcaseToolbarGroup", ->
                           sliderInput.build
                                     htmlcup: @
@@ -485,7 +486,10 @@ htmlcup.html5Page ->
                                         __proto__: sliderInput
                                         colorComponentIndex: i
                                         getComponent: @> @spiritcase.toolColor[@colorComponentIndex]/255
-                                        setComponent: (v)@> @spiritcase.toolColor[@colorComponentIndex] = v*255
+                                        setComponent: (v)@>
+                                          c = @spiritcase.toolColor
+                                          c[@colorComponentIndex] = v*255 + 0.5 | 0
+                                          @spiritcase.setToolColor c
                                         incScale: 1.035
                                         incDelta: 0.008
                                         incButton: (ev,el)@>
@@ -529,22 +533,21 @@ htmlcup.html5Page ->
                     m = /^\s*#?((?:[0-9a-fA-F]{3}){1,2})\s*$/.exec v then
                         try
                             @editingValue = true
-                            @spiritcase.setToolColor m[1]
+                            @spiritcase.setToolColorHex m[1]
                         finally
                             @editingValue = false
                 lib: @lib
         toolColor: [ 0, 0, 0 ]
         toolAlpha: 1
-        setToolColor: (c)@>
+        setColorPickerTool: @> # TODO
+
+        setToolColorHex: (c)@>
             @toolColor = @lib.color.hex2rgb c
             @colorinput.setColor(c)
             @
-        setColorPickerTool: @> # TODO
-
-
         setToolColor: (c)@>
-            @toolColor = @lib.color.hex2rgb c
-            @colorinput.setColor(c)
+            @toolColor = c
+            @colorinput.setColor(@lib.color.rgb2hex(c))
             @
 
         pencilButtonClick: @>
@@ -606,6 +609,7 @@ htmlcup.html5Page ->
 
         doneMouse: (el, event)@>
           @tool?.done?()
+          @scheduleCheckpoint()
 
         setup: @>
           @el.spiritcase = @
@@ -647,8 +651,63 @@ htmlcup.html5Page ->
             @webmodule ?= { }
             @webmodule[name] = build.call @
             "spiritcase.webmodule.#{name}"
-        
 
+        maxCheckpoints: 40
+        checkpoints: [ ]
+        checkpointsCounter: 0
+        checkpoint: @>
+          { Date } = @lib.window
+          canvas = @getAsCanvas()
+          @lastCheckpoint =
+                      time: new Date
+                      canvas: canvas
+                      counter: @checkpointsCounter++
+          @checkpoints.push @lastCheckpoint
+          if @checkpoints.length > @maxCheckpoints
+            for x in @checkpoints
+              x.generation = (x.generation ? 0) + 1
+            rest = @checkpoints.splice(@checkpoints / 2)
+            compressed = [ ]
+            for k,v of rest
+              if k & 1
+                compressed.push v
+            @checkpoints = @checkpoints.concat compressed
+        scheduleCheckpointDelay: 3000
+        scheduleCheckpoint: @>
+          return if @checkpointTimeout
+          { setTimeout } = @lib.window
+          @checkpointTimeout = setTimeout (=> @checkpointTimeout = null; @checkpoint()), @scheduleCheckpointDelay
+            
+        undoButtonClick: @>
+          { $ } = @lib
+          @setDialog ->
+            @label "History: "
+            @span class:"undoHistory"
+          $(".undoHistory").add (x.canvas for x in @checkpoints.concat([]).reverse())
+
+        getAsCanvas: @>
+          { document } = @lib.window
+          { imageData } = @
+          canvas = document.createElement "canvas"
+          canvas.height = imageData.height
+          canvas.width = imageData.width
+          ctx = canvas.getContext "2d"
+          ctx.putImageData imageData, 0, 0
+          canvas
+
+        frames: []
+        addFrame: @>
+            @frames.push @getAsCanvas()
+            @framesButtonClick()
+        framesButtonClick: @>
+            { $ } = @lib
+            @setDialog ->
+                @label "Frames: "
+                @span class:"framesList"
+                @button onclick:"javascript:spiritcase.addFrame()", "Add"
+            $(".framesList").add @frames
+        
+    
       spiritcase.setup()
     # @table id:"overlay", style:"position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;overflow:hidden:",
     #   @div style:"position:absolute;top:0;left:0;right:0;color:white;width:100%;overflow:hidden;background:rgba(0,0,255,0.1);border:1px solid white", "top"
@@ -714,6 +773,7 @@ htmlcup.html5Page ->
                             # @button id:"spiritcaseBrushButton",   onclick:"javascript:spiritcase.brushButtonClick(this)",   "Brush"
                             @button id:"spiritcaseEraseButton",   onclick:"javascript:spiritcase.eraseButtonClick(this)",   "Erase"
                             @button id:"spiritcaseEraseButton",   onclick:"javascript:spiritcase.undoButtonClick(this)",    "Undo"
+                            @button id:"spiritcaseFramesButton",  onclick:"javascript:spiritcase.framesButtonClick(this)",  "Frames"
                           @div class:"spiritcaseToolbarGroup", style:"font-size:initial;text-align:initial", ->
                             spiritcase.lib.sliderInput.build
                                     htmlcup: @

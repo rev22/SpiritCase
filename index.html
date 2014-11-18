@@ -1069,15 +1069,15 @@ body { border:0;margin:0;padding:0; }
             this.colorinput.setColor(this.lib.color.rgb2hex(c));
             return this;
           }),
-          pencilButtonClick: (function(x) {
-            x.coffee = "@>\n          @lib.$(\"#spiritcaseEraseButton\")[0]?.classList.remove(\"activated\")\n          @lib.$(\"#spiritcasePencilButton\")[0]?.classList.add(\"activated\")\n          @setDialog()\n          @tool =\n              spiritcase: @\n              employ: (x,y)@>\n                  x = x|0\n                  y = y|0\n                  return if x is @x and y is @y\n                  @x = x\n                  @y = y\n                  @spiritcase.setPixel x, y, @spiritcase.toolColor, @spiritcase.toolAlpha\n                  @spiritcase.redrawPixel x, y\n              done: @>\n                  @x = @y = null\n\n        ";
+          paintButtonClick: (function(x) {
+            x.coffee = "@>\n          @lib.$(\"#spiritcaseEraseButton\")[0]?.classList.remove(\"activated\")\n          @lib.$(\"#spiritcasePaintButton\")[0]?.classList.add(\"activated\")\n          @setDialog()\n          @tool =\n              spiritcase: @\n              employ: (x,y)@>\n                  x = x|0\n                  y = y|0\n                  return if x is @x and y is @y\n                  @x = x\n                  @y = y\n                  @spiritcase.setPixel x, y, @spiritcase.toolColor, @spiritcase.toolAlpha\n                  @spiritcase.redrawPixel x, y\n              done: @>\n                  @x = @y = null\n\n        ";
             return x;
           })(function() {
             var _ref, _ref1;
             if ((_ref = this.lib.$("#spiritcaseEraseButton")[0]) != null) {
               _ref.classList.remove("activated");
             }
-            if ((_ref1 = this.lib.$("#spiritcasePencilButton")[0]) != null) {
+            if ((_ref1 = this.lib.$("#spiritcasePaintButton")[0]) != null) {
               _ref1.classList.add("activated");
             }
             this.setDialog();
@@ -1106,11 +1106,11 @@ body { border:0;margin:0;padding:0; }
             };
           }),
           eraseButtonClick: (function(x) {
-            x.coffee = "@>\n          @lib.$(\"#spiritcasePencilButton\")[0]?.classList.remove(\"activated\")\n          @lib.$(\"#spiritcaseEraseButton\")[0]?.classList.add(\"activated\")\n          @setDialog()\n          @tool =\n              spiritcase: @\n              employ: (x,y)@>\n                  x = x|0\n                  y = y|0\n                  return if x is @x and y is @y\n                  @x = x\n                  @y = y\n                  # @spiritcase.setPixel x, y, @spiritcase.toolColor, @spiritcase.toolAlpha\n                  @spiritcase.unsetPixel x, y, @spiritcase.toolAlpha\n                  @spiritcase.redrawPixel x, y\n              done: @>\n                  @x = @y = null\n\n        ";
+            x.coffee = "@>\n          @lib.$(\"#spiritcasePaintButton\")[0]?.classList.remove(\"activated\")\n          @lib.$(\"#spiritcaseEraseButton\")[0]?.classList.add(\"activated\")\n          @setDialog()\n          @tool =\n              spiritcase: @\n              employ: (x,y)@>\n                  x = x|0\n                  y = y|0\n                  return if x is @x and y is @y\n                  @x = x\n                  @y = y\n                  # @spiritcase.setPixel x, y, @spiritcase.toolColor, @spiritcase.toolAlpha\n                  @spiritcase.unsetPixel x, y, @spiritcase.toolAlpha\n                  @spiritcase.redrawPixel x, y\n              done: @>\n                  @x = @y = null\n\n        ";
             return x;
           })(function() {
             var _ref, _ref1;
-            if ((_ref = this.lib.$("#spiritcasePencilButton")[0]) != null) {
+            if ((_ref = this.lib.$("#spiritcasePaintButton")[0]) != null) {
               _ref.classList.remove("activated");
             }
             if ((_ref1 = this.lib.$("#spiritcaseEraseButton")[0]) != null) {
@@ -1224,13 +1224,13 @@ body { border:0;margin:0;padding:0; }
             return this.scheduleCheckpoint();
           }),
           setup: (function(x) {
-            x.coffee = "@>\n          @el.spiritcase = @\n          @imageData = @icon.getData()\n            # width: @sizeX\n            # height: @sizeY\n            # data: do=>\n            #   m = @sizeX * @sizeY * 4\n            #   x = [ ]\n            #   x.push 0 while m-- > 0\n            #   x\n\n          @redraw()\n          @pencilButtonClick()\n\n          @el.onmousemove = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            if @spiritcase.mousedown > 0\n                @spiritcase.employMouse @, event\n          @el.onmouseup = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event\n            unless @spiritcase.mousedown <= 0\n              @spiritcase.mousedown--\n              unless @spiritcase.mousedown > 0\n                @spiritcase.doneMouse()\n          @el.onmousedown = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.mousedown++\n            @spiritcase.employMouse @, event\n          @el.onmouseout = (event)@>\n            @spiritcase.mousedown = 0\n            @spiritcase.doneMouse()\n          @\n        ";
+            x.coffee = "@>\n          @el.spiritcase = @\n          @imageData = @icon.getData()\n            # width: @sizeX\n            # height: @sizeY\n            # data: do=>\n            #   m = @sizeX * @sizeY * 4\n            #   x = [ ]\n            #   x.push 0 while m-- > 0\n            #   x\n\n          @redraw()\n          @paintButtonClick()\n\n          @el.onmousemove = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            if @spiritcase.mousedown > 0\n                @spiritcase.employMouse @, event\n          @el.onmouseup = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event\n            unless @spiritcase.mousedown <= 0\n              @spiritcase.mousedown--\n              unless @spiritcase.mousedown > 0\n                @spiritcase.doneMouse()\n          @el.onmousedown = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.mousedown++\n            @spiritcase.employMouse @, event\n          @el.onmouseout = (event)@>\n            @spiritcase.mousedown = 0\n            @spiritcase.doneMouse()\n          @\n        ";
             return x;
           })(function() {
             this.el.spiritcase = this;
             this.imageData = this.icon.getData();
             this.redraw();
-            this.pencilButtonClick();
+            this.paintButtonClick();
             this.el.onmousemove = (function(x) {
               x.coffee = "(event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            if @spiritcase.mousedown > 0\n                @spiritcase.employMouse @, event\n          ";
               return x;
@@ -1429,10 +1429,10 @@ body { border:0;margin:0;padding:0; }
                       onclick: "javascript:spiritcase.saveButtonClick(this)"
                     }, "Save");
                     this.button({
-                      id: "spiritcasePencilButton",
+                      id: "spiritcasePaintButton",
                       "class": "activated",
-                      onclick: "javascript:spiritcase.pencilButtonClick(this)"
-                    }, "Pencil");
+                      onclick: "javascript:spiritcase.paintButtonClick(this)"
+                    }, "Paint");
                     this.button({
                       id: "spiritcaseEraseButton",
                       onclick: "javascript:spiritcase.eraseButtonClick(this)"

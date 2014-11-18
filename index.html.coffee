@@ -552,9 +552,9 @@ htmlcup.html5Page ->
             @colorinput.setColor(@lib.color.rgb2hex(c))
             @
 
-        pencilButtonClick: @>
+        paintButtonClick: @>
           @lib.$("#spiritcaseEraseButton")[0]?.classList.remove("activated")
-          @lib.$("#spiritcasePencilButton")[0]?.classList.add("activated")
+          @lib.$("#spiritcasePaintButton")[0]?.classList.add("activated")
           @setDialog()
           @tool =
               spiritcase: @
@@ -570,7 +570,7 @@ htmlcup.html5Page ->
                   @x = @y = null
 
         eraseButtonClick: @>
-          @lib.$("#spiritcasePencilButton")[0]?.classList.remove("activated")
+          @lib.$("#spiritcasePaintButton")[0]?.classList.remove("activated")
           @lib.$("#spiritcaseEraseButton")[0]?.classList.add("activated")
           @setDialog()
           @tool =
@@ -658,7 +658,7 @@ htmlcup.html5Page ->
             #   x
 
           @redraw()
-          @pencilButtonClick()
+          @paintButtonClick()
 
           @el.onmousemove = (event)@>
             event.stopPropagation()
@@ -804,7 +804,7 @@ htmlcup.html5Page ->
                           @div class:"spiritcaseToolbarGroup", style:"font-size:initial;text-align:initial", ->
                             @button id:"spiritcaseLoadButton",    onclick:"javascript:spiritcase.loadButtonClick(this)",    "Load"
                             @button id:"spiritcaseSaveButton",    onclick:"javascript:spiritcase.saveButtonClick(this)",    "Save"
-                            @button id:"spiritcasePencilButton",  class:"activated", onclick:"javascript:spiritcase.pencilButtonClick(this)",  "Pencil"
+                            @button id:"spiritcasePaintButton",  class:"activated", onclick:"javascript:spiritcase.paintButtonClick(this)",  "Paint"
                             # @button id:"spiritcaseBrushButton",   onclick:"javascript:spiritcase.brushButtonClick(this)",   "Brush"
                             @button id:"spiritcaseEraseButton",   onclick:"javascript:spiritcase.eraseButtonClick(this)",   "Erase"
                             @button id:"spiritcaseUndoButton",    onclick:"javascript:spiritcase.undoButtonClick(this)",    "Undo"

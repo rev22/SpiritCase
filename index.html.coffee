@@ -153,13 +153,13 @@ htmlcup.html5Page ->
           cursor: cross;
       }
       """
-  factorY = factorX = factor = 32
-  sizeX = Math.floor(960 / factor)
-  sizeY = Math.floor(720 / factor)
+  factorY = factorX = factor = 16
+  sizeX = Math.floor(480 / factor)
+  sizeY = Math.floor(360 / factor)
   gridSize = 1
   checkersSize = 8
   params = { factor, factorX, factorY, sizeX, sizeY, gridSize, checkersSize }
-  params.borderColor = "#777"
+  params.borderColor = "#000"
   icon =
     borderColor: params.borderColor
     borderWidth: "1"
@@ -322,7 +322,7 @@ htmlcup.html5Page ->
               x = 0
               x_i = 0
               while x < x_s
-                ctx.fillStyle = "#{ [ "000", "222" ][ (x_i ^ y_i) & 1] }"
+                ctx.fillStyle = "#{ [ "1b1b1b", "333333" ][ (x_i ^ y_i) & 1] }"
                 # ctx.fillStyle = "#f00"
                 ctx.fillRect x, y, checkersSize, checkersSize
                 x += checkersSize
@@ -392,13 +392,15 @@ htmlcup.html5Page ->
           $: $
 
         setDialog: (x)@>
+            return unless @view?.dialogs?
+            c = @view.dialogs.firstChild then @lib.window.deleteNode c
+            return unless x?
             d = @lib.htmlcup.captureFirstTag ->
               @div class:"spiritcaseDialog", ->
                 # @div style:"width:0", ->
                     @div style:"display:inline-block", ->
                         x.call @
                     @div style:"display:inline-block", onclick:"deleteNode(this.parentNode)", class:"spiritcaseDeleteDialog", "×"
-            c = @view.dialogs.firstChild then @lib.window.deleteNode c
             @view.dialogs.appendChild d
 
         loadButtonClick: @>
@@ -551,6 +553,9 @@ htmlcup.html5Page ->
             @
 
         pencilButtonClick: @>
+          @lib.$("#spiritcaseEraseButton")[0]?.classList.remove("activated")
+          @lib.$("#spiritcasePencilButton")[0]?.classList.add("activated")
+          @setDialog()
           @tool =
               spiritcase: @
               employ: (x,y)@>
@@ -560,6 +565,24 @@ htmlcup.html5Page ->
                   @x = x
                   @y = y
                   @spiritcase.setPixel x, y, @spiritcase.toolColor, @spiritcase.toolAlpha
+                  @spiritcase.redrawPixel x, y
+              done: @>
+                  @x = @y = null
+
+        eraseButtonClick: @>
+          @lib.$("#spiritcasePencilButton")[0]?.classList.remove("activated")
+          @lib.$("#spiritcaseEraseButton")[0]?.classList.add("activated")
+          @setDialog()
+          @tool =
+              spiritcase: @
+              employ: (x,y)@>
+                  x = x|0
+                  y = y|0
+                  return if x is @x and y is @y
+                  @x = x
+                  @y = y
+                  # @spiritcase.setPixel x, y, @spiritcase.toolColor, @spiritcase.toolAlpha
+                  @spiritcase.unsetPixel x, y, @spiritcase.toolAlpha
                   @spiritcase.redrawPixel x, y
               done: @>
                   @x = @y = null
@@ -589,13 +612,25 @@ htmlcup.html5Page ->
                     i++
                     b[i] = rnd(255 * (1 - (1 - palpha) * (1 - calpha)))
                 
+        unsetPixel: (x,y,alpha)@>
+                { imageData: d } = @
+                i = (d.width * y + x) * 4 + 3
+                b = d.data
+                rnd = @lib.Math.round
+                b[i] = rnd(b[i] * (1 - alpha))
+                
         redrawPixel: (x,y)@>
           { gridSize, factor, factorY, sizeY, factorX, sizeX, checkersSize } = @
           ctx = @el.getContext "2d"
           p = @pixelColor(x, y)
           # ctx.fillStyle = (0x1000000 + (c[0] << 16) + (c[1] << 8) + c[2]).toString(16).substring(1) # '#330000' # @pixelColor(x_i, y_i)
+          x1 = x * factorX + gridSize
+          y1 = y * factorY + gridSize
+          x2 = factorX - gridSize
+          y2 = factorY - gridSize
+          ctx.clearRect x1, y1, x2, y2
           ctx.fillStyle = "rgba(#{p[0]},#{p[1]},#{p[2]},#{p[3]/255})"
-          ctx.fillRect x * factorX + gridSize, y * factorY + gridSize, factorX - gridSize, factorY - gridSize
+          ctx.fillRect x1, y1, x2, y2
           @
 
         mousedown: 0
@@ -762,17 +797,17 @@ htmlcup.html5Page ->
                       /* select option:not(:checked) { color:red !important; background:black !important; } */
                       /* option:active, option[selected], option:checked, option:hover, option:focus { background:#248 !important; } */
                       .spiritcaseToolbar button, .spiritcaseToolbar .button { min-width:5%; font-size:150%; border: 2px outset grey; }
-                      .spiritcaseToolbar button:active, .spiritcaseToolbar .button.button-on { border: 2px inset grey; background:#248; }
+                      .spiritcaseToolbar button.activated:not(:hover), .spiritcaseToolbar button:active, .spiritcaseToolbar .button.button-on { border: 2px inset grey; background:#248; }
                       .spiritcaseToolbar      .button input[type="checkbox"] { display:none; }
                   @div style:"text-align:center;width:100%", ->
                       @div id:"spiritcaseToolbar", style:"display:inline-block;text-align:initial", ->
                           @div class:"spiritcaseToolbarGroup", style:"font-size:initial;text-align:initial", ->
                             @button id:"spiritcaseLoadButton",    onclick:"javascript:spiritcase.loadButtonClick(this)",    "Load"
                             @button id:"spiritcaseSaveButton",    onclick:"javascript:spiritcase.saveButtonClick(this)",    "Save"
-                            @button id:"spiritcasePencilButton",  onclick:"javascript:spiritcase.pencilButtonClick(this)",  "Pencil"
+                            @button id:"spiritcasePencilButton",  class:"activated", onclick:"javascript:spiritcase.pencilButtonClick(this)",  "Pencil"
                             # @button id:"spiritcaseBrushButton",   onclick:"javascript:spiritcase.brushButtonClick(this)",   "Brush"
                             @button id:"spiritcaseEraseButton",   onclick:"javascript:spiritcase.eraseButtonClick(this)",   "Erase"
-                            @button id:"spiritcaseEraseButton",   onclick:"javascript:spiritcase.undoButtonClick(this)",    "Undo"
+                            @button id:"spiritcaseUndoButton",    onclick:"javascript:spiritcase.undoButtonClick(this)",    "Undo"
                             @button id:"spiritcaseFramesButton",  onclick:"javascript:spiritcase.framesButtonClick(this)",  "Frames"
                           @div class:"spiritcaseToolbarGroup", style:"font-size:initial;text-align:initial", ->
                             spiritcase.lib.sliderInput.build

@@ -951,6 +951,7 @@ htmlcup.html5Page ->
             false then @div class:"thisHeader", ->
               return @div ->
                 @span "CoffeeCharnia"
+                @button id:"killButton", "×"
                 @button id:"runButton", "▶"
               @select disabled:"1", ->
                 @option "HTML"
@@ -971,6 +972,7 @@ htmlcup.html5Page ->
               """
             @div style:"position:absolute;top:0;right:0;left:0;bottom:0;overflow:hidden", ->
                 @button id:"runButton", style:"right:0;top:0;position:absolute;z-index:1000000", "▶"
+                @button id:"killButton", style:"right:0;top:80px;position:absolute;z-index:1000000", "×"
                 @textarea id:"coffeeArea", class:"editArea",
                   ''''
                   # Welcome to CoffeeCharnia!
@@ -1220,7 +1222,7 @@ htmlcup.html5Page ->
           printNumber:
             (x)@> "#{x}"
         
-        window.app = window.coffeecharnia = app =
+        window.coffeecharnia = app =
           libs:
             CoffeeScript: window.CoffeeScript
             aceRefcoffeeMode: globalLibs.aceRefcoffeeMode
@@ -1233,7 +1235,7 @@ htmlcup.html5Page ->
           global: window.eval 'window'
           window: window
 
-          view: ((x)-> r = {}; r[v] = document.getElementById(v) for v in x.split(","); r ) "coffeeArea,runButton,introFooter,resultFooter,resultDatum,coffeecharniaConsole"
+          view: ((x)-> r = {}; r[v] = document.getElementById(v) for v in x.split(","); r ) "coffeeArea,runButton,killButton,introFooter,resultFooter,resultDatum,coffeecharniaConsole"
 
           accumulator: [ ]
 
@@ -1308,6 +1310,7 @@ htmlcup.html5Page ->
             # @ace? and @setupAce()
             app = @
             @view.runButton.onclick = => @runButtonClick()
+            @view.killButton.onclick = => @killButtonClick()
             area = @view.coffeeArea
             area.focus()
             (pos = area.value.length)? then area.setSelectionRange?(pos, pos)
@@ -1319,6 +1322,10 @@ htmlcup.html5Page ->
             window.onkeydown = (event)->
               return app.handleEnterKey?(event) if event.keyCode and event.keyCode is 13
               true
+
+          getElement: @> @view.coffeecharniaConsole
+
+          killButtonClick: @> el = @getElement(); el.setAttribute "style", el.getAttribute("style") + ";display:none"
 
           getSelection: @>
             (t = @view.coffeeArea.transformed)? then

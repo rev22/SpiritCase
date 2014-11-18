@@ -1665,6 +1665,9 @@ body { border:0;margin:0;padding:0; }
                 }, function() {
                   return this.div(function() {
                     this.span("CoffeeCharnia");
+                    this.button({
+                      id: "killButton"
+                    }, "×");
                     return this.button({
                       id: "runButton"
                     }, "▶");
@@ -1715,6 +1718,10 @@ body { border:0;margin:0;padding:0; }
                 id: "runButton",
                 style: "right:0;top:0;position:absolute;z-index:1000000"
               }, "▶");
+              this.button({
+                id: "killButton",
+                style: "right:0;top:80px;position:absolute;z-index:1000000"
+              }, "×");
               return this.textarea({
                 id: "coffeeArea",
                 "class": "editArea"
@@ -2106,7 +2113,7 @@ body { border:0;margin:0;padding:0; }
                 return "" + x;
               })
             };
-            window.app = window.coffeecharnia = app = {
+            window.coffeecharnia = app = {
               libs: {
                 CoffeeScript: window.CoffeeScript,
                 aceRefcoffeeMode: globalLibs.aceRefcoffeeMode,
@@ -2127,7 +2134,7 @@ body { border:0;margin:0;padding:0; }
                   r[v] = document.getElementById(v);
                 }
                 return r;
-              })("coffeeArea,runButton,introFooter,resultFooter,resultDatum,coffeecharniaConsole"),
+              })("coffeeArea,runButton,killButton,introFooter,resultFooter,resultDatum,coffeecharniaConsole"),
               accumulator: [],
               printHtml: (function(x) {
                 x.coffee = "(s)@>\n            @accumulator.push s\n\n          ";
@@ -2244,7 +2251,7 @@ body { border:0;margin:0;padding:0; }
                 }
               }),
               setup: (function(x) {
-                x.coffee = "@>\n            # @fs.readFileSync = (x)=> @readFileSync(x)\n            # @fs.writeFileSync = (x)=> @readFileSync(x)\n            # @ace? and @setupAce()\n            app = @\n            @view.runButton.onclick = => @runButtonClick()\n            area = @view.coffeeArea\n            area.focus()\n            (pos = area.value.length)? then area.setSelectionRange?(pos, pos)\n            area.setupTransform = (editor)->\n              area.transformed = editor\n              app.aceRefcoffeeMode (mode)->\n                editor.getSession().setMode(mode)\n              editor.setTheme(\"ace/theme/merbivore\")\n            window.onkeydown = (event)->\n              return app.handleEnterKey?(event) if event.keyCode and event.keyCode is 13\n              true\n\n          ";
+                x.coffee = "@>\n            # @fs.readFileSync = (x)=> @readFileSync(x)\n            # @fs.writeFileSync = (x)=> @readFileSync(x)\n            # @ace? and @setupAce()\n            app = @\n            @view.runButton.onclick = => @runButtonClick()\n            @view.killButton.onclick = => @killButtonClick()\n            area = @view.coffeeArea\n            area.focus()\n            (pos = area.value.length)? then area.setSelectionRange?(pos, pos)\n            area.setupTransform = (editor)->\n              area.transformed = editor\n              app.aceRefcoffeeMode (mode)->\n                editor.getSession().setMode(mode)\n              editor.setTheme(\"ace/theme/merbivore\")\n            window.onkeydown = (event)->\n              return app.handleEnterKey?(event) if event.keyCode and event.keyCode is 13\n              true\n\n          ";
                 return x;
               })(function() {
                 var app, area, pos;
@@ -2252,6 +2259,11 @@ body { border:0;margin:0;padding:0; }
                 this.view.runButton.onclick = (function(_this) {
                   return function() {
                     return _this.runButtonClick();
+                  };
+                })(this);
+                this.view.killButton.onclick = (function(_this) {
+                  return function() {
+                    return _this.killButtonClick();
                   };
                 })(this);
                 area = this.view.coffeeArea;
@@ -2274,6 +2286,20 @@ body { border:0;margin:0;padding:0; }
                   }
                   return true;
                 };
+              }),
+              getElement: (function(x) {
+                x.coffee = "@> @view.coffeecharniaConsole";
+                return x;
+              })(function() {
+                return this.view.coffeecharniaConsole;
+              }),
+              killButtonClick: (function(x) {
+                x.coffee = "@> el = @getElement(); el.setAttribute \"style\", el.getAttribute(\"style\") + \";display:none\"";
+                return x;
+              })(function() {
+                var el;
+                el = this.getElement();
+                return el.setAttribute("style", el.getAttribute("style") + ";display:none");
               }),
               getSelection: (function(x) {
                 x.coffee = "@>\n            (t = @view.coffeeArea.transformed)? then\n              t.getSelection()\n            else\n              @getInputSelection(@view)\n\n          ";

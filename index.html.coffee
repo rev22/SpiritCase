@@ -174,7 +174,7 @@ htmlcup.html5Page ->
      @section class:"centered", ->
       # @section id:"spiritcaseDialogs", class:"dynamic-section dynsec-vertical", ->
       @section class:"dynamic-section dynsec-vertical", ->
-        @span style:"border-color:#{icon.borderColor};border-width:#{icon.borderWidth}px;border-style:solid;padding:#{icon.padding}px", ->
+        @span style:"border-color:#{icon.borderColor};border-width:#{icon.borderWidth}px;border-style:solid;padding:#{icon.padding}px;display:inline-table", ->
           @canvas id:"icon", width:"#{sizeX}", height:"#{sizeY}"
       @section class:"dynamic-section dynsec-vertical", ->
         @canvas id:"canvas", width:"#{ sizeX * factorX + gridSize }", height:"#{ sizeY * factorY + gridSize }"

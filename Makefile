@@ -1,4 +1,4 @@
-TARGETS=coffee-script.js index.html
+TARGETS=index.html
 
 
 all: $(TARGETS)
@@ -12,7 +12,3 @@ clean:
 
 %.js: %.coffee
 	coffee -bc $<
-
-
-lib/coffee-script.js: ../reflective-coffeescript/extras/coffee-script.js
-	cp -av $< $@

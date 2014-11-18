@@ -144,6 +144,7 @@ htmlcup.html5Page ->
           color:white;
           font-family: sans;
           text-align:center;
+          cursor:pointer;
       }
       .sliderInputButton:hover {
           background:rgba(0,0,0,0.2);
@@ -151,6 +152,9 @@ htmlcup.html5Page ->
       .sliderInputButton:not(:hover) {
           opacity:0.6;
           cursor: cross;
+      }
+      .framesList {
+        cursor:pointer;
       }
       """
   factorY = factorX = factor = 16
@@ -170,7 +174,8 @@ htmlcup.html5Page ->
      @section class:"centered", ->
       # @section id:"spiritcaseDialogs", class:"dynamic-section dynsec-vertical", ->
       @section class:"dynamic-section dynsec-vertical", ->
-        @canvas id:"icon", width:"#{sizeX}", height:"#{sizeY}", style:"border-color:#{icon.borderColor};border-width:#{icon.borderWidth}px;border-style:solid;padding:#{icon.padding}px"
+        @span style:"border-color:#{icon.borderColor};border-width:#{icon.borderWidth}px;border-style:solid;padding:#{icon.padding}px", ->
+          @canvas id:"icon", width:"#{sizeX}", height:"#{sizeY}"
       @section class:"dynamic-section dynsec-vertical", ->
         @canvas id:"canvas", width:"#{ sizeX * factorX + gridSize }", height:"#{ sizeY * factorY + gridSize }"
 
@@ -242,10 +247,13 @@ htmlcup.html5Page ->
               throw "hex number has odd length: #{x.length}"
       sliderInput =
         $: $
-        mouseDown:  (ev,el)@>
-        mouseUp:    (ev,el)@>
-        mouseMove:  (ev,el)@>
-        mouseOut:   (ev,el)@>
+        terminateEvent: (ev)@>
+          ev.stopPropagation()
+          ev.preventDefault()
+        mouseDown:  (ev,el)@> @terminateEvent(ev)
+        mouseUp:    (ev,el)@> @terminateEvent(ev)
+        mouseMove:  (ev,el)@> @terminateEvent(ev)
+        mouseOut:   (ev,el)@> @terminateEvent(ev)
         setView: (el, {bar, text})@>
           { $ } = @
           el = $(el).up(".sliderInput")[0]
@@ -448,7 +456,7 @@ htmlcup.html5Page ->
                     { sliderInput }  = @spiritcase.lib
                     @spiritcase.setDialog ->
                         color = (n)=>
-                            @div style:"font-size:150%;background:##{n};color:#786;width:1.5em;display:inline-block", onclick:"javascript:spiritcase.setToolColorHex('#{n}')", "#{n}"
+                            @div style:"font-size:150%;background:##{n};color:#786;width:1.5em;display:inline-block", class:"paletteEntry", onclick:"javascript:spiritcase.setToolColorHex('#{n}')", "#{n}"
                         @div class:"spiritcaseToolbarGroup", ->
                           sliderInput.build
                                     htmlcup: @
@@ -463,10 +471,12 @@ htmlcup.html5Page ->
                                         incScale: 1.035
                                         incDelta: 0.008
                                         incButton: (ev,el)@>
+                                          @terminateEvent(ev)
                                           @spiritcase.toolAlpha = @spiritcase.toolAlpha * @incScale + @incDelta
                                           @spiritcase.toolAlpha > 1 then @spiritcase.toolAlpha = 1
                                           @refresh(el)
                                         decButton: (ev,el)@>
+                                          @terminateEvent(ev)
                                           @spiritcase.toolAlpha = @spiritcase.toolAlpha / @incScale - @incDelta
                                           @spiritcase.toolAlpha < 0 then @spiritcase.toolAlpha = 0
                                           @refresh(el)
@@ -495,11 +505,13 @@ htmlcup.html5Page ->
                                         incScale: 1.035
                                         incDelta: 0.008
                                         incButton: (ev,el)@>
+                                          @terminateEvent(ev)
                                           c = @getComponent() * @incScale + @incDelta
                                           c > 1 then c = 1
                                           @setComponent(c)
                                           @refresh(el)
                                         decButton: (ev,el)@>
+                                          @terminateEvent(ev)
                                           c = @getComponent() / @incScale - @incDelta
                                           c < 0 then c = 0
                                           @setComponent(c)
@@ -539,7 +551,7 @@ htmlcup.html5Page ->
                         finally
                             @editingValue = false
                 lib: @lib
-        toolColor: [ 0, 0, 0 ]
+        toolColor: [ Math.round(Math.random()*255), Math.round(Math.random()*255), Math.round(Math.random()*255) ]
         toolAlpha: 1
         setColorPickerTool: @> # TODO
 
@@ -644,6 +656,7 @@ htmlcup.html5Page ->
 
         doneMouse: (el, event)@>
           @tool?.done?()
+          @updateIcon()
           @scheduleCheckpoint()
 
         setup: @>
@@ -690,7 +703,13 @@ htmlcup.html5Page ->
         maxCheckpoints: 40
         checkpoints: [ ]
         checkpointsCounter: 0
+        updateIcon: @>
+          @icon.setImage(@imageData)
         checkpoint: @>
+          (xx = @checkpointTimeout)? then
+            { clearTimeout } = @lib.window
+            clearTimeout xx
+            @checkpointTimeout = null
           { Date } = @lib.window
           canvas = @getAsCanvas()
           @lastCheckpoint =
@@ -740,8 +759,37 @@ htmlcup.html5Page ->
                 @label "Frames: "
                 @span class:"framesList"
                 @button onclick:"javascript:spiritcase.addFrame()", "Add"
+            @frames.onclick = "javascript:spiritcase.swapFrame(this)"
             $(".framesList").add @frames
+
+        swapFrame: (event, el1, i)@>
+            @updateIcon()
+            event.stopPropagation()
+            event.preventDefault()
+            el0 = @icon.el
+            @icon.el = el1
+            @frames[i] = el0
+            n0 = el0.nextSibling
+            p0 = el0.parentNode
+            n1 = el1.nextSibling
+            p1 = el1.parentNode
+            p0.insertBefore(el1, n0)
+            p1.insertBefore(el0, n1)
+            @setupFrame i, el0
+            @imageData = el1.getContext('2d').getImageData(0, 0, el1.width, el1.height)
+            @redraw()
         
+        setupFrame: (k,v)@>
+            v.setAttribute "onclick", "javascript:spiritcase.swapFrame(event,this,#{k})"
+        
+        framesButtonClick: @>
+          { $ } = @lib
+          @setDialog ->
+              @label "Frames: "
+              @span class:"framesList"
+              @button onclick:"javascript:spiritcase.addFrame()", "Add"
+          $(".framesList").add @frames
+          @setupFrame k, v for k,v of @frames
     
       spiritcase.setup()
     # @table id:"overlay", style:"position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;overflow:hidden:",
@@ -799,6 +847,7 @@ htmlcup.html5Page ->
                       .spiritcaseToolbar button, .spiritcaseToolbar .button { min-width:5%; font-size:150%; border: 2px outset grey; }
                       .spiritcaseToolbar button.activated:not(:hover), .spiritcaseToolbar button:active, .spiritcaseToolbar .button.button-on { border: 2px inset grey; background:#248; }
                       .spiritcaseToolbar      .button input[type="checkbox"] { display:none; }
+                      .spiritcaseToolbar .paletteEntry { cursor:pointer; }
                   @div style:"text-align:center;width:100%", ->
                       @div id:"spiritcaseToolbar", style:"display:inline-block;text-align:initial", ->
                           @div class:"spiritcaseToolbarGroup", style:"font-size:initial;text-align:initial", ->
@@ -819,14 +868,20 @@ htmlcup.html5Page ->
                                     buildModule: (sliderInput)-> spiritcase.makeWebmodule "sliderInputZoom", ->
                                         spiritcase: @
                                         __proto__: sliderInput
-                                        incButton: (ev,el)@> @spiritcase.zoomIn(); @refresh(el)
-                                        decButton: (ev,el)@> @spiritcase.zoomOut(); @refresh(el)
+                                        incButton: (ev,el)@>
+                                          @terminateEvent(ev)
+                                          @spiritcase.zoomIn()
+                                          @refresh(el)
+                                        decButton: (ev,el)@>
+                                          @terminateEvent(ev)
+                                          @spiritcase.zoomOut()
+                                          @refresh(el)
                                         refresh: (el)@>
                                           @setView el,
                                             text: "#{@spiritcase.factor}"
                                         $: @lib.$
                           @div class:"spiritcaseToolbarGroup", ->
-                            @input id:"spiritcaseColorInput", type:"text", placeholder:"Color", size:"7", onfocus:"javascript:spiritcase.withColorinput(this).onfocus(event)", oninput:"javascript:spiritcase.withColorinput(this).oninput(event)"
+                            @input id:"spiritcaseColorInput", type:"text", placeholder:"Color", size:"7", onfocus:"javascript:spiritcase.withColorinput(this).onfocus(event)", oninput:"javascript:spiritcase.withColorinput(this).oninput(event)", style:"background:#{(spiritcase.lib.color.rgb2hex(spiritcase.toolColor))}"
                       @div id:"spiritcaseDialogs", ->
                 
         # document.body.firstChild.insertBefore htmlcup.div position:"absolute"
@@ -947,7 +1002,7 @@ htmlcup.html5Page ->
                       #
                     footer.call @, id:"footer", style:"display:table-row"
       ((x)-> document.body.appendChild coffeecharniaLayout x)
-        style: "position:absolute;overflow:auto;width:50%;height:50%;bottom:0;right:0;background:black;color:#ddd"
+        style: "position:absolute;overflow:auto;width:40%;height:25%;bottom:0;right:0;background:black;color:#ddd"
         innerStyle:
           ''''
           div,pre { padding: 0; margin:0; }
@@ -1006,8 +1061,8 @@ htmlcup.html5Page ->
               .coffeecharniaContainer button:hover, .coffeecharniaContainer button:focus, .coffeecharniaContainer button:active { opacity: 1; }
               """
             @div style:"position:absolute;top:0;right:0;left:0;bottom:0;overflow:hidden", ->
-                @button id:"runButton", style:"right:0;top:0;position:absolute;z-index:1000000", "▶"
-                @button id:"killButton", style:"right:0;top:80px;position:absolute;z-index:1000000", "×"
+                @button id:"runButton", style:"width:1.5em;right:0;top:45px;position:absolute;z-index:1000000", "▶"
+                @button id:"killButton", style:"width:1.5em;right:0;top:0;position:absolute;z-index:1000000", "×"
                 @textarea id:"coffeeArea", class:"editArea",
                   ''''
                   # Welcome to CoffeeCharnia!
@@ -1279,8 +1334,10 @@ htmlcup.html5Page ->
 
           isConverting: false
 
+          processSource: (s)@> "((x)->x.call(spiritcase)) ()->" + ("\n" + s).replace(/\n/g, "\n  ")
+
           evalCoffeescript: (x)@>
-            @eval(@libs.CoffeeScript.compile x, bare:true)
+            @eval(@libs.CoffeeScript.compile(@processSource(x), bare:true))
 
           evalWithSourceMap: (x)@>
             # This technique does not seem to work properly on Chromium 22

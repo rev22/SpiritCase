@@ -418,76 +418,109 @@ body { border:0;margin:0;padding:0; }
             throw "hex number has odd length: " + x.length;
           }
         };
-        sliderInput = (function(x) {
-          x.coffee = "({htmlcup, label, onclick, fillerColor, bgColor, module, value, width, noBar, bar })@>\n          control = (name)-> \"javascript:#{module}.#{name}(event,this)\"\n          fillerColor ?= \"#888\"\n          background = if bgColor? then \"background:#{bgColor}\" else \"\"\n          value ?= \"100%\"\n          width ?= \"5em\"\n          bar ?= 0\n          mouseControls = onmousedown:control(\"mouseDown\"), onmouseup:control(\"mouseUp\"), onmousemove:control(\"mouseMove\"), onmouseout:control(\"mouseOut\")\n          htmlcup.div class:\"sliderInput\", style:\"display:inline-block;position:relative;border:1px solid #{fillerColor}\", mouseControls, ->\n              noBar or @div style:\"position:absolute;left:0;top:0;bottom:0;right:0;z-index:-1\", ->\n                  @div class:\"sliderInputBar\", style:\"position:absolute;left:0;top:0;bottom:0;width:#{bar * 100}%;background:#{fillerColor}\"\n              @div style:\"display:inline-table\", ->\n                  @div class:\"sliderInputButton\", style:\"display:table-cell;width:1.5em;font-weight:bold\", onclick:control(\"decButton\"), \"-\"\n                  @div style:\"display:table-cell;width:#{width};max-width:#{width};text-align:center;overflow:visible;position:relative;background:#{bgColor}\", mouseControls, ->\n                      @span class:\"sliderInputLabel\", style:\"position:absolute;left:0;top:0\", ->\n                          @span label\n                      @div class:\"sliderInputValue\", style:\"position:absolute;bottom:0;right:0\", value\n                  @div class:\"sliderInputButton\", style:\"display:table-cell;width:1.5em\", onclick:control(\"incButton\"), \"+\"\n  \n      ";
-          return x;
-        })(function(_arg) {
-          var background, bar, bgColor, control, fillerColor, htmlcup, label, module, mouseControls, noBar, onclick, value, width;
-          htmlcup = _arg.htmlcup, label = _arg.label, onclick = _arg.onclick, fillerColor = _arg.fillerColor, bgColor = _arg.bgColor, module = _arg.module, value = _arg.value, width = _arg.width, noBar = _arg.noBar, bar = _arg.bar;
-          control = function(name) {
-            return "javascript:" + module + "." + name + "(event,this)";
-          };
-          if (fillerColor == null) {
-            fillerColor = "#888";
-          }
-          background = bgColor != null ? "background:" + bgColor : "";
-          if (value == null) {
-            value = "100%";
-          }
-          if (width == null) {
-            width = "5em";
-          }
-          if (bar == null) {
-            bar = 0;
-          }
-          mouseControls = {
-            onmousedown: control("mouseDown"),
-            onmouseup: control("mouseUp"),
-            onmousemove: control("mouseMove"),
-            onmouseout: control("mouseOut")
-          };
-          return htmlcup.div({
-            "class": "sliderInput",
-            style: "display:inline-block;position:relative;border:1px solid " + fillerColor
-          }, mouseControls, function() {
-            noBar || this.div({
-              style: "position:absolute;left:0;top:0;bottom:0;right:0;z-index:-1"
-            }, function() {
-              return this.div({
-                "class": "sliderInputBar",
-                style: "position:absolute;left:0;top:0;bottom:0;width:" + (bar * 100) + "%;background:" + fillerColor
+        sliderInput = {
+          $: $,
+          mouseDown: (function(x) {
+            x.coffee = "(ev,el)@>";
+            return x;
+          })(function(ev, el) {}),
+          mouseUp: (function(x) {
+            x.coffee = "(ev,el)@>";
+            return x;
+          })(function(ev, el) {}),
+          mouseMove: (function(x) {
+            x.coffee = "(ev,el)@>";
+            return x;
+          })(function(ev, el) {}),
+          mouseOut: (function(x) {
+            x.coffee = "(ev,el)@>";
+            return x;
+          })(function(ev, el) {}),
+          setView: (function(x) {
+            x.coffee = "(el, {bar, text})@>\n          { $ } = @\n          el = $(el).up(\".sliderInput\")[0]\n          $(\".sliderInputValue\", el)[0].textContent = text\n          $(\".sliderInputBar\", el).set(\"$width\", \"#{bar*100}%\")\n        ";
+            return x;
+          })(function(el, _arg) {
+            var $, bar, text;
+            bar = _arg.bar, text = _arg.text;
+            $ = this.$;
+            el = $(el).up(".sliderInput")[0];
+            $(".sliderInputValue", el)[0].textContent = text;
+            return $(".sliderInputBar", el).set("$width", "" + (bar * 100) + "%");
+          }),
+          build: (function(x) {
+            x.coffee = "({htmlcup, label, onclick, barColor, bgColor, buildModule, module, value, width, noBar, bar })@>\n          buildModule? then module = buildModule @\n          control = (name)-> \"javascript:#{module}.#{name}(event,this)\"\n          barColor ?= \"#888\"\n          background = if bgColor? then \"background:#{bgColor}\" else \"\"\n          value ?= \"100%\"\n          width ?= \"5em\"\n          bar ?= 0\n          mouseControls = onmousedown:control(\"mouseDown\"), onmouseup:control(\"mouseUp\"), onmousemove:control(\"mouseMove\"), onmouseout:control(\"mouseOut\")\n          htmlcup.div class:\"sliderInput\", style:\"display:inline-block;position:relative;border:1px solid #{barColor}\", mouseControls, ->\n              noBar or @div style:\"position:absolute;left:0;top:0;bottom:0;right:0;z-index:-1\", ->\n                  @div class:\"sliderInputBar\", style:\"position:absolute;left:0;top:0;bottom:0;width:#{bar * 100}%;background:#{barColor}\"\n              @div style:\"display:inline-table\", ->\n                  @div class:\"sliderInputButton\", style:\"display:table-cell;width:1.5em;font-weight:bold\", onclick:control(\"decButton\"), \"-\"\n                  @div style:\"display:table-cell;width:#{width};max-width:#{width};text-align:center;overflow:visible;position:relative;background:#{bgColor}\", mouseControls, ->\n                      @span class:\"sliderInputLabel\", style:\"position:absolute;left:0;top:0\", ->\n                          @span label\n                      @div class:\"sliderInputValue\", style:\"position:absolute;bottom:0;right:0\", value\n                  @div class:\"sliderInputButton\", style:\"display:table-cell;width:1.5em\", onclick:control(\"incButton\"), \"+\"\n  \n      ";
+            return x;
+          })(function(_arg) {
+            var background, bar, barColor, bgColor, buildModule, control, htmlcup, label, module, mouseControls, noBar, onclick, value, width;
+            htmlcup = _arg.htmlcup, label = _arg.label, onclick = _arg.onclick, barColor = _arg.barColor, bgColor = _arg.bgColor, buildModule = _arg.buildModule, module = _arg.module, value = _arg.value, width = _arg.width, noBar = _arg.noBar, bar = _arg.bar;
+            if (buildModule != null) {
+              module = buildModule(this);
+            }
+            control = function(name) {
+              return "javascript:" + module + "." + name + "(event,this)";
+            };
+            if (barColor == null) {
+              barColor = "#888";
+            }
+            background = bgColor != null ? "background:" + bgColor : "";
+            if (value == null) {
+              value = "100%";
+            }
+            if (width == null) {
+              width = "5em";
+            }
+            if (bar == null) {
+              bar = 0;
+            }
+            mouseControls = {
+              onmousedown: control("mouseDown"),
+              onmouseup: control("mouseUp"),
+              onmousemove: control("mouseMove"),
+              onmouseout: control("mouseOut")
+            };
+            return htmlcup.div({
+              "class": "sliderInput",
+              style: "display:inline-block;position:relative;border:1px solid " + barColor
+            }, mouseControls, function() {
+              noBar || this.div({
+                style: "position:absolute;left:0;top:0;bottom:0;right:0;z-index:-1"
+              }, function() {
+                return this.div({
+                  "class": "sliderInputBar",
+                  style: "position:absolute;left:0;top:0;bottom:0;width:" + (bar * 100) + "%;background:" + barColor
+                });
               });
-            });
-            return this.div({
-              style: "display:inline-table"
-            }, function() {
-              this.div({
-                "class": "sliderInputButton",
-                style: "display:table-cell;width:1.5em;font-weight:bold",
-                onclick: control("decButton")
-              }, "-");
-              this.div({
-                style: "display:table-cell;width:" + width + ";max-width:" + width + ";text-align:center;overflow:visible;position:relative;background:" + bgColor
-              }, mouseControls, function() {
-                this.span({
-                  "class": "sliderInputLabel",
-                  style: "position:absolute;left:0;top:0"
-                }, function() {
-                  return this.span(label);
+              return this.div({
+                style: "display:inline-table"
+              }, function() {
+                this.div({
+                  "class": "sliderInputButton",
+                  style: "display:table-cell;width:1.5em;font-weight:bold",
+                  onclick: control("decButton")
+                }, "-");
+                this.div({
+                  style: "display:table-cell;width:" + width + ";max-width:" + width + ";text-align:center;overflow:visible;position:relative;background:" + bgColor
+                }, mouseControls, function() {
+                  this.span({
+                    "class": "sliderInputLabel",
+                    style: "position:absolute;left:0;top:0"
+                  }, function() {
+                    return this.span(label);
+                  });
+                  return this.div({
+                    "class": "sliderInputValue",
+                    style: "position:absolute;bottom:0;right:0"
+                  }, value);
                 });
                 return this.div({
-                  "class": "sliderInputValue",
-                  style: "position:absolute;bottom:0;right:0"
-                }, value);
+                  "class": "sliderInputButton",
+                  style: "display:table-cell;width:1.5em",
+                  onclick: control("incButton")
+                }, "+");
               });
-              return this.div({
-                "class": "sliderInputButton",
-                style: "display:table-cell;width:1.5em",
-                onclick: control("incButton")
-              }, "+");
             });
-          });
-        });
+          })
+        };
         extensible = {
           extendObject: extendObject = function() {
             var k, r, v, x, _i, _len;
@@ -787,14 +820,14 @@ body { border:0;margin:0;padding:0; }
             return _results;
           }),
           withColorinput: (function(x) {
-            x.coffee = "(input)@>\n            @colorinput =\n                input: input\n                spiritcase: @\n                onfocus: @>\n                    { spiritcase }   = @\n                    { sliderInput }  = @spiritcase.lib\n                    @spiritcase.setDialog ->\n                        color = (n)=>\n                            @div style:\"font-size:150%;background:##{n};color:#786;width:1.5em;display:inline-block\", onclick:\"javascript:spiritcase.setToolColor('#{n}')\", \"#{n}\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                          sliderInput\n                                    htmlcup: @\n                                    label: \"Opacity\"\n                                    value: \"#{spiritcase.toolAlpha*100 + 0.5 | 0}%\"\n                                    bar: spiritcase.toolAlpha\n                                    # width:\"3em\"\n                                    # noBar: true\n                                    module: spiritcase.makeWebmodule \"sliderInputZoom\", ->\n                                        spiritcase: @\n                                        mouseDown:  (ev,el)@>\n                                        mouseUp:    (ev,el)@>\n                                        mouseMove:  (ev,el)@>\n                                        mouseOut:   (ev,el)@>\n                                        incButton: (ev,el)@>\n                                          @spiritcase.toolAlpha = 1.05 * @spiritcase.toolAlpha + 0.01\n                                          @spiritcase.toolAlpha > 1 then @spiritcase.toolAlpha = 1\n                                          @refresh(el)\n                                        decButton: (ev,el)@>\n                                          @spiritcase.toolAlpha = @spiritcase.toolAlpha / 1.05 - 0.01\n                                          @spiritcase.toolAlpha < 0 then @spiritcase.toolAlpha = 0\n                                          @refresh(el)\n                                        refresh: (el)@>\n                                            { $ } = @\n                                            el = $(el).up(\".sliderInput\")[0]\n                                            $(\".sliderInputValue\", el)[0].innerHTML = \"#{@spiritcase.toolAlpha*100 + 0.5 | 0}%\"\n                                            $(\".sliderInputBar\", el).set(\"$width\", \"#{@spiritcase.toolAlpha*100}%\")\n                                        $: @lib.$\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                            color \"000\"\n                            color \"fff\"\n                            color \"f00\"\n                            color \"0f0\"\n                            color \"00f\"\n                            color \"ff0\"\n                            color \"f0f\"\n                            color \"0ff\"\n                            # @button \"Add\", onclick:\"javascript:spiritcase.colorinput.saveCurrentColor()\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                            @button \"Pick\", onclick:\"javascript:spiritcase.setColorPickerTool()\"\n                editingValue: false\n                setColor: (c)@>\n                        @input.setAttribute \"style\", \"background:##{c}\"\n                        unless @editingValue\n                            @input.value = \"##{c}\"\n                oninput: @>\n                    v = @input.value\n                    m = /^\\s*#?((?:[0-9a-fA-F]{3}){1,2})\\s*$/.exec v then\n                        try\n                            @editingValue = true\n                            @spiritcase.setToolColor m[1]\n                        finally\n                            @editingValue = false\n                lib: @lib\n        ";
+            x.coffee = "(input)@>\n            @colorinput =\n                input: input\n                spiritcase: @\n                onfocus: @>\n                    { spiritcase }   = @\n                    { sliderInput }  = @spiritcase.lib\n                    @spiritcase.setDialog ->\n                        color = (n)=>\n                            @div style:\"font-size:150%;background:##{n};color:#786;width:1.5em;display:inline-block\", onclick:\"javascript:spiritcase.setToolColor('#{n}')\", \"#{n}\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                          sliderInput.build\n                                    htmlcup: @\n                                    label: \"Opacity\"\n                                    value: \"#{spiritcase.toolAlpha*100 + 0.5 | 0}%\"\n                                    bar: spiritcase.toolAlpha\n                                    width:\"4em\"\n                                    # noBar: true\n                                    buildModule: (sliderInput)-> spiritcase.makeWebmodule \"sliderInputOpacity\", ->\n                                        spiritcase: @\n                                        __proto__: sliderInput\n                                        incScale: 1.035\n                                        incDelta: 0.008\n                                        incButton: (ev,el)@>\n                                          @spiritcase.toolAlpha = @spiritcase.toolAlpha * @incScale + @incDelta\n                                          @spiritcase.toolAlpha > 1 then @spiritcase.toolAlpha = 1\n                                          @refresh(el)\n                                        decButton: (ev,el)@>\n                                          @spiritcase.toolAlpha = @spiritcase.toolAlpha / @incScale - @incDelta\n                                          @spiritcase.toolAlpha < 0 then @spiritcase.toolAlpha = 0\n                                          @refresh(el)\n                                        refresh: (el)@>\n                                          @setView el,\n                                            text: \"#{@spiritcase.toolAlpha*100 + 0.5 | 0}%\"\n                                            bar: @spiritcase.toolAlpha\n                                        $: @lib.$\n                          colorComponentSlider = ({ i, label, barColor })=> sliderInput.build\n                                    htmlcup: @\n                                    label: label\n                                    barColor: barColor\n                                    value: \"#{(spiritcase.toolColor[i]/255)*100 + 0.5 | 0}%\"\n                                    bar: spiritcase.toolColor[i]/255\n                                    width:\"4em\"\n                                    # noBar: true\n                                    buildModule: (sliderInput)-> spiritcase.makeWebmodule \"sliderInput#{label}\", ->\n                                        spiritcase: @\n                                        __proto__: sliderInput\n                                        colorComponentIndex: i\n                                        getComponent: @> @spiritcase.toolColor[@colorComponentIndex]/255\n                                        setComponent: (v)@> @spiritcase.toolColor[@colorComponentIndex] = v*255\n                                        incScale: 1.035\n                                        incDelta: 0.008\n                                        incButton: (ev,el)@>\n                                          c = @getComponent() * @incScale + @incDelta\n                                          c > 1 then c = 1\n                                          @setComponent(c)\n                                          @refresh(el)\n                                        decButton: (ev,el)@>\n                                          c = @getComponent() / @incScale - @incDelta\n                                          c < 0 then c = 0\n                                          @setComponent(c)\n                                          @refresh(el)\n                                        refresh: (el)@>\n                                          c = @getComponent()\n                                          @setView el,\n                                            text: \"#{c*100 + 0.5 | 0}%\"\n                                            bar: c\n                                        $: @lib.$\n                          colorComponentSlider i:0, label: \"Red\",    barColor: \"red\"\n                          colorComponentSlider i:1, label: \"Green\",  barColor: \"green\"\n                          colorComponentSlider i:2, label: \"Blue\",   barColor: \"blue\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                            color \"000\"\n                            color \"fff\"\n                            color \"f00\"\n                            color \"0f0\"\n                            color \"00f\"\n                            color \"ff0\"\n                            color \"f0f\"\n                            color \"0ff\"\n                            # @button \"Add\", onclick:\"javascript:spiritcase.colorinput.saveCurrentColor()\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                            @button \"Pick\", onclick:\"javascript:spiritcase.setColorPickerTool()\"\n                editingValue: false\n                setColor: (c)@>\n                        @input.setAttribute \"style\", \"background:##{c}\"\n                        unless @editingValue\n                            @input.value = \"##{c}\"\n                oninput: @>\n                    v = @input.value\n                    m = /^\\s*#?((?:[0-9a-fA-F]{3}){1,2})\\s*$/.exec v then\n                        try\n                            @editingValue = true\n                            @spiritcase.setToolColor m[1]\n                        finally\n                            @editingValue = false\n                lib: @lib\n        ";
             return x;
           })(function(input) {
             return this.colorinput = {
               input: input,
               spiritcase: this,
               onfocus: (function(x) {
-                x.coffee = "@>\n                    { spiritcase }   = @\n                    { sliderInput }  = @spiritcase.lib\n                    @spiritcase.setDialog ->\n                        color = (n)=>\n                            @div style:\"font-size:150%;background:##{n};color:#786;width:1.5em;display:inline-block\", onclick:\"javascript:spiritcase.setToolColor('#{n}')\", \"#{n}\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                          sliderInput\n                                    htmlcup: @\n                                    label: \"Opacity\"\n                                    value: \"#{spiritcase.toolAlpha*100 + 0.5 | 0}%\"\n                                    bar: spiritcase.toolAlpha\n                                    # width:\"3em\"\n                                    # noBar: true\n                                    module: spiritcase.makeWebmodule \"sliderInputZoom\", ->\n                                        spiritcase: @\n                                        mouseDown:  (ev,el)@>\n                                        mouseUp:    (ev,el)@>\n                                        mouseMove:  (ev,el)@>\n                                        mouseOut:   (ev,el)@>\n                                        incButton: (ev,el)@>\n                                          @spiritcase.toolAlpha = 1.05 * @spiritcase.toolAlpha + 0.01\n                                          @spiritcase.toolAlpha > 1 then @spiritcase.toolAlpha = 1\n                                          @refresh(el)\n                                        decButton: (ev,el)@>\n                                          @spiritcase.toolAlpha = @spiritcase.toolAlpha / 1.05 - 0.01\n                                          @spiritcase.toolAlpha < 0 then @spiritcase.toolAlpha = 0\n                                          @refresh(el)\n                                        refresh: (el)@>\n                                            { $ } = @\n                                            el = $(el).up(\".sliderInput\")[0]\n                                            $(\".sliderInputValue\", el)[0].innerHTML = \"#{@spiritcase.toolAlpha*100 + 0.5 | 0}%\"\n                                            $(\".sliderInputBar\", el).set(\"$width\", \"#{@spiritcase.toolAlpha*100}%\")\n                                        $: @lib.$\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                            color \"000\"\n                            color \"fff\"\n                            color \"f00\"\n                            color \"0f0\"\n                            color \"00f\"\n                            color \"ff0\"\n                            color \"f0f\"\n                            color \"0ff\"\n                            # @button \"Add\", onclick:\"javascript:spiritcase.colorinput.saveCurrentColor()\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                            @button \"Pick\", onclick:\"javascript:spiritcase.setColorPickerTool()\"\n                ";
+                x.coffee = "@>\n                    { spiritcase }   = @\n                    { sliderInput }  = @spiritcase.lib\n                    @spiritcase.setDialog ->\n                        color = (n)=>\n                            @div style:\"font-size:150%;background:##{n};color:#786;width:1.5em;display:inline-block\", onclick:\"javascript:spiritcase.setToolColor('#{n}')\", \"#{n}\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                          sliderInput.build\n                                    htmlcup: @\n                                    label: \"Opacity\"\n                                    value: \"#{spiritcase.toolAlpha*100 + 0.5 | 0}%\"\n                                    bar: spiritcase.toolAlpha\n                                    width:\"4em\"\n                                    # noBar: true\n                                    buildModule: (sliderInput)-> spiritcase.makeWebmodule \"sliderInputOpacity\", ->\n                                        spiritcase: @\n                                        __proto__: sliderInput\n                                        incScale: 1.035\n                                        incDelta: 0.008\n                                        incButton: (ev,el)@>\n                                          @spiritcase.toolAlpha = @spiritcase.toolAlpha * @incScale + @incDelta\n                                          @spiritcase.toolAlpha > 1 then @spiritcase.toolAlpha = 1\n                                          @refresh(el)\n                                        decButton: (ev,el)@>\n                                          @spiritcase.toolAlpha = @spiritcase.toolAlpha / @incScale - @incDelta\n                                          @spiritcase.toolAlpha < 0 then @spiritcase.toolAlpha = 0\n                                          @refresh(el)\n                                        refresh: (el)@>\n                                          @setView el,\n                                            text: \"#{@spiritcase.toolAlpha*100 + 0.5 | 0}%\"\n                                            bar: @spiritcase.toolAlpha\n                                        $: @lib.$\n                          colorComponentSlider = ({ i, label, barColor })=> sliderInput.build\n                                    htmlcup: @\n                                    label: label\n                                    barColor: barColor\n                                    value: \"#{(spiritcase.toolColor[i]/255)*100 + 0.5 | 0}%\"\n                                    bar: spiritcase.toolColor[i]/255\n                                    width:\"4em\"\n                                    # noBar: true\n                                    buildModule: (sliderInput)-> spiritcase.makeWebmodule \"sliderInput#{label}\", ->\n                                        spiritcase: @\n                                        __proto__: sliderInput\n                                        colorComponentIndex: i\n                                        getComponent: @> @spiritcase.toolColor[@colorComponentIndex]/255\n                                        setComponent: (v)@> @spiritcase.toolColor[@colorComponentIndex] = v*255\n                                        incScale: 1.035\n                                        incDelta: 0.008\n                                        incButton: (ev,el)@>\n                                          c = @getComponent() * @incScale + @incDelta\n                                          c > 1 then c = 1\n                                          @setComponent(c)\n                                          @refresh(el)\n                                        decButton: (ev,el)@>\n                                          c = @getComponent() / @incScale - @incDelta\n                                          c < 0 then c = 0\n                                          @setComponent(c)\n                                          @refresh(el)\n                                        refresh: (el)@>\n                                          c = @getComponent()\n                                          @setView el,\n                                            text: \"#{c*100 + 0.5 | 0}%\"\n                                            bar: c\n                                        $: @lib.$\n                          colorComponentSlider i:0, label: \"Red\",    barColor: \"red\"\n                          colorComponentSlider i:1, label: \"Green\",  barColor: \"green\"\n                          colorComponentSlider i:2, label: \"Blue\",   barColor: \"blue\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                            color \"000\"\n                            color \"fff\"\n                            color \"f00\"\n                            color \"0f0\"\n                            color \"00f\"\n                            color \"ff0\"\n                            color \"f0f\"\n                            color \"0ff\"\n                            # @button \"Add\", onclick:\"javascript:spiritcase.colorinput.saveCurrentColor()\"\n                        @div class:\"spiritcaseToolbarGroup\", ->\n                            @button \"Pick\", onclick:\"javascript:spiritcase.setColorPickerTool()\"\n                ";
                 return x;
               })(function() {
                 var sliderInput, spiritcase;
@@ -813,63 +846,141 @@ body { border:0;margin:0;padding:0; }
                   this.div({
                     "class": "spiritcaseToolbarGroup"
                   }, function() {
-                    return sliderInput({
+                    var colorComponentSlider;
+                    sliderInput.build({
                       htmlcup: this,
                       label: "Opacity",
                       value: "" + (spiritcase.toolAlpha * 100 + 0.5 | 0) + "%",
                       bar: spiritcase.toolAlpha,
-                      module: spiritcase.makeWebmodule("sliderInputZoom", function() {
-                        return {
-                          spiritcase: this,
-                          mouseDown: (function(x) {
-                            x.coffee = "(ev,el)@>";
-                            return x;
-                          })(function(ev, el) {}),
-                          mouseUp: (function(x) {
-                            x.coffee = "(ev,el)@>";
-                            return x;
-                          })(function(ev, el) {}),
-                          mouseMove: (function(x) {
-                            x.coffee = "(ev,el)@>";
-                            return x;
-                          })(function(ev, el) {}),
-                          mouseOut: (function(x) {
-                            x.coffee = "(ev,el)@>";
-                            return x;
-                          })(function(ev, el) {}),
-                          incButton: (function(x) {
-                            x.coffee = "(ev,el)@>\n                                          @spiritcase.toolAlpha = 1.05 * @spiritcase.toolAlpha + 0.01\n                                          @spiritcase.toolAlpha > 1 then @spiritcase.toolAlpha = 1\n                                          @refresh(el)\n                                        ";
-                            return x;
-                          })(function(ev, el) {
-                            this.spiritcase.toolAlpha = 1.05 * this.spiritcase.toolAlpha + 0.01;
-                            if (this.spiritcase.toolAlpha > 1) {
-                              this.spiritcase.toolAlpha = 1;
-                            }
-                            return this.refresh(el);
-                          }),
-                          decButton: (function(x) {
-                            x.coffee = "(ev,el)@>\n                                          @spiritcase.toolAlpha = @spiritcase.toolAlpha / 1.05 - 0.01\n                                          @spiritcase.toolAlpha < 0 then @spiritcase.toolAlpha = 0\n                                          @refresh(el)\n                                        ";
-                            return x;
-                          })(function(ev, el) {
-                            this.spiritcase.toolAlpha = this.spiritcase.toolAlpha / 1.05 - 0.01;
-                            if (this.spiritcase.toolAlpha < 0) {
-                              this.spiritcase.toolAlpha = 0;
-                            }
-                            return this.refresh(el);
-                          }),
-                          refresh: (function(x) {
-                            x.coffee = "(el)@>\n                                            { $ } = @\n                                            el = $(el).up(\".sliderInput\")[0]\n                                            $(\".sliderInputValue\", el)[0].innerHTML = \"#{@spiritcase.toolAlpha*100 + 0.5 | 0}%\"\n                                            $(\".sliderInputBar\", el).set(\"$width\", \"#{@spiritcase.toolAlpha*100}%\")\n                                        ";
-                            return x;
-                          })(function(el) {
-                            var $;
-                            $ = this.$;
-                            el = $(el).up(".sliderInput")[0];
-                            $(".sliderInputValue", el)[0].innerHTML = "" + (this.spiritcase.toolAlpha * 100 + 0.5 | 0) + "%";
-                            return $(".sliderInputBar", el).set("$width", "" + (this.spiritcase.toolAlpha * 100) + "%");
-                          }),
-                          $: this.lib.$
-                        };
-                      })
+                      width: "4em",
+                      buildModule: function(sliderInput) {
+                        return spiritcase.makeWebmodule("sliderInputOpacity", function() {
+                          return {
+                            spiritcase: this,
+                            __proto__: sliderInput,
+                            incScale: 1.035,
+                            incDelta: 0.008,
+                            incButton: (function(x) {
+                              x.coffee = "(ev,el)@>\n                                          @spiritcase.toolAlpha = @spiritcase.toolAlpha * @incScale + @incDelta\n                                          @spiritcase.toolAlpha > 1 then @spiritcase.toolAlpha = 1\n                                          @refresh(el)\n                                        ";
+                              return x;
+                            })(function(ev, el) {
+                              this.spiritcase.toolAlpha = this.spiritcase.toolAlpha * this.incScale + this.incDelta;
+                              if (this.spiritcase.toolAlpha > 1) {
+                                this.spiritcase.toolAlpha = 1;
+                              }
+                              return this.refresh(el);
+                            }),
+                            decButton: (function(x) {
+                              x.coffee = "(ev,el)@>\n                                          @spiritcase.toolAlpha = @spiritcase.toolAlpha / @incScale - @incDelta\n                                          @spiritcase.toolAlpha < 0 then @spiritcase.toolAlpha = 0\n                                          @refresh(el)\n                                        ";
+                              return x;
+                            })(function(ev, el) {
+                              this.spiritcase.toolAlpha = this.spiritcase.toolAlpha / this.incScale - this.incDelta;
+                              if (this.spiritcase.toolAlpha < 0) {
+                                this.spiritcase.toolAlpha = 0;
+                              }
+                              return this.refresh(el);
+                            }),
+                            refresh: (function(x) {
+                              x.coffee = "(el)@>\n                                          @setView el,\n                                            text: \"#{@spiritcase.toolAlpha*100 + 0.5 | 0}%\"\n                                            bar: @spiritcase.toolAlpha\n                                        ";
+                              return x;
+                            })(function(el) {
+                              return this.setView(el, {
+                                text: "" + (this.spiritcase.toolAlpha * 100 + 0.5 | 0) + "%",
+                                bar: this.spiritcase.toolAlpha
+                              });
+                            }),
+                            $: this.lib.$
+                          };
+                        });
+                      }
+                    });
+                    colorComponentSlider = (function(_this) {
+                      return function(_arg) {
+                        var barColor, i, label;
+                        i = _arg.i, label = _arg.label, barColor = _arg.barColor;
+                        return sliderInput.build({
+                          htmlcup: _this,
+                          label: label,
+                          barColor: barColor,
+                          value: "" + ((spiritcase.toolColor[i] / 255) * 100 + 0.5 | 0) + "%",
+                          bar: spiritcase.toolColor[i] / 255,
+                          width: "4em",
+                          buildModule: function(sliderInput) {
+                            return spiritcase.makeWebmodule("sliderInput" + label, function() {
+                              return {
+                                spiritcase: this,
+                                __proto__: sliderInput,
+                                colorComponentIndex: i,
+                                getComponent: (function(x) {
+                                  x.coffee = "@> @spiritcase.toolColor[@colorComponentIndex]/255";
+                                  return x;
+                                })(function() {
+                                  return this.spiritcase.toolColor[this.colorComponentIndex] / 255;
+                                }),
+                                setComponent: (function(x) {
+                                  x.coffee = "(v)@> @spiritcase.toolColor[@colorComponentIndex] = v*255";
+                                  return x;
+                                })(function(v) {
+                                  return this.spiritcase.toolColor[this.colorComponentIndex] = v * 255;
+                                }),
+                                incScale: 1.035,
+                                incDelta: 0.008,
+                                incButton: (function(x) {
+                                  x.coffee = "(ev,el)@>\n                                          c = @getComponent() * @incScale + @incDelta\n                                          c > 1 then c = 1\n                                          @setComponent(c)\n                                          @refresh(el)\n                                        ";
+                                  return x;
+                                })(function(ev, el) {
+                                  var c;
+                                  c = this.getComponent() * this.incScale + this.incDelta;
+                                  if (c > 1) {
+                                    c = 1;
+                                  }
+                                  this.setComponent(c);
+                                  return this.refresh(el);
+                                }),
+                                decButton: (function(x) {
+                                  x.coffee = "(ev,el)@>\n                                          c = @getComponent() / @incScale - @incDelta\n                                          c < 0 then c = 0\n                                          @setComponent(c)\n                                          @refresh(el)\n                                        ";
+                                  return x;
+                                })(function(ev, el) {
+                                  var c;
+                                  c = this.getComponent() / this.incScale - this.incDelta;
+                                  if (c < 0) {
+                                    c = 0;
+                                  }
+                                  this.setComponent(c);
+                                  return this.refresh(el);
+                                }),
+                                refresh: (function(x) {
+                                  x.coffee = "(el)@>\n                                          c = @getComponent()\n                                          @setView el,\n                                            text: \"#{c*100 + 0.5 | 0}%\"\n                                            bar: c\n                                        ";
+                                  return x;
+                                })(function(el) {
+                                  var c;
+                                  c = this.getComponent();
+                                  return this.setView(el, {
+                                    text: "" + (c * 100 + 0.5 | 0) + "%",
+                                    bar: c
+                                  });
+                                }),
+                                $: this.lib.$
+                              };
+                            });
+                          }
+                        });
+                      };
+                    })(this);
+                    colorComponentSlider({
+                      i: 0,
+                      label: "Red",
+                      barColor: "red"
+                    });
+                    colorComponentSlider({
+                      i: 1,
+                      label: "Green",
+                      barColor: "green"
+                    });
+                    return colorComponentSlider({
+                      i: 2,
+                      label: "Blue",
+                      barColor: "blue"
                     });
                   });
                   this.div({
@@ -1142,57 +1253,43 @@ body { border:0;margin:0;padding:0; }
                     "class": "spiritcaseToolbarGroup",
                     style: "font-size:initial;text-align:initial"
                   }, function() {
-                    return spiritcase.lib.sliderInput({
+                    return spiritcase.lib.sliderInput.build({
                       htmlcup: this,
                       label: "Zoom",
                       value: "" + spiritcase.factor,
                       width: "3em",
                       noBar: true,
-                      module: spiritcase.makeWebmodule("sliderInputZoom", function() {
-                        return {
-                          spiritcase: this,
-                          mouseDown: (function(x) {
-                            x.coffee = "(ev,el)@>";
-                            return x;
-                          })(function(ev, el) {}),
-                          mouseUp: (function(x) {
-                            x.coffee = "(ev,el)@>";
-                            return x;
-                          })(function(ev, el) {}),
-                          mouseMove: (function(x) {
-                            x.coffee = "(ev,el)@>";
-                            return x;
-                          })(function(ev, el) {}),
-                          mouseOut: (function(x) {
-                            x.coffee = "(ev,el)@>";
-                            return x;
-                          })(function(ev, el) {}),
-                          incButton: (function(x) {
-                            x.coffee = "(ev,el)@> @spiritcase.zoomIn(); @refresh(el)";
-                            return x;
-                          })(function(ev, el) {
-                            this.spiritcase.zoomIn();
-                            return this.refresh(el);
-                          }),
-                          decButton: (function(x) {
-                            x.coffee = "(ev,el)@> @spiritcase.zoomOut(); @refresh(el)";
-                            return x;
-                          })(function(ev, el) {
-                            this.spiritcase.zoomOut();
-                            return this.refresh(el);
-                          }),
-                          refresh: (function(x) {
-                            x.coffee = "(el)@>\n                                            { $ } = @\n                                            el = $(el).up(\".sliderInput\")[0]\n                                            $(\".sliderInputValue\", el)[0].innerHTML = \"#{@spiritcase.factor}\"\n                                        ";
-                            return x;
-                          })(function(el) {
-                            var $;
-                            $ = this.$;
-                            el = $(el).up(".sliderInput")[0];
-                            return $(".sliderInputValue", el)[0].innerHTML = "" + this.spiritcase.factor;
-                          }),
-                          $: this.lib.$
-                        };
-                      })
+                      buildModule: function(sliderInput) {
+                        return spiritcase.makeWebmodule("sliderInputZoom", function() {
+                          return {
+                            spiritcase: this,
+                            __proto__: sliderInput,
+                            incButton: (function(x) {
+                              x.coffee = "(ev,el)@> @spiritcase.zoomIn(); @refresh(el)";
+                              return x;
+                            })(function(ev, el) {
+                              this.spiritcase.zoomIn();
+                              return this.refresh(el);
+                            }),
+                            decButton: (function(x) {
+                              x.coffee = "(ev,el)@> @spiritcase.zoomOut(); @refresh(el)";
+                              return x;
+                            })(function(ev, el) {
+                              this.spiritcase.zoomOut();
+                              return this.refresh(el);
+                            }),
+                            refresh: (function(x) {
+                              x.coffee = "(el)@>\n                                          @setView el,\n                                            text: \"#{@spiritcase.factor}\"\n                                        ";
+                              return x;
+                            })(function(el) {
+                              return this.setView(el, {
+                                text: "" + this.spiritcase.factor
+                              });
+                            }),
+                            $: this.lib.$
+                          };
+                        });
+                      }
                     });
                   });
                   return this.div({

@@ -239,17 +239,29 @@ htmlcup.html5Page ->
               x.length == 3 then
                   return [ parseInt(x.substr(0, 1), 16)*0x11, parseInt(x.substr(1, 1), 16)*0x11, parseInt(x.substr(2, 1), 16)*0x11 ]
               throw "hex number has odd length: #{x.length}"
-      sliderInput = ({htmlcup, label, onclick, fillerColor, bgColor, module, value, width, noBar, bar })@>
+      sliderInput =
+        $: $
+        mouseDown:  (ev,el)@>
+        mouseUp:    (ev,el)@>
+        mouseMove:  (ev,el)@>
+        mouseOut:   (ev,el)@>
+        setView: (el, {bar, text})@>
+          { $ } = @
+          el = $(el).up(".sliderInput")[0]
+          $(".sliderInputValue", el)[0].textContent = text
+          $(".sliderInputBar", el).set("$width", "#{bar*100}%")
+        build: ({htmlcup, label, onclick, barColor, bgColor, buildModule, module, value, width, noBar, bar })@>
+          buildModule? then module = buildModule @
           control = (name)-> "javascript:#{module}.#{name}(event,this)"
-          fillerColor ?= "#888"
+          barColor ?= "#888"
           background = if bgColor? then "background:#{bgColor}" else ""
           value ?= "100%"
           width ?= "5em"
           bar ?= 0
           mouseControls = onmousedown:control("mouseDown"), onmouseup:control("mouseUp"), onmousemove:control("mouseMove"), onmouseout:control("mouseOut")
-          htmlcup.div class:"sliderInput", style:"display:inline-block;position:relative;border:1px solid #{fillerColor}", mouseControls, ->
+          htmlcup.div class:"sliderInput", style:"display:inline-block;position:relative;border:1px solid #{barColor}", mouseControls, ->
               noBar or @div style:"position:absolute;left:0;top:0;bottom:0;right:0;z-index:-1", ->
-                  @div class:"sliderInputBar", style:"position:absolute;left:0;top:0;bottom:0;width:#{bar * 100}%;background:#{fillerColor}"
+                  @div class:"sliderInputBar", style:"position:absolute;left:0;top:0;bottom:0;width:#{bar * 100}%;background:#{barColor}"
               @div style:"display:inline-table", ->
                   @div class:"sliderInputButton", style:"display:table-cell;width:1.5em;font-weight:bold", onclick:control("decButton"), "-"
                   @div style:"display:table-cell;width:#{width};max-width:#{width};text-align:center;overflow:visible;position:relative;background:#{bgColor}", mouseControls, ->
@@ -435,33 +447,66 @@ htmlcup.html5Page ->
                         color = (n)=>
                             @div style:"font-size:150%;background:##{n};color:#786;width:1.5em;display:inline-block", onclick:"javascript:spiritcase.setToolColor('#{n}')", "#{n}"
                         @div class:"spiritcaseToolbarGroup", ->
-                          sliderInput
+                          sliderInput.build
                                     htmlcup: @
                                     label: "Opacity"
                                     value: "#{spiritcase.toolAlpha*100 + 0.5 | 0}%"
                                     bar: spiritcase.toolAlpha
-                                    # width:"3em"
+                                    width:"4em"
                                     # noBar: true
-                                    module: spiritcase.makeWebmodule "sliderInputZoom", ->
+                                    buildModule: (sliderInput)-> spiritcase.makeWebmodule "sliderInputOpacity", ->
                                         spiritcase: @
-                                        mouseDown:  (ev,el)@>
-                                        mouseUp:    (ev,el)@>
-                                        mouseMove:  (ev,el)@>
-                                        mouseOut:   (ev,el)@>
+                                        __proto__: sliderInput
+                                        incScale: 1.035
+                                        incDelta: 0.008
                                         incButton: (ev,el)@>
-                                          @spiritcase.toolAlpha = 1.05 * @spiritcase.toolAlpha + 0.01
+                                          @spiritcase.toolAlpha = @spiritcase.toolAlpha * @incScale + @incDelta
                                           @spiritcase.toolAlpha > 1 then @spiritcase.toolAlpha = 1
                                           @refresh(el)
                                         decButton: (ev,el)@>
-                                          @spiritcase.toolAlpha = @spiritcase.toolAlpha / 1.05 - 0.01
+                                          @spiritcase.toolAlpha = @spiritcase.toolAlpha / @incScale - @incDelta
                                           @spiritcase.toolAlpha < 0 then @spiritcase.toolAlpha = 0
                                           @refresh(el)
                                         refresh: (el)@>
-                                            { $ } = @
-                                            el = $(el).up(".sliderInput")[0]
-                                            $(".sliderInputValue", el)[0].innerHTML = "#{@spiritcase.toolAlpha*100 + 0.5 | 0}%"
-                                            $(".sliderInputBar", el).set("$width", "#{@spiritcase.toolAlpha*100}%")
+                                          @setView el,
+                                            text: "#{@spiritcase.toolAlpha*100 + 0.5 | 0}%"
+                                            bar: @spiritcase.toolAlpha
                                         $: @lib.$
+                          colorComponentSlider = ({ i, label, barColor })=> sliderInput.build
+                                    htmlcup: @
+                                    label: label
+                                    barColor: barColor
+                                    value: "#{(spiritcase.toolColor[i]/255)*100 + 0.5 | 0}%"
+                                    bar: spiritcase.toolColor[i]/255
+                                    width:"4em"
+                                    # noBar: true
+                                    buildModule: (sliderInput)-> spiritcase.makeWebmodule "sliderInput#{label}", ->
+                                        spiritcase: @
+                                        __proto__: sliderInput
+                                        colorComponentIndex: i
+                                        getComponent: @> @spiritcase.toolColor[@colorComponentIndex]/255
+                                        setComponent: (v)@> @spiritcase.toolColor[@colorComponentIndex] = v*255
+                                        incScale: 1.035
+                                        incDelta: 0.008
+                                        incButton: (ev,el)@>
+                                          c = @getComponent() * @incScale + @incDelta
+                                          c > 1 then c = 1
+                                          @setComponent(c)
+                                          @refresh(el)
+                                        decButton: (ev,el)@>
+                                          c = @getComponent() / @incScale - @incDelta
+                                          c < 0 then c = 0
+                                          @setComponent(c)
+                                          @refresh(el)
+                                        refresh: (el)@>
+                                          c = @getComponent()
+                                          @setView el,
+                                            text: "#{c*100 + 0.5 | 0}%"
+                                            bar: c
+                                        $: @lib.$
+                          colorComponentSlider i:0, label: "Red",    barColor: "red"
+                          colorComponentSlider i:1, label: "Green",  barColor: "green"
+                          colorComponentSlider i:2, label: "Blue",   barColor: "blue"
                         @div class:"spiritcaseToolbarGroup", ->
                             color "000"
                             color "fff"
@@ -670,24 +715,20 @@ htmlcup.html5Page ->
                             @button id:"spiritcaseEraseButton",   onclick:"javascript:spiritcase.eraseButtonClick(this)",   "Erase"
                             @button id:"spiritcaseEraseButton",   onclick:"javascript:spiritcase.undoButtonClick(this)",    "Undo"
                           @div class:"spiritcaseToolbarGroup", style:"font-size:initial;text-align:initial", ->
-                            spiritcase.lib.sliderInput
+                            spiritcase.lib.sliderInput.build
                                     htmlcup: @
                                     label: "Zoom"
                                     value:"#{spiritcase.factor}"
                                     width:"3em"
                                     noBar: true
-                                    module: spiritcase.makeWebmodule "sliderInputZoom", ->
+                                    buildModule: (sliderInput)-> spiritcase.makeWebmodule "sliderInputZoom", ->
                                         spiritcase: @
-                                        mouseDown:  (ev,el)@>
-                                        mouseUp:    (ev,el)@>
-                                        mouseMove:  (ev,el)@>
-                                        mouseOut:   (ev,el)@>
+                                        __proto__: sliderInput
                                         incButton: (ev,el)@> @spiritcase.zoomIn(); @refresh(el)
                                         decButton: (ev,el)@> @spiritcase.zoomOut(); @refresh(el)
                                         refresh: (el)@>
-                                            { $ } = @
-                                            el = $(el).up(".sliderInput")[0]
-                                            $(".sliderInputValue", el)[0].innerHTML = "#{@spiritcase.factor}"
+                                          @setView el,
+                                            text: "#{@spiritcase.factor}"
                                         $: @lib.$
                           @div class:"spiritcaseToolbarGroup", ->
                             @input id:"spiritcaseColorInput", type:"text", placeholder:"Color", size:"7", onfocus:"javascript:spiritcase.withColorinput(this).onfocus(event)", oninput:"javascript:spiritcase.withColorinput(this).oninput(event)"

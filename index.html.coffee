@@ -322,7 +322,7 @@ htmlcup.html5Page ->
               x = 0
               x_i = 0
               while x < x_s
-                ctx.fillStyle = "#{ [ "1b1b1b", "333333" ][ (x_i ^ y_i) & 1] }"
+                ctx.fillStyle = "#{ [ "181818", "303030" ][ (x_i ^ y_i) & 1] }"
                 # ctx.fillStyle = "#f00"
                 ctx.fillRect x, y, checkersSize, checkersSize
                 x += checkersSize

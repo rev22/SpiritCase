@@ -645,9 +645,14 @@ htmlcup.html5Page ->
           ctx.fillRect x1, y1, x2, y2
           @
 
+        unmodified: true
+        
         mousedown: 0
 
         employMouse: (el, event)@>
+          if @unmodified
+            @checkpoint()
+            @unmodified = false
           { gridSize, factor, factorY, sizeY, factorX, sizeX, checkersSize } = @
           h = gridSize / 2
           x = event.clientX - el.offsetLeft - gridSize
@@ -733,12 +738,23 @@ htmlcup.html5Page ->
           @checkpointTimeout = setTimeout (=> @checkpointTimeout = null; @checkpoint()), @scheduleCheckpointDelay
             
         undoButtonClick: @>
+          @checkpoint() unless @unmodified
           { $ } = @lib
           @setDialog ->
             @label "History: "
             @span class:"undoHistory"
-          $(".undoHistory").add (x.canvas for x in @checkpoints.concat([]).reverse())
-
+          $(".undoHistory").add (@setupUndoStep(v.canvas) for v in @checkpoints.concat([]).reverse())
+        setupUndoStep: (v)@>
+          v.setAttribute "onclick", "javascript:spiritcase.chooseUndoStep(event,this)"
+          v
+        chooseUndoStep: (event, el1)@>
+            event.stopPropagation()
+            event.preventDefault()
+            @checkpoint() unless @unmodified
+            @imageData = el1.getContext('2d').getImageData(0, 0, el1.width, el1.height)
+            @updateIcon()
+            @redraw()
+            
         getAsCanvas: @>
           { document } = @lib.window
           { imageData } = @
@@ -791,6 +807,7 @@ htmlcup.html5Page ->
           $(".framesList").add @frames
           @setupFrame k, v for k,v of @frames
     
+        
       spiritcase.setup()
     # @table id:"overlay", style:"position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;overflow:hidden:",
     #   @div style:"position:absolute;top:0;left:0;right:0;color:white;width:100%;overflow:hidden;background:rgba(0,0,255,0.1);border:1px solid white", "top"

@@ -1223,12 +1223,17 @@ body { border:0;margin:0;padding:0; }
             ctx.fillRect(x1, y1, x2, y2);
             return this;
           }),
+          unmodified: true,
           mousedown: 0,
           employMouse: (function(x) {
-            x.coffee = "(el, event)@>\n          { gridSize, factor, factorY, sizeY, factorX, sizeX, checkersSize } = @\n          h = gridSize / 2\n          x = event.clientX - el.offsetLeft - gridSize\n          y = event.clientY - el.offsetTop - gridSize\n          @tool?.employ(x / factorX, y / factorY)\n\n        ";
+            x.coffee = "(el, event)@>\n          if @unmodified\n            @checkpoint()\n            @unmodified = false\n          { gridSize, factor, factorY, sizeY, factorX, sizeX, checkersSize } = @\n          h = gridSize / 2\n          x = event.clientX - el.offsetLeft - gridSize\n          y = event.clientY - el.offsetTop - gridSize\n          @tool?.employ(x / factorX, y / factorY)\n\n        ";
             return x;
           })(function(el, event) {
             var checkersSize, factor, factorX, factorY, gridSize, h, sizeX, sizeY, x, y, _ref;
+            if (this.unmodified) {
+              this.checkpoint();
+              this.unmodified = false;
+            }
             gridSize = this.gridSize, factor = this.factor, factorY = this.factorY, sizeY = this.sizeY, factorX = this.factorX, sizeX = this.sizeX, checkersSize = this.checkersSize;
             h = gridSize / 2;
             x = event.clientX - el.offsetLeft - gridSize;
@@ -1370,10 +1375,13 @@ body { border:0;margin:0;padding:0; }
             })(this)), this.scheduleCheckpointDelay);
           }),
           undoButtonClick: (function(x) {
-            x.coffee = "@>\n          { $ } = @lib\n          @setDialog ->\n            @label \"History: \"\n            @span class:\"undoHistory\"\n          $(\".undoHistory\").add (x.canvas for x in @checkpoints.concat([]).reverse())\n\n        ";
+            x.coffee = "@>\n          @checkpoint() unless @unmodified\n          { $ } = @lib\n          @setDialog ->\n            @label \"History: \"\n            @span class:\"undoHistory\"\n          $(\".undoHistory\").add (@setupUndoStep(v.canvas) for v in @checkpoints.concat([]).reverse())\n        ";
             return x;
           })(function() {
-            var $, x;
+            var $, v;
+            if (!this.unmodified) {
+              this.checkpoint();
+            }
             $ = this.lib.$;
             this.setDialog(function() {
               this.label("History: ");
@@ -1386,11 +1394,31 @@ body { border:0;margin:0;padding:0; }
               _ref = this.checkpoints.concat([]).reverse();
               _results = [];
               for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                x = _ref[_i];
-                _results.push(x.canvas);
+                v = _ref[_i];
+                _results.push(this.setupUndoStep(v.canvas));
               }
               return _results;
             }).call(this));
+          }),
+          setupUndoStep: (function(x) {
+            x.coffee = "(v)@>\n          v.setAttribute \"onclick\", \"javascript:spiritcase.chooseUndoStep(event,this)\"\n          v\n        ";
+            return x;
+          })(function(v) {
+            v.setAttribute("onclick", "javascript:spiritcase.chooseUndoStep(event,this)");
+            return v;
+          }),
+          chooseUndoStep: (function(x) {
+            x.coffee = "(event, el1)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @checkpoint() unless @unmodified\n            @imageData = el1.getContext('2d').getImageData(0, 0, el1.width, el1.height)\n            @updateIcon()\n            @redraw()\n            \n        ";
+            return x;
+          })(function(event, el1) {
+            event.stopPropagation();
+            event.preventDefault();
+            if (!this.unmodified) {
+              this.checkpoint();
+            }
+            this.imageData = el1.getContext('2d').getImageData(0, 0, el1.width, el1.height);
+            this.updateIcon();
+            return this.redraw();
           }),
           getAsCanvas: (function(x) {
             x.coffee = "@>\n          { document } = @lib.window\n          { imageData } = @\n          canvas = document.createElement \"canvas\"\n          canvas.height = imageData.height\n          canvas.width = imageData.width\n          ctx = canvas.getContext \"2d\"\n          ctx.putImageData imageData, 0, 0\n          canvas\n\n        ";
@@ -1460,7 +1488,7 @@ body { border:0;margin:0;padding:0; }
             return v.setAttribute("onclick", "javascript:spiritcase.swapFrame(event,this," + k + ")");
           }),
           framesButtonClick: (function(x) {
-            x.coffee = "@>\n          { $ } = @lib\n          @setDialog ->\n              @label \"Frames: \"\n              @span class:\"framesList\"\n              @button onclick:\"javascript:spiritcase.addFrame()\", \"Add\"\n          $(\".framesList\").add @frames\n          @setupFrame k, v for k,v of @frames\n    \n      ";
+            x.coffee = "@>\n          { $ } = @lib\n          @setDialog ->\n              @label \"Frames: \"\n              @span class:\"framesList\"\n              @button onclick:\"javascript:spiritcase.addFrame()\", \"Add\"\n          $(\".framesList\").add @frames\n          @setupFrame k, v for k,v of @frames\n    \n        \n      ";
             return x;
           })(function() {
             var $, k, v, _ref, _results;

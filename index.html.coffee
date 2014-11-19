@@ -594,8 +594,8 @@ htmlcup.html5Page ->
                         finally
                             @editingValue = false
                 lib: @lib
-        toolColor: [ Math.round(Math.random()*255), Math.round(Math.random()*255), Math.round(Math.random()*255) ]
-        toolAlpha: 1
+        toolColor: [ Math.round(100+Math.random()*155), Math.round(100+Math.random()*155), Math.round(100+Math.random()*155) ]
+        toolAlpha: 0.3
         setColorPickerTool: @> # TODO
 
         setToolColorHex: (c)@>

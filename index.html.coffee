@@ -124,6 +124,9 @@ htmlcup.html5Page ->
       .spiritcaseDialog {
         padding-top:1em;
       }
+      .sliderInput {
+        cursor:default;
+      }
       .sliderInputValue {
           font-size:100%;
           font-weight:bold;
@@ -144,7 +147,7 @@ htmlcup.html5Page ->
           color:white;
           font-family: sans;
           text-align:center;
-          cursor:pointer;
+          cursor:pointer;cursor:hand;
       }
       .sliderInputButton:hover {
           background:rgba(0,0,0,0.2);
@@ -258,8 +261,7 @@ htmlcup.html5Page ->
         terminateEvent: (ev)@>
           ev.stopPropagation()
           ev.preventDefault()
-        buttonsPressed: 0
-        mouseSet: (ev,el)@>
+        mouseEv: (ev,el)@>
           r = el.getClientRects()[0]
           sx = r.width
           # sy = el.offsetHeight
@@ -267,28 +269,33 @@ htmlcup.html5Page ->
           # y = ev.clientY - el.offsetTop
           @barSet(x/(sx - 1), el)
         barSet: (bar, el)@> @setView el, { bar } # { text: "#{bar}" }
-        mouseDown:  (ev,el)@>
-          # return unless ev.target is el
+        barClick:  (ev,el)@>
           @terminateEvent(ev)
-          # ev.target.setCapture()
-          @buttonsPressed++ if @buttonsPressed < 1
-          @mouseSet(ev,el)
-        mouseUp:    (ev,el)@>
-          # return unless ev.target is el
-          @terminateEvent(ev)
-          @buttonsPressed-- if @buttonsPressed > 0
-        mouseMove:  (ev,el)@>
-          # return unless ev.target is el
-          @terminateEvent(ev)
-          @mouseSet(ev,el) if @buttonsPressed > 0
-        mouseOut:   (ev,el)@>
-          @terminateEvent(ev)
-          # if ev.target is el
-          # @buttonsPressed = 0
-        mouseOver:   (ev,el)@>
-          @terminateEvent(ev)
-          if ev.target is el
-            @buttonsPressed = 0
+          @mouseEv(ev,el)
+        # buttonsPressed: 0
+        # mouseDown:  (ev,el)@>
+        #   # return unless ev.target is el
+        #   @terminateEvent(ev)
+        #   # ev.target.setCapture()
+        #   @buttonsPressed++ if @buttonsPressed < 1
+        #   @mouseEv(ev,el)
+        # mouseUp:    (ev,el)@>
+        #   # return unless ev.target is el
+        #   @terminateEvent(ev)
+        #   @buttonsPressed-- if @buttonsPressed > 0
+        # mouseMove:  (ev,el)@>
+        #   # return unless ev.target is el
+        #   @terminateEvent(ev)
+        #   @mouseEv(ev,el) if @buttonsPressed > 0
+        # mouseOut:   (ev,el)@>
+        #   @terminateEvent(ev)
+        #   # if ev.target is el
+        #   # @buttonsPressed = 0
+        # mouseOver:   (ev,el)@>
+        #   @terminateEvent(ev)
+        #   if ev.target is el
+        #     @buttonsPressed = 0
+        ignoreEv: (ev, el)@> @terminateEvent(ev)
         setView: (el, {bar, text})@>
           { $ } = @
           el = $(el).up(".sliderInput")[0]
@@ -302,7 +309,7 @@ htmlcup.html5Page ->
           value ?= "100%"
           width ?= "5em"
           bar ?= 0
-          mouseControls = onmousedown:control("mouseDown") # , onmousemove:control("mouseMove") # , onmouseup:control("mouseUp"), onmouseout:control("mouseOut"), onmouseover:control("mouseOver")
+          mouseControls = onclick:control("barClick"), onmousedown:control("ignoreEv") # onmousedown:control("mouseDown") # , onmousemove:control("mouseMove") # , onmouseup:control("mouseUp"), onmouseout:control("mouseOut"), onmouseover:control("mouseOver")
           htmlcup.div class:"sliderInput", style:"display:inline-block;position:relative;border:1px solid #{barColor}", ->
               noBar or @div style:"position:absolute;left:0;top:0;bottom:0;right:0;z-index:-1", ->
                   @div class:"sliderInputBar", style:"position:absolute;left:0;top:0;bottom:0;width:#{bar * 100}%;background:#{barColor}"

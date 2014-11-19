@@ -96,6 +96,9 @@ body { border:0;margin:0;padding:0; }
 .spiritcaseDialog {
   padding-top:1em;
 }
+.sliderInput {
+  cursor:default;
+}
 .sliderInputValue {
     font-size:100%;
     font-weight:bold;
@@ -116,7 +119,7 @@ body { border:0;margin:0;padding:0; }
     color:white;
     font-family: sans;
     text-align:center;
-    cursor:pointer;
+    cursor:pointer;cursor:hand;
 }
 .sliderInputButton:hover {
     background:rgba(0,0,0,0.2);
@@ -442,8 +445,7 @@ body { border:0;margin:0;padding:0; }
             ev.stopPropagation();
             return ev.preventDefault();
           }),
-          buttonsPressed: 0,
-          mouseSet: (function(x) {
+          mouseEv: (function(x) {
             x.coffee = "(ev,el)@>\n          r = el.getClientRects()[0]\n          sx = r.width\n          # sy = el.offsetHeight\n          x = ev.clientX - r.left\n          # y = ev.clientY - el.offsetTop\n          @barSet(x/(sx - 1), el)\n        ";
             return x;
           })(function(ev, el) {
@@ -461,48 +463,18 @@ body { border:0;margin:0;padding:0; }
               bar: bar
             });
           }),
-          mouseDown: (function(x) {
-            x.coffee = "(ev,el)@>\n          # return unless ev.target is el\n          @terminateEvent(ev)\n          # ev.target.setCapture()\n          @buttonsPressed++ if @buttonsPressed < 1\n          @mouseSet(ev,el)\n        ";
+          barClick: (function(x) {
+            x.coffee = "(ev,el)@>\n          @terminateEvent(ev)\n          @mouseEv(ev,el)\n        # buttonsPressed: 0\n        # mouseDown:  (ev,el)@>\n        #   # return unless ev.target is el\n        #   @terminateEvent(ev)\n        #   # ev.target.setCapture()\n        #   @buttonsPressed++ if @buttonsPressed < 1\n        #   @mouseEv(ev,el)\n        # mouseUp:    (ev,el)@>\n        #   # return unless ev.target is el\n        #   @terminateEvent(ev)\n        #   @buttonsPressed-- if @buttonsPressed > 0\n        # mouseMove:  (ev,el)@>\n        #   # return unless ev.target is el\n        #   @terminateEvent(ev)\n        #   @mouseEv(ev,el) if @buttonsPressed > 0\n        # mouseOut:   (ev,el)@>\n        #   @terminateEvent(ev)\n        #   # if ev.target is el\n        #   # @buttonsPressed = 0\n        # mouseOver:   (ev,el)@>\n        #   @terminateEvent(ev)\n        #   if ev.target is el\n        #     @buttonsPressed = 0\n        ";
             return x;
           })(function(ev, el) {
             this.terminateEvent(ev);
-            if (this.buttonsPressed < 1) {
-              this.buttonsPressed++;
-            }
-            return this.mouseSet(ev, el);
+            return this.mouseEv(ev, el);
           }),
-          mouseUp: (function(x) {
-            x.coffee = "(ev,el)@>\n          # return unless ev.target is el\n          @terminateEvent(ev)\n          @buttonsPressed-- if @buttonsPressed > 0\n        ";
-            return x;
-          })(function(ev, el) {
-            this.terminateEvent(ev);
-            if (this.buttonsPressed > 0) {
-              return this.buttonsPressed--;
-            }
-          }),
-          mouseMove: (function(x) {
-            x.coffee = "(ev,el)@>\n          # return unless ev.target is el\n          @terminateEvent(ev)\n          @mouseSet(ev,el) if @buttonsPressed > 0\n        ";
-            return x;
-          })(function(ev, el) {
-            this.terminateEvent(ev);
-            if (this.buttonsPressed > 0) {
-              return this.mouseSet(ev, el);
-            }
-          }),
-          mouseOut: (function(x) {
-            x.coffee = "(ev,el)@>\n          @terminateEvent(ev)\n          # if ev.target is el\n          # @buttonsPressed = 0\n        ";
+          ignoreEv: (function(x) {
+            x.coffee = "(ev, el)@> @terminateEvent(ev)";
             return x;
           })(function(ev, el) {
             return this.terminateEvent(ev);
-          }),
-          mouseOver: (function(x) {
-            x.coffee = "(ev,el)@>\n          @terminateEvent(ev)\n          if ev.target is el\n            @buttonsPressed = 0\n        ";
-            return x;
-          })(function(ev, el) {
-            this.terminateEvent(ev);
-            if (ev.target === el) {
-              return this.buttonsPressed = 0;
-            }
           }),
           setView: (function(x) {
             x.coffee = "(el, {bar, text})@>\n          { $ } = @\n          el = $(el).up(\".sliderInput\")[0]\n          text?  then $(\".sliderInputValue\", el)[0].textContent = text\n          bar?   then $(\".sliderInputBar\", el).set(\"$width\", \"#{bar*100}%\")\n        ";
@@ -520,7 +492,7 @@ body { border:0;margin:0;padding:0; }
             }
           }),
           build: (function(x) {
-            x.coffee = "({htmlcup, label, onclick, barColor, bgColor, buildModule, module, value, width, noBar, bar })@>\n          buildModule? then module = buildModule @\n          control = (name)-> \"javascript:#{module}.#{name}(event,this)\"\n          barColor ?= \"#888\"\n          background = if bgColor? then \"background:#{bgColor}\" else \"\"\n          value ?= \"100%\"\n          width ?= \"5em\"\n          bar ?= 0\n          mouseControls = onmousedown:control(\"mouseDown\") # , onmousemove:control(\"mouseMove\") # , onmouseup:control(\"mouseUp\"), onmouseout:control(\"mouseOut\"), onmouseover:control(\"mouseOver\")\n          htmlcup.div class:\"sliderInput\", style:\"display:inline-block;position:relative;border:1px solid #{barColor}\", ->\n              noBar or @div style:\"position:absolute;left:0;top:0;bottom:0;right:0;z-index:-1\", ->\n                  @div class:\"sliderInputBar\", style:\"position:absolute;left:0;top:0;bottom:0;width:#{bar * 100}%;background:#{barColor}\"\n              @div style:\"display:inline-table\", mouseControls, ->\n                  @div class:\"sliderInputButton\", style:\"display:table-cell;width:1.5em;font-weight:bold\", onclick:control(\"decButton\"), onmousedown:control(\"terminateEvent\"), \"-\"\n                  @div style:\"display:table-cell;width:#{width};max-width:#{width};text-align:center;overflow:visible;position:relative;background:#{bgColor}\", ->\n                      @span class:\"sliderInputLabel\", style:\"position:absolute;left:0;top:0\", ->\n                          @span label\n                      @div class:\"sliderInputValue\", style:\"position:absolute;bottom:0;right:0\", value\n                  @div class:\"sliderInputButton\", style:\"display:table-cell;width:1.5em\", onclick:control(\"incButton\"), onmousedown:control(\"terminateEvent\"), \"+\"\n  \n      ";
+            x.coffee = "({htmlcup, label, onclick, barColor, bgColor, buildModule, module, value, width, noBar, bar })@>\n          buildModule? then module = buildModule @\n          control = (name)-> \"javascript:#{module}.#{name}(event,this)\"\n          barColor ?= \"#888\"\n          background = if bgColor? then \"background:#{bgColor}\" else \"\"\n          value ?= \"100%\"\n          width ?= \"5em\"\n          bar ?= 0\n          mouseControls = onclick:control(\"barClick\"), onmousedown:control(\"ignoreEv\") # onmousedown:control(\"mouseDown\") # , onmousemove:control(\"mouseMove\") # , onmouseup:control(\"mouseUp\"), onmouseout:control(\"mouseOut\"), onmouseover:control(\"mouseOver\")\n          htmlcup.div class:\"sliderInput\", style:\"display:inline-block;position:relative;border:1px solid #{barColor}\", ->\n              noBar or @div style:\"position:absolute;left:0;top:0;bottom:0;right:0;z-index:-1\", ->\n                  @div class:\"sliderInputBar\", style:\"position:absolute;left:0;top:0;bottom:0;width:#{bar * 100}%;background:#{barColor}\"\n              @div style:\"display:inline-table\", mouseControls, ->\n                  @div class:\"sliderInputButton\", style:\"display:table-cell;width:1.5em;font-weight:bold\", onclick:control(\"decButton\"), onmousedown:control(\"terminateEvent\"), \"-\"\n                  @div style:\"display:table-cell;width:#{width};max-width:#{width};text-align:center;overflow:visible;position:relative;background:#{bgColor}\", ->\n                      @span class:\"sliderInputLabel\", style:\"position:absolute;left:0;top:0\", ->\n                          @span label\n                      @div class:\"sliderInputValue\", style:\"position:absolute;bottom:0;right:0\", value\n                  @div class:\"sliderInputButton\", style:\"display:table-cell;width:1.5em\", onclick:control(\"incButton\"), onmousedown:control(\"terminateEvent\"), \"+\"\n  \n      ";
             return x;
           })(function(_arg) {
             var background, bar, barColor, bgColor, buildModule, control, htmlcup, label, module, mouseControls, noBar, onclick, value, width;
@@ -545,7 +517,8 @@ body { border:0;margin:0;padding:0; }
               bar = 0;
             }
             mouseControls = {
-              onmousedown: control("mouseDown")
+              onclick: control("barClick"),
+              onmousedown: control("ignoreEv")
             };
             return htmlcup.div({
               "class": "sliderInput",

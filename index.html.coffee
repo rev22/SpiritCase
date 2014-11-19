@@ -805,8 +805,7 @@ htmlcup.html5Page ->
         updateIcon: @>
           @icon.setImage(@imageData)
         checkpoint: (name)@>
-          { console } = @lib.window
-          console.log "checkpoint #{name}"
+          # { console } = @lib.window; console.log "checkpoint #{name}"
           (xx = @checkpointTimeout)? then
             { clearTimeout } = @lib.window
             clearTimeout xx
@@ -851,11 +850,11 @@ htmlcup.html5Page ->
         chooseUndoStep: (event, el1)@>
             event.stopPropagation()
             event.preventDefault()
-            @checkpoint("chooseUndoStep") if @modified
+            @checkpoint("chooseUndoStep") if @modified and @modified isnt "chooseUndo"
             @imageData = el1.getContext('2d').getImageData(0, 0, el1.width, el1.height)
             @updateIcon()
             @redraw()
-            @modified = true
+            @modified = "chooseUndo"
             
         getAsCanvas: @>
           { document } = @lib.window

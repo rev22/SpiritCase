@@ -1432,12 +1432,10 @@ body { border:0;margin:0;padding:0; }
             return this.icon.setImage(this.imageData);
           }),
           checkpoint: (function(x) {
-            x.coffee = "(name)@>\n          { console } = @lib.window\n          console.log \"checkpoint #{name}\"\n          (xx = @checkpointTimeout)? then\n            { clearTimeout } = @lib.window\n            clearTimeout xx\n            @checkpointTimeout = null\n          { Date } = @lib.window\n          canvas = @getAsCanvas()\n          @lastCheckpoint =\n                      time: new Date\n                      canvas: canvas\n                      counter: @checkpointsCounter++\n          @checkpoints.push @lastCheckpoint\n          if @checkpoints.length > @maxCheckpoints\n            for x in @checkpoints\n              x.generation = (x.generation ? 0) + 1\n            rest = @checkpoints.splice(@checkpoints / 2)\n            compressed = [ ]\n            for k,v of rest\n              if k & 1\n                compressed.push v\n            @checkpoints = @checkpoints.concat compressed\n          if !@currentDialog? or @currentDialog is \"undoHistory\"\n            @undoButtonClick(noCheckpoint: 1)\n          @modified = false\n        ";
+            x.coffee = "(name)@>\n          # { console } = @lib.window; console.log \"checkpoint #{name}\"\n          (xx = @checkpointTimeout)? then\n            { clearTimeout } = @lib.window\n            clearTimeout xx\n            @checkpointTimeout = null\n          { Date } = @lib.window\n          canvas = @getAsCanvas()\n          @lastCheckpoint =\n                      time: new Date\n                      canvas: canvas\n                      counter: @checkpointsCounter++\n          @checkpoints.push @lastCheckpoint\n          if @checkpoints.length > @maxCheckpoints\n            for x in @checkpoints\n              x.generation = (x.generation ? 0) + 1\n            rest = @checkpoints.splice(@checkpoints / 2)\n            compressed = [ ]\n            for k,v of rest\n              if k & 1\n                compressed.push v\n            @checkpoints = @checkpoints.concat compressed\n          if !@currentDialog? or @currentDialog is \"undoHistory\"\n            @undoButtonClick(noCheckpoint: 1)\n          @modified = false\n        ";
             return x;
           })(function(name) {
-            var Date, canvas, clearTimeout, compressed, console, k, rest, v, x, xx, _i, _len, _ref, _ref1;
-            console = this.lib.window.console;
-            console.log("checkpoint " + name);
+            var Date, canvas, clearTimeout, compressed, k, rest, v, x, xx, _i, _len, _ref, _ref1;
             if ((xx = this.checkpointTimeout) != null) {
               clearTimeout = this.lib.window.clearTimeout;
               clearTimeout(xx);
@@ -1527,18 +1525,18 @@ body { border:0;margin:0;padding:0; }
             return v;
           }),
           chooseUndoStep: (function(x) {
-            x.coffee = "(event, el1)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @checkpoint(\"chooseUndoStep\") if @modified\n            @imageData = el1.getContext('2d').getImageData(0, 0, el1.width, el1.height)\n            @updateIcon()\n            @redraw()\n            @modified = true\n            \n        ";
+            x.coffee = "(event, el1)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @checkpoint(\"chooseUndoStep\") if @modified and @modified isnt \"chooseUndo\"\n            @imageData = el1.getContext('2d').getImageData(0, 0, el1.width, el1.height)\n            @updateIcon()\n            @redraw()\n            @modified = \"chooseUndo\"\n            \n        ";
             return x;
           })(function(event, el1) {
             event.stopPropagation();
             event.preventDefault();
-            if (this.modified) {
+            if (this.modified && this.modified !== "chooseUndo") {
               this.checkpoint("chooseUndoStep");
             }
             this.imageData = el1.getContext('2d').getImageData(0, 0, el1.width, el1.height);
             this.updateIcon();
             this.redraw();
-            return this.modified = true;
+            return this.modified = "chooseUndo";
           }),
           getAsCanvas: (function(x) {
             x.coffee = "@>\n          { document } = @lib.window\n          { imageData } = @\n          canvas = document.createElement \"canvas\"\n          canvas.height = imageData.height\n          canvas.width = imageData.width\n          ctx = canvas.getContext \"2d\"\n          ctx.putImageData imageData, 0, 0\n          canvas\n\n        ";

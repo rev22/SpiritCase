@@ -1332,14 +1332,14 @@ body { border:0;margin:0;padding:0; }
             }
           }),
           setup: (function(x) {
-            x.coffee = "@>\n          @el.spiritcase = @\n          @imageData = @icon.getData()\n            # width: @sizeX\n            # height: @sizeY\n            # data: do=>\n            #   m = @sizeX * @sizeY * 4\n            #   x = [ ]\n            #   x.push 0 while m-- > 0\n            #   x\n\n          @redraw()\n          @paintButtonClick()\n\n          @el.onmousemove = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            if @spiritcase.mousedown > 0\n                @spiritcase.employMouse @, event, false\n          @el.onmouseup = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event, false\n            unless @spiritcase.mousedown <= 0\n              @spiritcase.mousedown--\n              unless @spiritcase.mousedown > 0\n                @spiritcase.doneMouse(@, event, true)\n          @el.onmousedown = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event, 0 is @spiritcase.mousedown++\n          @el.onmouseout = (event)@>\n            @spiritcase.doneMouse(@, event, @spiritcase.mousedown > 0)\n            @spiritcase.mousedown = 0\n          @\n        ";
+            x.coffee = "@>\n          @el.spiritcase = @\n          @imageData = @icon.getData()\n            # width: @sizeX\n            # height: @sizeY\n            # data: do=>\n            #   m = @sizeX * @sizeY * 4\n            #   x = [ ]\n            #   x.push 0 while m-- > 0\n            #   x\n\n          @redraw()\n          @paintButtonClick()\n\n          @el.ontouchmove = @el.onmousemove = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            if @spiritcase.mousedown > 0\n                @spiritcase.employMouse @, event, false\n          @el.ontouchend = @el.onmouseup = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event, false\n            unless @spiritcase.mousedown <= 0\n              @spiritcase.mousedown--\n              unless @spiritcase.mousedown > 0\n                @spiritcase.doneMouse(@, event, true)\n          @el.ontouchstart = @el.onmousedown = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event, 0 is @spiritcase.mousedown++\n          @el.ontouchcancel = @el.onmouseout = (event)@>\n            @spiritcase.doneMouse(@, event, @spiritcase.mousedown > 0)\n            @spiritcase.mousedown = 0\n          @\n        ";
             return x;
           })(function() {
             this.el.spiritcase = this;
             this.imageData = this.icon.getData();
             this.redraw();
             this.paintButtonClick();
-            this.el.onmousemove = (function(x) {
+            this.el.ontouchmove = this.el.onmousemove = (function(x) {
               x.coffee = "(event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            if @spiritcase.mousedown > 0\n                @spiritcase.employMouse @, event, false\n          ";
               return x;
             })(function(event) {
@@ -1349,7 +1349,7 @@ body { border:0;margin:0;padding:0; }
                 return this.spiritcase.employMouse(this, event, false);
               }
             });
-            this.el.onmouseup = (function(x) {
+            this.el.ontouchend = this.el.onmouseup = (function(x) {
               x.coffee = "(event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event, false\n            unless @spiritcase.mousedown <= 0\n              @spiritcase.mousedown--\n              unless @spiritcase.mousedown > 0\n                @spiritcase.doneMouse(@, event, true)\n          ";
               return x;
             })(function(event) {
@@ -1363,7 +1363,7 @@ body { border:0;margin:0;padding:0; }
                 }
               }
             });
-            this.el.onmousedown = (function(x) {
+            this.el.ontouchstart = this.el.onmousedown = (function(x) {
               x.coffee = "(event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event, 0 is @spiritcase.mousedown++\n          ";
               return x;
             })(function(event) {
@@ -1371,7 +1371,7 @@ body { border:0;margin:0;padding:0; }
               event.preventDefault();
               return this.spiritcase.employMouse(this, event, 0 === this.spiritcase.mousedown++);
             });
-            this.el.onmouseout = (function(x) {
+            this.el.ontouchcancel = this.el.onmouseout = (function(x) {
               x.coffee = "(event)@>\n            @spiritcase.doneMouse(@, event, @spiritcase.mousedown > 0)\n            @spiritcase.mousedown = 0\n          ";
               return x;
             })(function(event) {

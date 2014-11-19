@@ -756,12 +756,12 @@ htmlcup.html5Page ->
           @redraw()
           @paintButtonClick()
 
-          @el.onmousemove = (event)@>
+          @el.ontouchmove = @el.onmousemove = (event)@>
             event.stopPropagation()
             event.preventDefault()
             if @spiritcase.mousedown > 0
                 @spiritcase.employMouse @, event, false
-          @el.onmouseup = (event)@>
+          @el.ontouchend = @el.onmouseup = (event)@>
             event.stopPropagation()
             event.preventDefault()
             @spiritcase.employMouse @, event, false
@@ -769,11 +769,11 @@ htmlcup.html5Page ->
               @spiritcase.mousedown--
               unless @spiritcase.mousedown > 0
                 @spiritcase.doneMouse(@, event, true)
-          @el.onmousedown = (event)@>
+          @el.ontouchstart = @el.onmousedown = (event)@>
             event.stopPropagation()
             event.preventDefault()
             @spiritcase.employMouse @, event, 0 is @spiritcase.mousedown++
-          @el.onmouseout = (event)@>
+          @el.ontouchcancel = @el.onmouseout = (event)@>
             @spiritcase.doneMouse(@, event, @spiritcase.mousedown > 0)
             @spiritcase.mousedown = 0
           @

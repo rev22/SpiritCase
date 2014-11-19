@@ -705,8 +705,19 @@ body { border:0;margin:0;padding:0; }
               }
             }
           }),
+          updateCanvasSize: (function(x) {
+            x.coffee = "@>\n          { imageData } = @\n          unless @sizeX is imageData.width and @sizeY is imageData.height\n            @sizeX = imageData.width\n            @sizeY = imageData.height\n        ";
+            return x;
+          })(function() {
+            var imageData;
+            imageData = this.imageData;
+            if (!(this.sizeX === imageData.width && this.sizeY === imageData.height)) {
+              this.sizeX = imageData.width;
+              return this.sizeY = imageData.height;
+            }
+          }),
           load: (function(x) {
-            x.coffee = "(imageData)@>\n            @addFrame?()\n            @icon.setImage(imageData)\n            @imageData = imageData\n            @redraw()\n            unless @sizeX is imageData.width and @sizeY is imageData.height\n                @sizeX = imageData.width\n                @sizeY = imageData.height\n            @imageData = imageData\n            @redraw()\n        ";
+            x.coffee = "(imageData)@>\n            @addFrame?()\n            @icon.setImage(imageData)\n            @imageData = imageData\n            @updateCanvasSize()\n            @redraw()\n        ";
             return x;
           })(function(imageData) {
             if (typeof this.addFrame === "function") {
@@ -714,12 +725,7 @@ body { border:0;margin:0;padding:0; }
             }
             this.icon.setImage(imageData);
             this.imageData = imageData;
-            this.redraw();
-            if (!(this.sizeX === imageData.width && this.sizeY === imageData.height)) {
-              this.sizeX = imageData.width;
-              this.sizeY = imageData.height;
-            }
-            this.imageData = imageData;
+            this.updateCanvasSize();
             return this.redraw();
           }),
           pixelColor: (function(x) {
@@ -1474,7 +1480,7 @@ body { border:0;margin:0;padding:0; }
           }),
           scheduleCheckpointDelay: 3000,
           scheduleCheckpoint: (function(x) {
-            x.coffee = "(name)@>\n          return if @checkpointTimeout\n          { setTimeout } = @lib.window\n          @checkpointTimeout = setTimeout (=> @checkpointTimeout = null; @checkpoint(name)), @scheduleCheckpointDelay\n            \n        ";
+            x.coffee = "(name)@>\n          return if @checkpointTimeout\n          { setTimeout } = @lib.window\n          @checkpointTimeout = setTimeout (=> @checkpointTimeout = null; @checkpoint(name)), @scheduleCheckpointDelay\n\n        ";
             return x;
           })(function(name) {
             var setTimeout;
@@ -1516,6 +1522,33 @@ body { border:0;margin:0;padding:0; }
               }
               return _results;
             }).call(this));
+          }),
+          webmodule: "spiritcase",
+          eventControl: (function(x) {
+            x.coffee = "(name)@> \"javascript:#{@webmodule}.#{name}(event,this)\"";
+            return x;
+          })(function(name) {
+            return "javascript:" + this.webmodule + "." + name + "(event,this)";
+          }),
+          moreButtonClick: (function(x) {
+            x.coffee = "(opts)@>\n          control = => @eventControl.apply @, arguments \n          @setDialog \"more\", ->\n            @label \"Scale: \"\n            @button onclick:control(\"doubleScale\"), \"2X\"\n            @button onclick:control(\"halveScale\"), \"/2\"\n        ";
+            return x;
+          })(function(opts) {
+            var control;
+            control = (function(_this) {
+              return function() {
+                return _this.eventControl.apply(_this, arguments);
+              };
+            })(this);
+            return this.setDialog("more", function() {
+              this.label("Scale: ");
+              this.button({
+                onclick: control("doubleScale")
+              }, "2X");
+              return this.button({
+                onclick: control("halveScale")
+              }, "/2");
+            });
           }),
           setupUndoStep: (function(x) {
             x.coffee = "(v)@>\n          v.setAttribute \"onclick\", \"javascript:spiritcase.chooseUndoStep(event,this)\"\n          v\n        ";
@@ -1585,7 +1618,7 @@ body { border:0;margin:0;padding:0; }
             return _results;
           }),
           swapFrame: (function(x) {
-            x.coffee = "(event, el1, i)@>\n            @updateIcon()\n            event.stopPropagation()\n            event.preventDefault()\n            el0 = @icon.el\n            @icon.el = el1\n            @frames[i] = el0\n            n0 = el0.nextSibling\n            p0 = el0.parentNode\n            n1 = el1.nextSibling\n            p1 = el1.parentNode\n            p0.insertBefore(el1, n0)\n            p1.insertBefore(el0, n1)\n            @setupFrame i, el0\n            @imageData = el1.getContext('2d').getImageData(0, 0, el1.width, el1.height)\n            @redraw()\n        \n        ";
+            x.coffee = "(event, el1, i)@>\n            @updateIcon()\n            event.stopPropagation()\n            event.preventDefault()\n            el0 = @icon.el\n            @icon.el = el1\n            @frames[i] = el0\n            n0 = el0.nextSibling\n            p0 = el0.parentNode\n            n1 = el1.nextSibling\n            p1 = el1.parentNode\n            p0.insertBefore(el1, n0)\n            p1.insertBefore(el0, n1)\n            @setupFrame i, el0\n            @imageData = el1.getContext('2d').getImageData(0, 0, el1.width, el1.height)\n            @updateCanvasSize()            \n            @redraw()\n        \n        ";
             return x;
           })(function(event, el1, i) {
             var el0, n0, n1, p0, p1;
@@ -1603,13 +1636,84 @@ body { border:0;margin:0;padding:0; }
             p1.insertBefore(el0, n1);
             this.setupFrame(i, el0);
             this.imageData = el1.getContext('2d').getImageData(0, 0, el1.width, el1.height);
+            this.updateCanvasSize();
             return this.redraw();
           }),
           setupFrame: (function(x) {
-            x.coffee = "(k,v)@>\n            v.setAttribute \"onclick\", \"javascript:spiritcase.swapFrame(event,this,#{k})\"\n        \n    \n        \n      ";
+            x.coffee = "(k,v)@>\n            v.setAttribute \"onclick\", \"javascript:spiritcase.swapFrame(event,this,#{k})\"\n        \n    \n        ";
             return x;
           })(function(k, v) {
             return v.setAttribute("onclick", "javascript:spiritcase.swapFrame(event,this," + k + ")");
+          }),
+          doubleScale: (function(x) {
+            x.coffee = "@>\n          @updateIcon()\n          @load @intScale2X(@icon.el)\n          \n        ";
+            return x;
+          })(function() {
+            this.updateIcon();
+            return this.load(this.intScale2X(this.icon.el));
+          }),
+          halveScale: (function(x) {
+            x.coffee = "@>\n          { document } = @lib.window\n          @updateIcon()\n          c = @icon.el\n          c2 = document.createElement \"canvas\"\n          c2.width   = nw = c.width / 2   | 0\n          c2.height  = nh = c.height / 2  | 0\n          c2c = c2.getContext \"2d\"\n          c2c.drawImage c, 0, 0, nw, nh\n          @load c2c.getImageData(0,0,nw,nh)\n          \n        ";
+            return x;
+          })(function() {
+            var c, c2, c2c, document, nh, nw;
+            document = this.lib.window.document;
+            this.updateIcon();
+            c = this.icon.el;
+            c2 = document.createElement("canvas");
+            c2.width = nw = c.width / 2 | 0;
+            c2.height = nh = c.height / 2 | 0;
+            c2c = c2.getContext("2d");
+            c2c.drawImage(c, 0, 0, nw, nh);
+            return this.load(c2c.getImageData(0, 0, nw, nh));
+          }),
+          intScale2X: (function(x) {
+            x.coffee = "(c)@>\n          { document } = @lib.window\n          w = c.width\n          h = c.height\n          \n          c2 = document.createElement \"canvas\"\n          c2.width = w * 2\n          c2.height = h\n          \n          c2c = c2.getContext \"2d\"\n          \n          x = 0\n          x2 = 0\n          \n          while x < w\n            if false\n                c2c.drawImage c,  x, 0, x + 1, h,  x2, 0, x2 + 1, h\n                x2++\n                c2c.drawImage c,  x, 0, x + 1, h,  x2, 0, x2 + 1, h\n                x++\n                x2++\n            else\n                c2c.drawImage c,  x, 0, 1, h,  x2, 0, 2, h\n                x++\n                x2 += 2\n\n          # return c2c.getImageData(0, 0, w * 2, h)\n          c3 = document.createElement \"canvas\"\n          c3c = c3.getContext \"2d\"\n          c3.width = w = w * 2\n          c3.height = h * 2\n          \n          x = 0\n          x2 = 0\n          \n          while x < h\n            if false\n                c3c.drawImage c2,  0, x, w, x + 1,  0, x2, w, x2 + 1\n                x2++\n                c3c.drawImage c2,  0, x, w, x + 1,  0, x2, w, x2 + 1\n                x++\n                x2++\n            else\n                c3c.drawImage c2,  0, x, w, 1,  0, x2, w, 2\n                x++\n                x2 += 2\n\n          c3c.getImageData(0, 0, w, h * 2)\n        \n      ";
+            return x;
+          })(function(c) {
+            var c2, c2c, c3, c3c, document, h, w, x, x2;
+            document = this.lib.window.document;
+            w = c.width;
+            h = c.height;
+            c2 = document.createElement("canvas");
+            c2.width = w * 2;
+            c2.height = h;
+            c2c = c2.getContext("2d");
+            x = 0;
+            x2 = 0;
+            while (x < w) {
+              if (false) {
+                c2c.drawImage(c, x, 0, x + 1, h, x2, 0, x2 + 1, h);
+                x2++;
+                c2c.drawImage(c, x, 0, x + 1, h, x2, 0, x2 + 1, h);
+                x++;
+                x2++;
+              } else {
+                c2c.drawImage(c, x, 0, 1, h, x2, 0, 2, h);
+                x++;
+                x2 += 2;
+              }
+            }
+            c3 = document.createElement("canvas");
+            c3c = c3.getContext("2d");
+            c3.width = w = w * 2;
+            c3.height = h * 2;
+            x = 0;
+            x2 = 0;
+            while (x < h) {
+              if (false) {
+                c3c.drawImage(c2, 0, x, w, x + 1, 0, x2, w, x2 + 1);
+                x2++;
+                c3c.drawImage(c2, 0, x, w, x + 1, 0, x2, w, x2 + 1);
+                x++;
+                x2++;
+              } else {
+                c3c.drawImage(c2, 0, x, w, 1, 0, x2, w, 2);
+                x++;
+                x2 += 2;
+              }
+            }
+            return c3c.getImageData(0, 0, w, h * 2);
           })
         });
         return spiritcase.setup();
@@ -1657,6 +1761,10 @@ body { border:0;margin:0;padding:0; }
                       id: "spiritcaseFramesButton",
                       onclick: "javascript:spiritcase.framesButtonClick(this)"
                     }, "Frames");
+                    this.button({
+                      id: "spiritcaseFramesButton",
+                      onclick: "javascript:spiritcase.moreButtonClick(this)"
+                    }, "More");
                     return this.button({
                       id: "spiritcaseUndoButton",
                       onclick: "javascript:spiritcase.undoButtonClick(this)"

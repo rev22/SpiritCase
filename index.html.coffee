@@ -407,15 +407,16 @@ htmlcup.html5Page ->
               ctx.fillRect(0, y * factorY, sizeX * factorX, gridSize)
               y++
           return
+        updateCanvasSize: @>
+          { imageData } = @
+          unless @sizeX is imageData.width and @sizeY is imageData.height
+            @sizeX = imageData.width
+            @sizeY = imageData.height
         load: (imageData)@>
             @addFrame?()
             @icon.setImage(imageData)
             @imageData = imageData
-            @redraw()
-            unless @sizeX is imageData.width and @sizeY is imageData.height
-                @sizeX = imageData.width
-                @sizeY = imageData.height
-            @imageData = imageData
+            @updateCanvasSize()
             @redraw()
         pixelColor: (x,y)@>
                 { imageData: d } = @
@@ -834,7 +835,7 @@ htmlcup.html5Page ->
           return if @checkpointTimeout
           { setTimeout } = @lib.window
           @checkpointTimeout = setTimeout (=> @checkpointTimeout = null; @checkpoint(name)), @scheduleCheckpointDelay
-            
+
         undoButtonClick: (opts)@>
           if @modified
             unless opts?.noCheckpoint
@@ -844,6 +845,14 @@ htmlcup.html5Page ->
             @label "History: "
             @span class:"undoHistory"
           $(".undoHistory").add (@setupUndoStep(v.canvas) for v in @checkpoints.concat([]).reverse())
+        webmodule: "spiritcase"
+        eventControl: (name)@> "javascript:#{@webmodule}.#{name}(event,this)"
+        moreButtonClick: (opts)@>
+          control = => @eventControl.apply @, arguments 
+          @setDialog "more", ->
+            @label "Scale: "
+            @button onclick:control("doubleScale"), "2X"
+            @button onclick:control("halveScale"), "/2"
         setupUndoStep: (v)@>
           v.setAttribute "onclick", "javascript:spiritcase.chooseUndoStep(event,this)"
           v
@@ -894,12 +903,76 @@ htmlcup.html5Page ->
             p1.insertBefore(el0, n1)
             @setupFrame i, el0
             @imageData = el1.getContext('2d').getImageData(0, 0, el1.width, el1.height)
+            @updateCanvasSize()            
             @redraw()
         
         setupFrame: (k,v)@>
             v.setAttribute "onclick", "javascript:spiritcase.swapFrame(event,this,#{k})"
         
     
+        doubleScale: @>
+          @updateIcon()
+          @load @intScale2X(@icon.el)
+          
+        halveScale: @>
+          { document } = @lib.window
+          @updateIcon()
+          c = @icon.el
+          c2 = document.createElement "canvas"
+          c2.width   = nw = c.width / 2   | 0
+          c2.height  = nh = c.height / 2  | 0
+          c2c = c2.getContext "2d"
+          c2c.drawImage c, 0, 0, nw, nh
+          @load c2c.getImageData(0,0,nw,nh)
+          
+        intScale2X: (c)@>
+          { document } = @lib.window
+          w = c.width
+          h = c.height
+          
+          c2 = document.createElement "canvas"
+          c2.width = w * 2
+          c2.height = h
+          
+          c2c = c2.getContext "2d"
+          
+          x = 0
+          x2 = 0
+          
+          while x < w
+            if false
+                c2c.drawImage c,  x, 0, x + 1, h,  x2, 0, x2 + 1, h
+                x2++
+                c2c.drawImage c,  x, 0, x + 1, h,  x2, 0, x2 + 1, h
+                x++
+                x2++
+            else
+                c2c.drawImage c,  x, 0, 1, h,  x2, 0, 2, h
+                x++
+                x2 += 2
+
+          # return c2c.getImageData(0, 0, w * 2, h)
+          c3 = document.createElement "canvas"
+          c3c = c3.getContext "2d"
+          c3.width = w = w * 2
+          c3.height = h * 2
+          
+          x = 0
+          x2 = 0
+          
+          while x < h
+            if false
+                c3c.drawImage c2,  0, x, w, x + 1,  0, x2, w, x2 + 1
+                x2++
+                c3c.drawImage c2,  0, x, w, x + 1,  0, x2, w, x2 + 1
+                x++
+                x2++
+            else
+                c3c.drawImage c2,  0, x, w, 1,  0, x2, w, 2
+                x++
+                x2 += 2
+
+          c3c.getImageData(0, 0, w, h * 2)
         
       spiritcase.setup()
     # @table id:"overlay", style:"position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;overflow:hidden:",
@@ -968,6 +1041,7 @@ htmlcup.html5Page ->
                             @button id:"spiritcaseEraseButton",   onclick:"javascript:spiritcase.eraseButtonClick(this)",   "Erase"
                             # @button id:"spiritcaseSelectButton",  onclick:"javascript:spiritcase.framesButtonClick(this)",  "Frames"
                             @button id:"spiritcaseFramesButton",  onclick:"javascript:spiritcase.framesButtonClick(this)",  "Frames"
+                            @button id:"spiritcaseFramesButton",  onclick:"javascript:spiritcase.moreButtonClick(this)",  "More"
                             @button id:"spiritcaseUndoButton",    onclick:"javascript:spiritcase.undoButtonClick(this)",    "Undo"
                           @div class:"spiritcaseToolbarGroup", style:"font-size:initial;text-align:initial", ->
                             spiritcase.lib.sliderInput.build

@@ -497,6 +497,29 @@ htmlcup.html5Page ->
                 onfocus: @>
                     { spiritcase }   = @
                     { sliderInput }  = @spiritcase.lib
+                    @spiritcase.tool =
+                      name: "pick"
+                      spiritcase: @spiritcase
+                      readOnly: true
+                      employ: (x,y)@>
+                        x = x|0
+                        y = y|0
+                        return if x is @x and y is @y
+                        @x = x
+                        @y = y
+                        [ r, g, b ] = @spiritcase.pixelColor x, y
+                        c = @spiritcase.toolColor
+                        c[0]=r
+                        c[1]=g
+                        c[2]=b
+                        @spiritcase.setToolColor c
+                        
+                        # @spiritcase.setPixel x, y, @spiritcase.toolColor, @spiritcase.toolAlpha
+                        # @spiritcase.unsetPixel x, y, @spiritcase.toolAlpha
+                        # @spiritcase.redrawPixel x, y
+                      done: @>
+                        @spiritcase.paintButtonClick()
+                        @x = @y = null
                     @spiritcase.setDialog "selectColor", ->
                         color = (n)=>
                             @div style:"font-size:150%;background:##{n};color:#786;width:1.5em;display:inline-block", class:"paletteEntry", onclick:"javascript:spiritcase.setToolColorHex('#{n}')", "#{n}"
@@ -584,8 +607,8 @@ htmlcup.html5Page ->
                             color "f0f"
                             color "0ff"
                             # @button "Add", onclick:"javascript:spiritcase.colorinput.saveCurrentColor()"
-                        @div class:"spiritcaseToolbarGroup", ->
-                            @button "Pick", onclick:"javascript:spiritcase.setColorPickerTool()"
+                        # @div class:"spiritcaseToolbarGroup", ->
+                        #    @button "Pick", onclick:"javascript:spiritcase.setColorPickerTool()"
                 editingValue: false
                 setColor: (c)@>
                         @input.setAttribute "style", "background:##{c}"
@@ -927,8 +950,9 @@ htmlcup.html5Page ->
                             @button id:"spiritcasePaintButton",  class:"activated", onclick:"javascript:spiritcase.paintButtonClick(this)",  "Paint"
                             # @button id:"spiritcaseBrushButton",   onclick:"javascript:spiritcase.brushButtonClick(this)",   "Brush"
                             @button id:"spiritcaseEraseButton",   onclick:"javascript:spiritcase.eraseButtonClick(this)",   "Erase"
-                            @button id:"spiritcaseUndoButton",    onclick:"javascript:spiritcase.undoButtonClick(this)",    "Undo"
+                            # @button id:"spiritcaseSelectButton",  onclick:"javascript:spiritcase.framesButtonClick(this)",  "Frames"
                             @button id:"spiritcaseFramesButton",  onclick:"javascript:spiritcase.framesButtonClick(this)",  "Frames"
+                            @button id:"spiritcaseUndoButton",    onclick:"javascript:spiritcase.undoButtonClick(this)",    "Undo"
                           @div class:"spiritcaseToolbarGroup", style:"font-size:initial;text-align:initial", ->
                             spiritcase.lib.sliderInput.build
                                     htmlcup: @

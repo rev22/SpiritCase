@@ -156,6 +156,14 @@ htmlcup.html5Page ->
       .framesList {
         cursor:pointer;
       }
+      .framesList canvas, .undoHistory canvas {
+        margin:2px;
+        padding:1px;
+        border:1px solid black;
+      }
+      .framesList canvas:hover, .undoHistory canvas:hover {
+        border:1px solid white;
+      }
       """
   factorY = factorX = factor = 16
   sizeX = Math.floor(480 / factor)
@@ -399,9 +407,11 @@ htmlcup.html5Page ->
           sliderInput: sliderInput
           $: $
 
-        setDialog: (x)@>
+        currentDialog: null
+        setDialog: (name, x)@>
             return unless @view?.dialogs?
             c = @view.dialogs.firstChild then @lib.window.deleteNode c
+            @currentDialog = name
             return unless x?
             d = @lib.htmlcup.captureFirstTag ->
               @div class:"spiritcaseDialog", ->
@@ -413,7 +423,7 @@ htmlcup.html5Page ->
 
         loadButtonClick: @>
             spiritcase = @
-            @setDialog ->
+            @setDialog "loadFile", ->
                 @label "Load file: "
                 @input type:"file", onchange:"javascript:spiritcase.loadFile(event)"
 
@@ -421,7 +431,7 @@ htmlcup.html5Page ->
             @load @imageData
             uri = @icon.el.toDataURL()
             spiritcase = @
-            @setDialog ->
+            @setDialog "saveFile", ->
                 @label "Download: "
                 @a download:"file", href:uri, style:"font-size:150%", "file.png"
                 
@@ -454,7 +464,7 @@ htmlcup.html5Page ->
                 onfocus: @>
                     { spiritcase }   = @
                     { sliderInput }  = @spiritcase.lib
-                    @spiritcase.setDialog ->
+                    @spiritcase.setDialog "selectColor", ->
                         color = (n)=>
                             @div style:"font-size:150%;background:##{n};color:#786;width:1.5em;display:inline-block", class:"paletteEntry", onclick:"javascript:spiritcase.setToolColorHex('#{n}')", "#{n}"
                         @div class:"spiritcaseToolbarGroup", ->
@@ -556,19 +566,24 @@ htmlcup.html5Page ->
         setColorPickerTool: @> # TODO
 
         setToolColorHex: (c)@>
+            if @tool.name is "erase"
+              @paintButtonClick noSetdialog: 1
             @toolColor = @lib.color.hex2rgb c
             @colorinput.setColor(c)
             @
         setToolColor: (c)@>
+            if @tool.name is "erase"
+              @paintButtonClick noSetdialog: 1
             @toolColor = c
             @colorinput.setColor(@lib.color.rgb2hex(c))
             @
 
-        paintButtonClick: @>
+        paintButtonClick: (opts)@>
           @lib.$("#spiritcaseEraseButton")[0]?.classList.remove("activated")
           @lib.$("#spiritcasePaintButton")[0]?.classList.add("activated")
-          @setDialog()
+          @setDialog() unless opts?.noSetdialog
           @tool =
+              name: "paint"
               spiritcase: @
               employ: (x,y)@>
                   x = x|0
@@ -586,6 +601,7 @@ htmlcup.html5Page ->
           @lib.$("#spiritcaseEraseButton")[0]?.classList.add("activated")
           @setDialog()
           @tool =
+              name: "erase"
               spiritcase: @
               employ: (x,y)@>
                   x = x|0
@@ -645,24 +661,24 @@ htmlcup.html5Page ->
           ctx.fillRect x1, y1, x2, y2
           @
 
-        unmodified: true
+        modified: true
         
         mousedown: 0
 
-        employMouse: (el, event)@>
-          if @unmodified
-            @checkpoint()
-            @unmodified = false
+        employMouse: (el, event, isFirst)@>
+          @checkpoint("employMouse") if @modified and isFirst and @modified isnt "doneMouse"
           { gridSize, factor, factorY, sizeY, factorX, sizeX, checkersSize } = @
           h = gridSize / 2
           x = event.clientX - el.offsetLeft - gridSize
           y = event.clientY - el.offsetTop - gridSize
           @tool?.employ(x / factorX, y / factorY)
 
-        doneMouse: (el, event)@>
+        doneMouse: (el, event, isLast)@>
           @tool?.done?()
           @updateIcon()
-          @scheduleCheckpoint()
+          if isLast
+            @modified = "doneMouse"
+            @scheduleCheckpoint("doneMouse")
 
         setup: @>
           @el.spiritcase = @
@@ -682,23 +698,22 @@ htmlcup.html5Page ->
             event.stopPropagation()
             event.preventDefault()
             if @spiritcase.mousedown > 0
-                @spiritcase.employMouse @, event
+                @spiritcase.employMouse @, event, false
           @el.onmouseup = (event)@>
             event.stopPropagation()
             event.preventDefault()
-            @spiritcase.employMouse @, event
+            @spiritcase.employMouse @, event, false
             unless @spiritcase.mousedown <= 0
               @spiritcase.mousedown--
               unless @spiritcase.mousedown > 0
-                @spiritcase.doneMouse()
+                @spiritcase.doneMouse(@, event, true)
           @el.onmousedown = (event)@>
             event.stopPropagation()
             event.preventDefault()
-            @spiritcase.mousedown++
-            @spiritcase.employMouse @, event
+            @spiritcase.employMouse @, event, 0 is @spiritcase.mousedown++
           @el.onmouseout = (event)@>
+            @spiritcase.doneMouse(@, event, @spiritcase.mousedown > 0)
             @spiritcase.mousedown = 0
-            @spiritcase.doneMouse()
           @
         makeWebmodule: (name, build)@>
             @webmodule ?= { }
@@ -710,7 +725,9 @@ htmlcup.html5Page ->
         checkpointsCounter: 0
         updateIcon: @>
           @icon.setImage(@imageData)
-        checkpoint: @>
+        checkpoint: (name)@>
+          { console } = @lib.window
+          console.log "checkpoint #{name}"
           (xx = @checkpointTimeout)? then
             { clearTimeout } = @lib.window
             clearTimeout xx
@@ -731,16 +748,21 @@ htmlcup.html5Page ->
               if k & 1
                 compressed.push v
             @checkpoints = @checkpoints.concat compressed
+          if !@currentDialog? or @currentDialog is "undoHistory"
+            @undoButtonClick(noCheckpoint: 1)
+          @modified = false
         scheduleCheckpointDelay: 3000
-        scheduleCheckpoint: @>
+        scheduleCheckpoint: (name)@>
           return if @checkpointTimeout
           { setTimeout } = @lib.window
-          @checkpointTimeout = setTimeout (=> @checkpointTimeout = null; @checkpoint()), @scheduleCheckpointDelay
+          @checkpointTimeout = setTimeout (=> @checkpointTimeout = null; @checkpoint(name)), @scheduleCheckpointDelay
             
-        undoButtonClick: @>
-          @checkpoint() unless @unmodified
+        undoButtonClick: (opts)@>
+          if @modified
+            unless opts?.noCheckpoint
+              @checkpoint("undo")
           { $ } = @lib
-          @setDialog ->
+          @setDialog "undoHistory", ->
             @label "History: "
             @span class:"undoHistory"
           $(".undoHistory").add (@setupUndoStep(v.canvas) for v in @checkpoints.concat([]).reverse())
@@ -750,10 +772,11 @@ htmlcup.html5Page ->
         chooseUndoStep: (event, el1)@>
             event.stopPropagation()
             event.preventDefault()
-            @checkpoint() unless @unmodified
+            @checkpoint("chooseUndoStep") if @modified
             @imageData = el1.getContext('2d').getImageData(0, 0, el1.width, el1.height)
             @updateIcon()
             @redraw()
+            @modified = true
             
         getAsCanvas: @>
           { document } = @lib.window
@@ -770,13 +793,13 @@ htmlcup.html5Page ->
             @frames.push @getAsCanvas()
             @framesButtonClick()
         framesButtonClick: @>
-            { $ } = @lib
-            @setDialog ->
-                @label "Frames: "
-                @span class:"framesList"
-                @button onclick:"javascript:spiritcase.addFrame()", "Add"
-            @frames.onclick = "javascript:spiritcase.swapFrame(this)"
-            $(".framesList").add @frames
+          { $ } = @lib
+          @setDialog "frames", ->
+              @label "Frames: "
+              @span class:"framesList"
+              @button onclick:"javascript:spiritcase.addFrame()", "Add"
+          $(".framesList").add @frames
+          @setupFrame k, v for k,v of @frames
 
         swapFrame: (event, el1, i)@>
             @updateIcon()
@@ -798,14 +821,6 @@ htmlcup.html5Page ->
         setupFrame: (k,v)@>
             v.setAttribute "onclick", "javascript:spiritcase.swapFrame(event,this,#{k})"
         
-        framesButtonClick: @>
-          { $ } = @lib
-          @setDialog ->
-              @label "Frames: "
-              @span class:"framesList"
-              @button onclick:"javascript:spiritcase.addFrame()", "Add"
-          $(".framesList").add @frames
-          @setupFrame k, v for k,v of @frames
     
         
       spiritcase.setup()

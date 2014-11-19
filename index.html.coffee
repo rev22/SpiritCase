@@ -258,15 +258,42 @@ htmlcup.html5Page ->
         terminateEvent: (ev)@>
           ev.stopPropagation()
           ev.preventDefault()
-        mouseDown:  (ev,el)@> @terminateEvent(ev)
-        mouseUp:    (ev,el)@> @terminateEvent(ev)
-        mouseMove:  (ev,el)@> @terminateEvent(ev)
-        mouseOut:   (ev,el)@> @terminateEvent(ev)
+        buttonsPressed: 0
+        mouseSet: (ev,el)@>
+          r = el.getClientRects()[0]
+          sx = r.width
+          # sy = el.offsetHeight
+          x = ev.clientX - r.left
+          # y = ev.clientY - el.offsetTop
+          @barSet(x/(sx - 1), el)
+        barSet: (bar, el)@> @setView el, { bar } # { text: "#{bar}" }
+        mouseDown:  (ev,el)@>
+          # return unless ev.target is el
+          @terminateEvent(ev)
+          # ev.target.setCapture()
+          @buttonsPressed++ if @buttonsPressed < 1
+          @mouseSet(ev,el)
+        mouseUp:    (ev,el)@>
+          # return unless ev.target is el
+          @terminateEvent(ev)
+          @buttonsPressed-- if @buttonsPressed > 0
+        mouseMove:  (ev,el)@>
+          # return unless ev.target is el
+          @terminateEvent(ev)
+          @mouseSet(ev,el) if @buttonsPressed > 0
+        mouseOut:   (ev,el)@>
+          @terminateEvent(ev)
+          # if ev.target is el
+          # @buttonsPressed = 0
+        mouseOver:   (ev,el)@>
+          @terminateEvent(ev)
+          if ev.target is el
+            @buttonsPressed = 0
         setView: (el, {bar, text})@>
           { $ } = @
           el = $(el).up(".sliderInput")[0]
-          $(".sliderInputValue", el)[0].textContent = text
-          $(".sliderInputBar", el).set("$width", "#{bar*100}%")
+          text?  then $(".sliderInputValue", el)[0].textContent = text
+          bar?   then $(".sliderInputBar", el).set("$width", "#{bar*100}%")
         build: ({htmlcup, label, onclick, barColor, bgColor, buildModule, module, value, width, noBar, bar })@>
           buildModule? then module = buildModule @
           control = (name)-> "javascript:#{module}.#{name}(event,this)"
@@ -275,17 +302,17 @@ htmlcup.html5Page ->
           value ?= "100%"
           width ?= "5em"
           bar ?= 0
-          mouseControls = onmousedown:control("mouseDown"), onmouseup:control("mouseUp"), onmousemove:control("mouseMove"), onmouseout:control("mouseOut")
-          htmlcup.div class:"sliderInput", style:"display:inline-block;position:relative;border:1px solid #{barColor}", mouseControls, ->
+          mouseControls = onmousedown:control("mouseDown") # , onmousemove:control("mouseMove") # , onmouseup:control("mouseUp"), onmouseout:control("mouseOut"), onmouseover:control("mouseOver")
+          htmlcup.div class:"sliderInput", style:"display:inline-block;position:relative;border:1px solid #{barColor}", ->
               noBar or @div style:"position:absolute;left:0;top:0;bottom:0;right:0;z-index:-1", ->
                   @div class:"sliderInputBar", style:"position:absolute;left:0;top:0;bottom:0;width:#{bar * 100}%;background:#{barColor}"
-              @div style:"display:inline-table", ->
-                  @div class:"sliderInputButton", style:"display:table-cell;width:1.5em;font-weight:bold", onclick:control("decButton"), "-"
-                  @div style:"display:table-cell;width:#{width};max-width:#{width};text-align:center;overflow:visible;position:relative;background:#{bgColor}", mouseControls, ->
+              @div style:"display:inline-table", mouseControls, ->
+                  @div class:"sliderInputButton", style:"display:table-cell;width:1.5em;font-weight:bold", onclick:control("decButton"), onmousedown:control("terminateEvent"), "-"
+                  @div style:"display:table-cell;width:#{width};max-width:#{width};text-align:center;overflow:visible;position:relative;background:#{bgColor}", ->
                       @span class:"sliderInputLabel", style:"position:absolute;left:0;top:0", ->
                           @span label
                       @div class:"sliderInputValue", style:"position:absolute;bottom:0;right:0", value
-                  @div class:"sliderInputButton", style:"display:table-cell;width:1.5em", onclick:control("incButton"), "+"
+                  @div class:"sliderInputButton", style:"display:table-cell;width:1.5em", onclick:control("incButton"), onmousedown:control("terminateEvent"), "+"
   
       extensible = extendObject: extendObject = ->
         r = { }
@@ -490,6 +517,9 @@ htmlcup.html5Page ->
                                           @spiritcase.toolAlpha = @spiritcase.toolAlpha / @incScale - @incDelta
                                           @spiritcase.toolAlpha < 0 then @spiritcase.toolAlpha = 0
                                           @refresh(el)
+                                        barSet: (bar,el)@>
+                                          @spiritcase.toolAlpha = bar
+                                          @refresh(el)
                                         refresh: (el)@>
                                           @setView el,
                                             text: "#{@spiritcase.toolAlpha*100 + 0.5 | 0}%"
@@ -525,6 +555,9 @@ htmlcup.html5Page ->
                                           c = @getComponent() / @incScale - @incDelta
                                           c < 0 then c = 0
                                           @setComponent(c)
+                                          @refresh(el)
+                                        barSet: (bar,el)@>
+                                          @setComponent(bar)
                                           @refresh(el)
                                         refresh: (el)@>
                                           c = @getComponent()

@@ -727,12 +727,12 @@ htmlcup.html5Page ->
         
         mousedown: 0
 
-        employMouse: (el, event, isFirst)@>
+        employMouse: (el, location, isFirst)@>
           @checkpoint("employMouse") if @modified and isFirst and @modified isnt "doneMouse"
           { gridSize, factor, factorY, sizeY, factorX, sizeX, checkersSize } = @
           h = gridSize / 2
-          x = event.clientX - el.offsetLeft - gridSize
-          y = event.clientY - el.offsetTop - gridSize
+          x = location.clientX - el.offsetLeft - gridSize
+          y = location.clientY - el.offsetTop - gridSize
           @tool?.employ(x / factorX, y / factorY)
 
         doneMouse: (el, event, isLast)@>
@@ -756,12 +756,17 @@ htmlcup.html5Page ->
           @redraw()
           @paintButtonClick()
 
-          @el.ontouchmove = @el.onmousemove = (event)@>
+          @el.onmousemove = (event)@>
             event.stopPropagation()
             event.preventDefault()
             if @spiritcase.mousedown > 0
                 @spiritcase.employMouse @, event, false
-          @el.ontouchend = @el.onmouseup = (event)@>
+          @el.ontouchmove = (event)@>
+            event.stopPropagation()
+            event.preventDefault()
+            if @spiritcase.mousedown > 0
+                @spiritcase.employMouse @, event.touches[0], false
+          @el.onmouseup = (event)@>
             event.stopPropagation()
             event.preventDefault()
             @spiritcase.employMouse @, event, false
@@ -769,10 +774,22 @@ htmlcup.html5Page ->
               @spiritcase.mousedown--
               unless @spiritcase.mousedown > 0
                 @spiritcase.doneMouse(@, event, true)
-          @el.ontouchstart = @el.onmousedown = (event)@>
+          @el.ontouchend = (event)@>
+            event.stopPropagation()
+            event.preventDefault()
+            @spiritcase.employMouse @, event.touches[0], false
+            unless @spiritcase.mousedown <= 0
+              @spiritcase.mousedown--
+              unless @spiritcase.mousedown > 0
+                @spiritcase.doneMouse(@, event, true)
+          @el.onmousedown = (event)@>
             event.stopPropagation()
             event.preventDefault()
             @spiritcase.employMouse @, event, 0 is @spiritcase.mousedown++
+          @el.ontouchstart = (event)@>
+            event.stopPropagation()
+            event.preventDefault()
+            @spiritcase.employMouse @, event.touches[0], 0 is @spiritcase.mousedown++
           @el.ontouchcancel = @el.onmouseout = (event)@>
             @spiritcase.doneMouse(@, event, @spiritcase.mousedown > 0)
             @spiritcase.mousedown = 0

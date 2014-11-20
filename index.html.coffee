@@ -1088,7 +1088,7 @@ htmlcup.html5Page ->
                             @button id:"spiritcaseEraseButton",   onclick:"javascript:spiritcase.eraseButtonClick(this)",   "Erase"
                             # @button id:"spiritcaseSelectButton",  onclick:"javascript:spiritcase.framesButtonClick(this)",  "Frames"
                             @button id:"spiritcaseFramesButton",  onclick:"javascript:spiritcase.framesButtonClick(this)",  "Frames"
-                            # @button id:"spiritcaseToolsButton",   onclick:"javascript:spiritcase.toolsButtonClick(this)",  "Tools"
+                            @button id:"spiritcaseToolsButton",   onclick:"javascript:spiritcase.toolsButtonClick(this)",  "Tools"
                             @button id:"spiritcaseUndoButton",    onclick:"javascript:spiritcase.undoButtonClick(this)",    "Undo"
                           @div class:"spiritcaseToolbarGroup", style:"font-size:initial;text-align:initial", ->
                             spiritcase.lib.sliderInput.build

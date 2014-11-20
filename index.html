@@ -423,6 +423,7 @@ body { border:0;margin:0;padding:0; }
         var $, colorLib, dynmod, extendObject, extensible, sliderInput, spiritcase;
         $ = require('minified').$;
         colorLib = {
+          Math: Math,
           rgb2hex: function(c) {
             return (0x1000000 + (c[0] << 16) + (c[1] << 8) + c[2]).toString(16).substring(1);
           },
@@ -434,7 +435,72 @@ body { border:0;margin:0;padding:0; }
               return [parseInt(x.substr(0, 1), 16) * 0x11, parseInt(x.substr(1, 1), 16) * 0x11, parseInt(x.substr(2, 1), 16) * 0x11];
             }
             throw "hex number has odd length: " + x.length;
-          }
+          },
+          rgb2hsv: (function(x) {
+            x.coffee = "([r,g,b])@>\n           { Math } = @\n           r=r/255\n           g=g/255\n           b=b/255;\n           v = Math.max(r, Math.max(g,b));\n           min = Math.min(r, Math.min(g,b));\n           return [0,0,0] if v is 0\n           d = v - min\n           return [0,0,v] if d is 0\n           s = d / v\n           if r is v\n          	 h = (g - b) / d\n           else if g is v\n             h = ((b - r) / d) + 2\n           else\n          	 h = ((r - g) / d) + 4\n           h /= 6\n           h += 1 if h < 0\n           [h,s,v]\n           \n          ";
+            return x;
+          })(function(_arg) {
+            var Math, b, d, g, h, min, r, s, v;
+            r = _arg[0], g = _arg[1], b = _arg[2];
+            Math = this.Math;
+            r = r / 255;
+            g = g / 255;
+            b = b / 255;
+            v = Math.max(r, Math.max(g, b));
+            min = Math.min(r, Math.min(g, b));
+            if (v === 0) {
+              return [0, 0, 0];
+            }
+            d = v - min;
+            if (d === 0) {
+              return [0, 0, v];
+            }
+            s = d / v;
+            if (r === v) {
+              h = (g - b) / d;
+            } else if (g === v) {
+              h = ((b - r) / d) + 2;
+            } else {
+              h = ((r - g) / d) + 4;
+            }
+            h /= 6;
+            if (h < 0) {
+              h += 1;
+            }
+            return [h, s, v];
+          }),
+          hsv2rgb: (function(x) {
+            x.coffee = "([h,s,v])@>\n            return [v,v,v] if s is 0\n            h  = if h >= 1 then h - 1 else h\n            { Math } = @\n            hh = h * 6\n            hhh = Math.floor hh\n            f = hh - hhh\n            a = v * (1.0 - s)\n            b = v * (1.0 - s * f)\n            c = v * (1.0 - s * (1 - f))\n            return switch hhh\n              when 0 then [ Math.round(v * 255), Math.round(c * 255), Math.round(a * 255) ]\n              when 1 then [ Math.round(b * 255), Math.round(v * 255), Math.round(a * 255) ]\n              when 2 then [ Math.round(a * 255), Math.round(v * 255), Math.round(c * 255) ]\n              when 3 then [ Math.round(a * 255), Math.round(b * 255), Math.round(v * 255) ]\n              when 4 then [ Math.round(c * 255), Math.round(a * 255), Math.round(v * 255) ]\n              when 5 then [ Math.round(v * 255), Math.round(a * 255), Math.round(b * 255) ]\n          \n      ";
+            return x;
+          })(function(_arg) {
+            var Math, a, b, c, f, h, hh, hhh, s, v;
+            h = _arg[0], s = _arg[1], v = _arg[2];
+            if (s === 0) {
+              return [v, v, v];
+            }
+            h = h >= 1 ? h - 1 : h;
+            Math = this.Math;
+            hh = h * 6;
+            hhh = Math.floor(hh);
+            f = hh - hhh;
+            a = v * (1.0 - s);
+            b = v * (1.0 - s * f);
+            c = v * (1.0 - s * (1 - f));
+            switch (hhh) {
+              case 0:
+                return [Math.round(v * 255), Math.round(c * 255), Math.round(a * 255)];
+              case 1:
+                return [Math.round(b * 255), Math.round(v * 255), Math.round(a * 255)];
+              case 2:
+                return [Math.round(a * 255), Math.round(v * 255), Math.round(c * 255)];
+              case 3:
+                return [Math.round(a * 255), Math.round(b * 255), Math.round(v * 255)];
+              case 4:
+                return [Math.round(c * 255), Math.round(a * 255), Math.round(v * 255)];
+              case 5:
+                return [Math.round(v * 255), Math.round(a * 255), Math.round(b * 255)];
+            }
+          })
         };
         sliderInput = {
           $: $,
@@ -1139,7 +1205,7 @@ body { border:0;margin:0;padding:0; }
               lib: this.lib
             };
           }),
-          toolColor: [Math.round(100 + Math.random() * 155), Math.round(100 + Math.random() * 155), Math.round(100 + Math.random() * 155)],
+          toolColor: colorLib.hsv2rgb([Math.random(), 1, 1]),
           toolAlpha: 0.3,
           setColorPickerTool: (function(x) {
             x.coffee = "@>";

@@ -249,6 +249,7 @@ htmlcup.html5Page ->
     @coffeeScript ->
       $ = require('minified').$
       colorLib =
+          Math: Math
           rgb2hex: (c)-> (0x1000000 + (c[0] << 16) + (c[1] << 8) + c[2]).toString(16).substring(1)
           hex2rgb: (x)->
               x.length == 6 then
@@ -256,6 +257,45 @@ htmlcup.html5Page ->
               x.length == 3 then
                   return [ parseInt(x.substr(0, 1), 16)*0x11, parseInt(x.substr(1, 1), 16)*0x11, parseInt(x.substr(2, 1), 16)*0x11 ]
               throw "hex number has odd length: #{x.length}"
+          rgb2hsv: ([r,g,b])@>
+           { Math } = @
+           r=r/255
+           g=g/255
+           b=b/255;
+           v = Math.max(r, Math.max(g,b));
+           min = Math.min(r, Math.min(g,b));
+           return [0,0,0] if v is 0
+           d = v - min
+           return [0,0,v] if d is 0
+           s = d / v
+           if r is v
+          	 h = (g - b) / d
+           else if g is v
+             h = ((b - r) / d) + 2
+           else
+          	 h = ((r - g) / d) + 4
+           h /= 6
+           h += 1 if h < 0
+           [h,s,v]
+           
+          hsv2rgb: ([h,s,v])@>
+            return [v,v,v] if s is 0
+            h  = if h >= 1 then h - 1 else h
+            { Math } = @
+            hh = h * 6
+            hhh = Math.floor hh
+            f = hh - hhh
+            a = v * (1.0 - s)
+            b = v * (1.0 - s * f)
+            c = v * (1.0 - s * (1 - f))
+            return switch hhh
+              when 0 then [ Math.round(v * 255), Math.round(c * 255), Math.round(a * 255) ]
+              when 1 then [ Math.round(b * 255), Math.round(v * 255), Math.round(a * 255) ]
+              when 2 then [ Math.round(a * 255), Math.round(v * 255), Math.round(c * 255) ]
+              when 3 then [ Math.round(a * 255), Math.round(b * 255), Math.round(v * 255) ]
+              when 4 then [ Math.round(c * 255), Math.round(a * 255), Math.round(v * 255) ]
+              when 5 then [ Math.round(v * 255), Math.round(a * 255), Math.round(b * 255) ]
+          
       sliderInput =
         $: $
         terminateEvent: (ev)@>
@@ -624,7 +664,7 @@ htmlcup.html5Page ->
                         finally
                             @editingValue = false
                 lib: @lib
-        toolColor: [ Math.round(100+Math.random()*155), Math.round(100+Math.random()*155), Math.round(100+Math.random()*155) ]
+        toolColor: colorLib.hsv2rgb([ Math.random(), 1, 1 ])
         toolAlpha: 0.3
         setColorPickerTool: @> # TODO
 

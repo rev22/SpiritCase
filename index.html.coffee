@@ -885,8 +885,8 @@ htmlcup.html5Page ->
             @label "History: "
             @span class:"undoHistory"
           $(".undoHistory").add (@setupUndoStep(v.canvas) for v in @checkpoints.concat([]).reverse())
-        webmodule: "spiritcase"
-        eventControl: (name)@> "javascript:#{@webmodule}.#{name}(event,this)"
+        webmoduleName: "spiritcase"
+        eventControl: (name)@> "javascript:#{@webmoduleName}.#{name}(event,this)"
         toolsButtonClick: (opts)@>
           control = => @eventControl.apply @, arguments 
           @setDialog "tools", ->

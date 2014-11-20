@@ -1589,12 +1589,12 @@ body { border:0;margin:0;padding:0; }
               return _results;
             }).call(this));
           }),
-          webmodule: "spiritcase",
+          webmoduleName: "spiritcase",
           eventControl: (function(x) {
-            x.coffee = "(name)@> \"javascript:#{@webmodule}.#{name}(event,this)\"";
+            x.coffee = "(name)@> \"javascript:#{@webmoduleName}.#{name}(event,this)\"";
             return x;
           })(function(name) {
-            return "javascript:" + this.webmodule + "." + name + "(event,this)";
+            return "javascript:" + this.webmoduleName + "." + name + "(event,this)";
           }),
           toolsButtonClick: (function(x) {
             x.coffee = "(opts)@>\n          control = => @eventControl.apply @, arguments \n          @setDialog \"tools\", ->\n            \n            @div class:\"spiritcaseToolbarGroup\", ->\n              @label \"Scale: \"\n              @button onclick:control(\"doubleScale\"), \"2X\"\n              @button onclick:control(\"halveScale\"), \"/2\"\n            \n            @div class:\"spiritcaseToolbarGroup\", ->\n              @button onclick:control(\"startConsole\"), \"Console\"\n        ";

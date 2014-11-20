@@ -1531,7 +1531,7 @@ body { border:0;margin:0;padding:0; }
             return "javascript:" + this.webmodule + "." + name + "(event,this)";
           }),
           moreButtonClick: (function(x) {
-            x.coffee = "(opts)@>\n          control = => @eventControl.apply @, arguments \n          @setDialog \"more\", ->\n            @label \"Scale: \"\n            @button onclick:control(\"doubleScale\"), \"2X\"\n            @button onclick:control(\"halveScale\"), \"/2\"\n        ";
+            x.coffee = "(opts)@>\n          control = => @eventControl.apply @, arguments \n          @setDialog \"more\", ->\n            \n            @div class:\"spiritcaseToolbarGroup\", ->\n              @label \"Scale: \"\n              @button onclick:control(\"doubleScale\"), \"2X\"\n              @button onclick:control(\"halveScale\"), \"/2\"\n            \n            @div class:\"spiritcaseToolbarGroup\", ->\n              @button onclick:control(\"startConsole\"), \"Console\"\n        ";
             return x;
           })(function(opts) {
             var control;
@@ -1541,14 +1541,31 @@ body { border:0;margin:0;padding:0; }
               };
             })(this);
             return this.setDialog("more", function() {
-              this.label("Scale: ");
-              this.button({
-                onclick: control("doubleScale")
-              }, "2X");
-              return this.button({
-                onclick: control("halveScale")
-              }, "/2");
+              this.div({
+                "class": "spiritcaseToolbarGroup"
+              }, function() {
+                this.label("Scale: ");
+                this.button({
+                  onclick: control("doubleScale")
+                }, "2X");
+                return this.button({
+                  onclick: control("halveScale")
+                }, "/2");
+              });
+              return this.div({
+                "class": "spiritcaseToolbarGroup"
+              }, function() {
+                return this.button({
+                  onclick: control("startConsole")
+                }, "Console");
+              });
             });
+          }),
+          startConsole: (function(x) {
+            x.coffee = "@>\n          @lib.window.coffeecharniaStart()\n        ";
+            return x;
+          })(function() {
+            return this.lib.window.coffeecharniaStart();
           }),
           setupUndoStep: (function(x) {
             x.coffee = "(v)@>\n          v.setAttribute \"onclick\", \"javascript:spiritcase.chooseUndoStep(event,this)\"\n          v\n        ";
@@ -1933,1006 +1950,1008 @@ body { border:0;margin:0;padding:0; }
         };
       })();
 </script><script type="text/javascript">(function () {
-        var coffeecharniaLayout, withAce, withCoffee;
-        coffeecharniaLayout = function(_arg) {
-          var body, footer, header, innerStyle, minheight, minwidth, style;
-          header = _arg.header, body = _arg.body, footer = _arg.footer, minheight = _arg.minheight, minwidth = _arg.minwidth, style = _arg.style, innerStyle = _arg.innerStyle;
-          return htmlcup.captureFirstTag(function() {
-            return this.div({
-              id: "coffeecharniaConsole",
-              "class": "coffeecharniaContainer",
-              style: "" + style
-            }, function() {
+        return window.coffeecharniaStart = function() {
+          var coffeecharniaLayout, withAce, withCoffee;
+          coffeecharniaLayout = function(_arg) {
+            var body, footer, header, innerStyle, minheight, minwidth, style;
+            header = _arg.header, body = _arg.body, footer = _arg.footer, minheight = _arg.minheight, minwidth = _arg.minwidth, style = _arg.style, innerStyle = _arg.innerStyle;
+            return htmlcup.captureFirstTag(function() {
               return this.div({
-                style: "height:100%;display:table;width:100%;max-width:100%;table-layout:fixed"
+                id: "coffeecharniaConsole",
+                "class": "coffeecharniaContainer",
+                style: "" + style
               }, function() {
-                if (innerStyle != null) {
-                  this.style(innerStyle);
-                }
-                if (false) {
-                  header.call(this, {
-                    style: "display:table-row;min-height:1em;overflow:auto;max-height:5em",
-                    "class": "consoleHeader"
-                  });
-                } else if (false) {
-                  this.div({
-                    style: "display:table-row;min-height:1em;background:pink"
-                  }, function() {
-                    return this.div({
-                      style: "max-height:5em;overflow-y:scroll;overflow-x:hidden;position:relative;display:block"
-                    }, function() {
-                      return this.div({
-                        style: "float:left;width:100%",
-                        contentEditable: "true"
-                      }, function() {
-                        var x, _i, _results;
-                        _results = [];
-                        for (x = _i = 0; _i <= 25; x = ++_i) {
-                          _results.push(this.div("x"));
-                        }
-                        return _results;
-                      });
+                return this.div({
+                  style: "height:100%;display:table;width:100%;max-width:100%;table-layout:fixed"
+                }, function() {
+                  if (innerStyle != null) {
+                    this.style(innerStyle);
+                  }
+                  if (false) {
+                    header.call(this, {
+                      style: "display:table-row;min-height:1em;overflow:auto;max-height:5em",
+                      "class": "consoleHeader"
                     });
-                  });
-                } else {
-                  this.div({
-                    style: "display:table-row;min-height:1em"
-                  }, function() {
-                    return this.div({
-                      style: "max-height:5em;overflow:hidden;position:relative;display:block"
+                  } else if (false) {
+                    this.div({
+                      style: "display:table-row;min-height:1em;background:pink"
                     }, function() {
                       return this.div({
-                        style: "float:left;width:100%"
-                      }, function() {
-                        return header != null ? header.call(this, {
-                          "class": "consoleHeader"
-                        }) : void 0;
-                      });
-                    });
-                  });
-                }
-                if (false) {
-                  this.div({
-                    style: "position:relative;height:100%;overflow:hidden;display:table-row"
-                  }, function() {
-                    return this.div({
-                      style: "position:relative;width:100%;height:100%;min-height:" + minheight
-                    }, function() {
-                      return this.div({
-                        style: "position:absolute;top:0;right:0;left:0;bottom:0;overflow:auto"
+                        style: "max-height:5em;overflow-y:scroll;overflow-x:hidden;position:relative;display:block"
                       }, function() {
                         return this.div({
-                          style: "width:200%;max-width:50em;min-width:100%;height:100%;overflow:hidden"
+                          style: "float:left;width:100%",
+                          contentEditable: "true"
+                        }, function() {
+                          var x, _i, _results;
+                          _results = [];
+                          for (x = _i = 0; _i <= 25; x = ++_i) {
+                            _results.push(this.div("x"));
+                          }
+                          return _results;
+                        });
+                      });
+                    });
+                  } else {
+                    this.div({
+                      style: "display:table-row;min-height:1em"
+                    }, function() {
+                      return this.div({
+                        style: "max-height:5em;overflow:hidden;position:relative;display:block"
+                      }, function() {
+                        return this.div({
+                          style: "float:left;width:100%"
+                        }, function() {
+                          return header != null ? header.call(this, {
+                            "class": "consoleHeader"
+                          }) : void 0;
+                        });
+                      });
+                    });
+                  }
+                  if (false) {
+                    this.div({
+                      style: "position:relative;height:100%;overflow:hidden;display:table-row"
+                    }, function() {
+                      return this.div({
+                        style: "position:relative;width:100%;height:100%;min-height:" + minheight
+                      }, function() {
+                        return this.div({
+                          style: "position:absolute;top:0;right:0;left:0;bottom:0;overflow:auto"
                         }, function() {
                           return this.div({
-                            style: "position:relative;width:100%;height:100%;display:table"
+                            style: "width:200%;max-width:50em;min-width:100%;height:100%;overflow:hidden"
                           }, function() {
-                            return body.call(this);
+                            return this.div({
+                              style: "position:relative;width:100%;height:100%;display:table"
+                            }, function() {
+                              return body.call(this);
+                            });
                           });
                         });
                       });
                     });
-                  });
-                } else {
-                  this.div({
-                    style: "position:relative;height:100%;overflow:hidden;display:table-row"
-                  }, function() {
-                    return this.div({
-                      style: "position:relative;width:100%;height:100%;min-height:" + minheight
+                  } else {
+                    this.div({
+                      style: "position:relative;height:100%;overflow:hidden;display:table-row"
                     }, function() {
                       return this.div({
-                        style: "position:absolute;top:0;right:0;left:0;bottom:0;overflow:auto"
+                        style: "position:relative;width:100%;height:100%;min-height:" + minheight
                       }, function() {
-                        return body.call(this);
+                        return this.div({
+                          style: "position:absolute;top:0;right:0;left:0;bottom:0;overflow:auto"
+                        }, function() {
+                          return body.call(this);
+                        });
                       });
                     });
+                  }
+                  return footer.call(this, {
+                    id: "footer",
+                    style: "display:table-row"
                   });
-                }
-                return footer.call(this, {
-                  id: "footer",
-                  style: "display:table-row"
                 });
               });
             });
-          });
-        };
-        (function(x) {
-          return document.body.appendChild(coffeecharniaLayout(x));
-        })({
-          style: "position:absolute;overflow:auto;width:40%;height:25%;bottom:0;right:0;background:black;color:#ddd",
-          innerStyle: "div,pre { padding: 0; margin:0; }\na { color: #ffb }\na:visited { color: #eec }\na:hover { color: white }",
-          minheight: "7em",
-          minwidth: "60em",
-          head: function() {
-            this.meta({
-              charset: "utf-8"
-            });
-            return this.style("body { background:black; color: #ddd; }\na { color:#5af; }\na:visited { color:#49f; }\na:hover { color:#6cf; }\nselect, textarea { border: 1px solid #555; }");
-          },
-          header: function(opts) {
-            this.style("div.thisHeader, .thisHeader div { text-align:center; }");
-            return this.div(opts, function() {
-              this.style(".coffeecharniaContainer select { min-width:5em; max-width:30%; width:18em; }\n.coffeecharniaContainer select, .coffeecharniaContainer button { font-size:inherit; text-align:center;   }\n.coffeecharniaContainer .button { display:inline-block; }\n.coffeecharniaContainer button, .coffeecharniaContainer .button, .coffeecharniaContainer input, .coffeecharniaContainer select:not(:focus):not(:hover) { color:white; background:black; }\n/* select option:not(:checked) { color:red !important; background:black !important; } */\n/* option:active, option[selected], option:checked, option:hover, option:focus { background:#248 !important; } */\n.coffeecharniaContainer button, .coffeecharniaContainer .button { min-width:5%; font-size:220%; border: 2px outset grey; }\n.coffeecharniaContainer button:active, .coffeecharniaContainer .button.button-on { border: 2px inset grey; background:#248; }\n.coffeecharniaContainer .button input[type=\"checkbox\"] { display:none; }\n.coffeecharniaContainer .arrow { font-weight:bold;  }\n.coffeecharniaContainer .editArea { height:100%;width:100%;box-sizing:border-box; }");
-              if (false) {
-                return this.div({
-                  "class": "thisHeader"
-                }, function() {
-                  return this.div(function() {
-                    this.span("CoffeeCharnia");
+          };
+          (function(x) {
+            return document.body.appendChild(coffeecharniaLayout(x));
+          })({
+            style: "position:absolute;overflow:auto;width:40%;height:25%;bottom:0;right:0;background:black;color:#ddd",
+            innerStyle: "div,pre { padding: 0; margin:0; }\na { color: #ffb }\na:visited { color: #eec }\na:hover { color: white }",
+            minheight: "7em",
+            minwidth: "60em",
+            head: function() {
+              this.meta({
+                charset: "utf-8"
+              });
+              return this.style("body { background:black; color: #ddd; }\na { color:#5af; }\na:visited { color:#49f; }\na:hover { color:#6cf; }\nselect, textarea { border: 1px solid #555; }");
+            },
+            header: function(opts) {
+              this.style("div.thisHeader, .thisHeader div { text-align:center; }");
+              return this.div(opts, function() {
+                this.style(".coffeecharniaContainer select { min-width:5em; max-width:30%; width:18em; }\n.coffeecharniaContainer select, .coffeecharniaContainer button { font-size:inherit; text-align:center;   }\n.coffeecharniaContainer .button { display:inline-block; }\n.coffeecharniaContainer button, .coffeecharniaContainer .button, .coffeecharniaContainer input, .coffeecharniaContainer select:not(:focus):not(:hover) { color:white; background:black; }\n/* select option:not(:checked) { color:red !important; background:black !important; } */\n/* option:active, option[selected], option:checked, option:hover, option:focus { background:#248 !important; } */\n.coffeecharniaContainer button, .coffeecharniaContainer .button { min-width:5%; font-size:220%; border: 2px outset grey; }\n.coffeecharniaContainer button:active, .coffeecharniaContainer .button.button-on { border: 2px inset grey; background:#248; }\n.coffeecharniaContainer .button input[type=\"checkbox\"] { display:none; }\n.coffeecharniaContainer .arrow { font-weight:bold;  }\n.coffeecharniaContainer .editArea { height:100%;width:100%;box-sizing:border-box; }");
+                if (false) {
+                  return this.div({
+                    "class": "thisHeader"
+                  }, function() {
+                    return this.div(function() {
+                      this.span("CoffeeCharnia");
+                      this.button({
+                        id: "killButton"
+                      }, "×");
+                      return this.button({
+                        id: "runButton"
+                      }, "▶");
+                    });
+                    this.select({
+                      disabled: "1"
+                    }, function() {
+                      this.option("HTML");
+                      return this.option("PHP");
+                    });
                     this.button({
-                      id: "killButton"
-                    }, "×");
-                    return this.button({
-                      id: "runButton"
-                    }, "▶");
-                  });
-                  this.select({
-                    disabled: "1"
-                  }, function() {
-                    this.option("HTML");
-                    return this.option("PHP");
-                  });
-                  this.button({
-                    id: "fromButton",
-                    "class": "arrow"
-                  }, "«");
-                  this.label({
-                    id: "autoButton",
-                    "class": "button button-on"
-                  }, function() {
-                    this.input({
-                      type: "checkbox",
-                      checked: "1",
-                      onchange: 'this.parentNode.setAttribute("class", "button button-" + (this.checked ? "on" : "off"))'
+                      id: "fromButton",
+                      "class": "arrow"
+                    }, "«");
+                    this.label({
+                      id: "autoButton",
+                      "class": "button button-on"
+                    }, function() {
+                      this.input({
+                        type: "checkbox",
+                        checked: "1",
+                        onchange: 'this.parentNode.setAttribute("class", "button button-" + (this.checked ? "on" : "off"))'
+                      });
+                      return this.span({
+                        id: "autoButtonText"
+                      }, "Auto");
                     });
-                    return this.span({
-                      id: "autoButtonText"
-                    }, "Auto");
+                    this.button({
+                      id: "toButton",
+                      "class": "arrow"
+                    }, "»");
+                    return this.select({
+                      disabled: "1"
+                    }, function() {
+                      this.option("CoffeeScript (htmlcup)");
+                      return this.option("Reflective CoffeeScript (htmlcup)");
+                    });
                   });
-                  this.button({
-                    id: "toButton",
-                    "class": "arrow"
-                  }, "»");
-                  return this.select({
-                    disabled: "1"
-                  }, function() {
-                    this.option("CoffeeScript (htmlcup)");
-                    return this.option("Reflective CoffeeScript (htmlcup)");
-                  });
-                });
-              }
-            });
-          },
-          body: function(opts) {
-            this.style(".coffeecharniaContainer textarea { background: black; color: #ddd; }\n.coffeecharniaContainer button { opacity: 0.4; }\n.coffeecharniaContainer button:hover, .coffeecharniaContainer button:focus, .coffeecharniaContainer button:active { opacity: 1; }");
-            return this.div({
-              style: "position:absolute;top:0;right:0;left:0;bottom:0;overflow:hidden"
-            }, function() {
-              this.button({
-                id: "runButton",
-                style: "width:1.5em;right:0;top:45px;position:absolute;z-index:1000000"
-              }, "▶");
-              this.button({
-                id: "killButton",
-                style: "width:1.5em;right:0;top:0;position:absolute;z-index:1000000"
-              }, "×");
-              return this.textarea({
-                id: "coffeeArea",
-                "class": "editArea"
-              }, "# Welcome to CoffeeCharnia!\n");
-            });
-          },
-          footer: function(opts) {
-            this.style(".coffeecharniaContainer div.thisFooter, .coffeecharniaContainer .thisFooter div { text-align:center; }");
-            return this.div({
-              "class": "thisFooter"
-            }, opts, function() {
-              this.style("#resultFooter {\n  /* overflow:auto; */\n  vertical-align: middle;\n}\n#resultDatum {\n  text-align:initial;\n  vertical-align:initial;\n  display:inline-block;\n}");
-              this.div({
-                id: "resultFooter",
-                style: "display:none"
-              }, function() {
-                return this.div({
-                  id: "resultDatum"
-                }, function() {});
+                }
               });
+            },
+            body: function(opts) {
+              this.style(".coffeecharniaContainer textarea { background: black; color: #ddd; }\n.coffeecharniaContainer button { opacity: 0.4; }\n.coffeecharniaContainer button:hover, .coffeecharniaContainer button:focus, .coffeecharniaContainer button:active { opacity: 1; }");
               return this.div({
-                id: "introFooter"
+                style: "position:absolute;top:0;right:0;left:0;bottom:0;overflow:hidden"
               }, function() {
-                this.b("CoffeeCharnia");
-                this.span(function() {
-                  this.span(": ");
-                  return this.i("A Reflective Coffescript Console/Editor!");
-                });
-                this.printHtml(" &bull; ");
-                return this.a({
-                  href: "https://github.com/rev22/reflective-coffeescript"
-                }, "Reflective Coffeescript");
+                this.button({
+                  id: "runButton",
+                  style: "width:1.5em;right:0;top:45px;position:absolute;z-index:1000000"
+                }, "▶");
+                this.button({
+                  id: "killButton",
+                  style: "width:1.5em;right:0;top:0;position:absolute;z-index:1000000"
+                }, "×");
+                return this.textarea({
+                  id: "coffeeArea",
+                  "class": "editArea"
+                }, "# Welcome to CoffeeCharnia!\n");
               });
-            });
-          }
-        });
-        withAce = function(cb) {
-          return jsLoad('ace', "https://github.com/ajaxorg/ace-builds/raw/master/src-min-noconflict/ace.js", cb);
-        };
-        withCoffee = function(cb) {
-          return jsLoad('CoffeeScript', "lib/coffee-script.js", cb);
-        };
-        return withAce(function() {
-          return withCoffee(function() {
-            var app, camelcapBookmarklet, globalLibs, inject;
-            globalLibs = {
-              aceRefcoffeeMode: {
-                setup: (function(x) {
-                  x.coffee = "({ace, console, CoffeeScript})@>\n                  ace.define \"ace/mode/refcoffee_highlight_rules\", [\n                    \"require\"\n                    \"exports\"\n                    \"module\"\n                    \"ace/mode/coffee_highlight_rules\"\n                  ], (req, exports, module)->\n                    RefcoffeeHighlightRules = ->\n                      @$rules.start = [\n                          {\n                            stateName: \"litdoc\"\n                            token: \"string\"\n                            regex: \"''''\"\n                          }\n                      ].concat @$rules.start\n\n                      @$rules.start = for x in @$rules.start\n                        if x?.regex? and typeof x.regex is 'string'\n                          x.regex = x.regex.replace /\\[\\\\-=\\]>/, \"[\\\\-=@]>\"\n                        x\n                      \n                      @normalizeRules()\n                      return\n                    \"use strict\"\n                    makeClass = (p)-> c = p.constructor; c:: = p; c\n                    CoffeeHighlightRules = req(\"./coffee_highlight_rules\").CoffeeHighlightRules\n                    exports.RefcoffeeHighlightRules = makeClass\n                      constructor: ->\n                        CoffeeHighlightRules.call @\n                        RefcoffeeHighlightRules.call @\n                        return\n                      __proto__: CoffeeHighlightRules::\n                    return\n                    \n                  ace.define \"ace/mode/refcoffee\", [\n                    \"require\"\n                    \"exports\"\n                    \"module\"\n                    \"ace/mode/coffee\"\n                    \"ace/mode/refcoffee_highlight_rules\"\n                  ], (req, exports, module)->\n                    WorkerClient = undefined\n                    CoffeeMode = req(\"ace/mode/coffee\").Mode\n                    makeClass = (p)-> c = p.constructor; c:: = p; c\n                    Rules = req(\"./refcoffee_highlight_rules\").RefcoffeeHighlightRules\n                    Mode = makeClass\n                      __proto__: CoffeeMode::\n                      constructor: ->\n                        CoffeeMode.call @\n                        @HighlightRules = Rules\n                        # @$outdent = new Outdent()\n                        # @foldingRules = new FoldMode()\n                        return\n                    \"use strict\"\n                    (->\n                      @$id = \"ace/mode/refcoffee\"\n                      @createWorker = (session)-> null\n                      return\n                    ).call Mode::\n                    exports.Mode = Mode\n                    return\n\n        ";
-                  return x;
-                })(function(_arg) {
-                  var CoffeeScript, ace, console;
-                  ace = _arg.ace, console = _arg.console, CoffeeScript = _arg.CoffeeScript;
-                  ace.define("ace/mode/refcoffee_highlight_rules", ["require", "exports", "module", "ace/mode/coffee_highlight_rules"], function(req, exports, module) {
-                    var CoffeeHighlightRules, RefcoffeeHighlightRules, makeClass;
-                    RefcoffeeHighlightRules = function() {
-                      var x;
-                      this.$rules.start = [
-                        {
-                          stateName: "litdoc",
-                          token: "string",
-                          regex: "''''"
-                        }
-                      ].concat(this.$rules.start);
-                      this.$rules.start = (function() {
-                        var _i, _len, _ref, _results;
-                        _ref = this.$rules.start;
-                        _results = [];
-                        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                          x = _ref[_i];
-                          if (((x != null ? x.regex : void 0) != null) && typeof x.regex === 'string') {
-                            x.regex = x.regex.replace(/\[\\-=\]>/, "[\\-=@]>");
+            },
+            footer: function(opts) {
+              this.style(".coffeecharniaContainer div.thisFooter, .coffeecharniaContainer .thisFooter div { text-align:center; }");
+              return this.div({
+                "class": "thisFooter"
+              }, opts, function() {
+                this.style("#resultFooter {\n  /* overflow:auto; */\n  vertical-align: middle;\n}\n#resultDatum {\n  text-align:initial;\n  vertical-align:initial;\n  display:inline-block;\n}");
+                this.div({
+                  id: "resultFooter",
+                  style: "display:none"
+                }, function() {
+                  return this.div({
+                    id: "resultDatum"
+                  }, function() {});
+                });
+                return this.div({
+                  id: "introFooter"
+                }, function() {
+                  this.b("CoffeeCharnia");
+                  this.span(function() {
+                    this.span(": ");
+                    return this.i("A Reflective Coffescript Console/Editor!");
+                  });
+                  this.printHtml(" &bull; ");
+                  return this.a({
+                    href: "https://github.com/rev22/reflective-coffeescript"
+                  }, "Reflective Coffeescript");
+                });
+              });
+            }
+          });
+          withAce = function(cb) {
+            return jsLoad('ace', "https://github.com/ajaxorg/ace-builds/raw/master/src-min-noconflict/ace.js", cb);
+          };
+          withCoffee = function(cb) {
+            return jsLoad('CoffeeScript', "lib/coffee-script.js", cb);
+          };
+          return withAce(function() {
+            return withCoffee(function() {
+              var app, camelcapBookmarklet, globalLibs, inject;
+              globalLibs = {
+                aceRefcoffeeMode: {
+                  setup: (function(x) {
+                    x.coffee = "({ace, console, CoffeeScript})@>\n                  ace.define \"ace/mode/refcoffee_highlight_rules\", [\n                    \"require\"\n                    \"exports\"\n                    \"module\"\n                    \"ace/mode/coffee_highlight_rules\"\n                  ], (req, exports, module)->\n                    RefcoffeeHighlightRules = ->\n                      @$rules.start = [\n                          {\n                            stateName: \"litdoc\"\n                            token: \"string\"\n                            regex: \"''''\"\n                          }\n                      ].concat @$rules.start\n\n                      @$rules.start = for x in @$rules.start\n                        if x?.regex? and typeof x.regex is 'string'\n                          x.regex = x.regex.replace /\\[\\\\-=\\]>/, \"[\\\\-=@]>\"\n                        x\n                      \n                      @normalizeRules()\n                      return\n                    \"use strict\"\n                    makeClass = (p)-> c = p.constructor; c:: = p; c\n                    CoffeeHighlightRules = req(\"./coffee_highlight_rules\").CoffeeHighlightRules\n                    exports.RefcoffeeHighlightRules = makeClass\n                      constructor: ->\n                        CoffeeHighlightRules.call @\n                        RefcoffeeHighlightRules.call @\n                        return\n                      __proto__: CoffeeHighlightRules::\n                    return\n                    \n                  ace.define \"ace/mode/refcoffee\", [\n                    \"require\"\n                    \"exports\"\n                    \"module\"\n                    \"ace/mode/coffee\"\n                    \"ace/mode/refcoffee_highlight_rules\"\n                  ], (req, exports, module)->\n                    WorkerClient = undefined\n                    CoffeeMode = req(\"ace/mode/coffee\").Mode\n                    makeClass = (p)-> c = p.constructor; c:: = p; c\n                    Rules = req(\"./refcoffee_highlight_rules\").RefcoffeeHighlightRules\n                    Mode = makeClass\n                      __proto__: CoffeeMode::\n                      constructor: ->\n                        CoffeeMode.call @\n                        @HighlightRules = Rules\n                        # @$outdent = new Outdent()\n                        # @foldingRules = new FoldMode()\n                        return\n                    \"use strict\"\n                    (->\n                      @$id = \"ace/mode/refcoffee\"\n                      @createWorker = (session)-> null\n                      return\n                    ).call Mode::\n                    exports.Mode = Mode\n                    return\n\n        ";
+                    return x;
+                  })(function(_arg) {
+                    var CoffeeScript, ace, console;
+                    ace = _arg.ace, console = _arg.console, CoffeeScript = _arg.CoffeeScript;
+                    ace.define("ace/mode/refcoffee_highlight_rules", ["require", "exports", "module", "ace/mode/coffee_highlight_rules"], function(req, exports, module) {
+                      var CoffeeHighlightRules, RefcoffeeHighlightRules, makeClass;
+                      RefcoffeeHighlightRules = function() {
+                        var x;
+                        this.$rules.start = [
+                          {
+                            stateName: "litdoc",
+                            token: "string",
+                            regex: "''''"
                           }
-                          _results.push(x);
-                        }
-                        return _results;
-                      }).call(this);
-                      this.normalizeRules();
-                    };
-                    "use strict";
-                    makeClass = function(p) {
-                      var c;
-                      c = p.constructor;
-                      c.prototype = p;
-                      return c;
-                    };
-                    CoffeeHighlightRules = req("./coffee_highlight_rules").CoffeeHighlightRules;
-                    exports.RefcoffeeHighlightRules = makeClass({
-                      constructor: function() {
-                        CoffeeHighlightRules.call(this);
-                        RefcoffeeHighlightRules.call(this);
-                      },
-                      __proto__: CoffeeHighlightRules.prototype
-                    });
-                  });
-                  return ace.define("ace/mode/refcoffee", ["require", "exports", "module", "ace/mode/coffee", "ace/mode/refcoffee_highlight_rules"], function(req, exports, module) {
-                    var CoffeeMode, Mode, Rules, WorkerClient, makeClass;
-                    WorkerClient = void 0;
-                    CoffeeMode = req("ace/mode/coffee").Mode;
-                    makeClass = function(p) {
-                      var c;
-                      c = p.constructor;
-                      c.prototype = p;
-                      return c;
-                    };
-                    Rules = req("./refcoffee_highlight_rules").RefcoffeeHighlightRules;
-                    Mode = makeClass({
-                      __proto__: CoffeeMode.prototype,
-                      constructor: function() {
-                        CoffeeMode.call(this);
-                        this.HighlightRules = Rules;
-                      }
-                    });
-                    "use strict";
-                    (function() {
-                      this.$id = "ace/mode/refcoffee";
-                      this.createWorker = function(session) {
-                        return null;
-                      };
-                    }).call(Mode.prototype);
-                    exports.Mode = Mode;
-                  });
-                })
-              }
-            };
-            window.DynmodPrinter = {
-              pkgInfo: {
-                version: "DynmodPrinter 0.2.7-coffeecharnia",
-                description: "Generic printer, for data and reflective code",
-                copyright: "Copyright (c) 2014 Michele Bini",
-                license: "MIT"
-              },
-              pkgTest: (function(x) {
-                x.coffee = "@>\n            testPrint = (v, r)=>\n              r2 = @print(v)\n              if r isnt r2\n                throw \"Expected representation: '#{r}', obtained: '#{r2}'\"\n            testPrint [ ], \"[ ]\"\n            testPrint [ { } ], \"[ { } ]\"\n            testPrint new @Date(\"2014-05-12T23:04:24.627Z\"), 'new Date(\"2014-05-12T23:04:24.627Z\")'\n          ";
-                return x;
-              })(function() {
-                var testPrint;
-                testPrint = (function(_this) {
-                  return function(v, r) {
-                    var r2;
-                    r2 = _this.print(v);
-                    if (r !== r2) {
-                      throw "Expected representation: '" + r + "', obtained: '" + r2 + "'";
-                    }
-                  };
-                })(this);
-                testPrint([], "[ ]");
-                testPrint([{}], "[ { } ]");
-                return testPrint(new this.Date("2014-05-12T23:04:24.627Z"), 'new Date("2014-05-12T23:04:24.627Z")');
-              }),
-              Date: Date,
-              Array: Array,
-              RegExp: RegExp,
-              columns: 74,
-              console: console,
-              window: window,
-              global: window,
-              globalName: "window",
-              symbolicPackages: true,
-              newline: (function(x) {
-                x.coffee = "@> true";
-                return x;
-              })(function() {
-                return true;
-              }),
-              limitLines: (function(x) {
-                x.coffee = "(maxLines)@>\n            lines: 0\n            maxLines: maxLines\n            newline: @> @lines++ < @maxLines\n            __proto__: @\n          ";
-                return x;
-              })(function(maxLines) {
-                return {
-                  lines: 0,
-                  maxLines: maxLines,
-                  newline: (function(x) {
-                    x.coffee = "@> @lines++ < @maxLines";
-                    return x;
-                  })(function() {
-                    return this.lines++ < this.maxLines;
-                  }),
-                  __proto__: this
-                };
-              }),
-              print: (function(x) {
-                x.coffee = "(x, prev, depth = 0, ind = \"\")@>\n              p = arguments.callee\n              depth = depth + 1\n              print = (y)=> p.call @, y, { prev, x }, depth\n              clean = (x)->\n                if /^[(]([(@][^\\n]*)[)]$/.test x\n                  x.substring(1, x.length - 1)\n                else\n                  x\n              if x == null\n                ind + \"null\"\n              else if x == @global\n                ind + @globalName\n              else if x == undefined\n                ind + \"undefined\"\n              else\n                t = typeof x\n                if t is \"boolean\"\n                  ind + if x then \"true\" else \"false\"\n                else if t is \"number\"\n                  ind + @printNumber x\n                else if t is \"string\"\n                  if x.length > 8 and /\\n/.test x\n                    l = x.split(\"\\n\")\n                    l = (x.replace /\\\"\\\"\\\"/g, '\\\"\\\"\\\"' for x in l)\n                    l.unshift ind + '\"\"\"'\n                    l.push     ind + '\"\"\"'\n                    l.join(ind + \"\\n\")\n                  else\n                    ind + '\"' + x.replace(/\\\"/g, \"\\\\\\\"\") + '\"'\n                else if t is \"function\"\n                  ni = ind + \"  \"\n                  if x.coffee?\n                    # YAY a reflective function!!!\n                    s = x.coffee\n                    if depth is 1 or /\\n/.test s\n                      lines = s.split \"\\n\"\n                      if lines.length > 1\n                        if (mn = lines[1].match(/^[ \\t]+/))?\n                          mn = mn[0].length\n                          id = mn - ni.length\n                          if id > 0\n                            x = new @RegExp(\"[ \\\\t]{#{id}}\")\n                            lines = (line.replace x, \"\" for line in lines)\n                          else if id < 0\n                            ni = @Array(-id + 1).join(\" \")\n                            lines = (ni + line for line in lines)                \n                      lines.join(\"\\n\")\n                    else\n                      ind + \"(\" + s + \")\"\n                  else\n                    ind + x.toString().replace(/\\n/g, '\\n' + ni)\n                else if (c = (do (p = prev, c = 1)-> (return c if p.x == x; p = p.prev; c++) while p?; 0))\n                  # Report cyclic structures\n                  \"<cycle-#{c}+#{depth - c - 1}>\"\n                else if t isnt \"object\"\n                  # print object of odd type\n                  \"<#{t}>\"\n                else if @Array.isArray x\n                  if x.length is 0\n                    \"[ ]\"\n                  else\n                    cl = 2\n                    hasLines = false\n                    xxxx = for xx in x\n                      break unless @newline()\n                      xx = print xx\n                      hasLines = true if /\\n/.test xx\n                      cl += 2 + xx.length\n                      xx\n                    if not hasLines and depth * 2 + cl + 1 < @columns\n                      \"[ \" + xxxx.join(\", \") + \" ]\"\n                    else\n                      ni = ind + \"  \"\n                      l = [ ind + \"[\" ]\n                      for xx in xxxx\n                        l.push ni + clean(xx).replace(/\\n/g, '\\n' + ni)\n                      l.push ind + \"]\"\n                      l.join \"\\n\"\n                else\n                  l = [ ]\n                  @window?.document?   and   x.id?   and   typeof x.id is \"string\"   and   x is @window.document.getElementById x.id   then\n                    return \"#{ind}window.document.getElementById '#{ x.id.replace(/\\'/, \"\\\\'\") }'\"\n                  @symbolicPackages and depth > 1 and (packageVersion = x.pkgInfo?.version)? then\n                    return ind + \"dynmodArchive.load '\" + packageVersion.replace(/\\ .*/, \"\") + \"'\"\n                  ind = \"\"\n                  if x instanceof @Date\n                    return \"new Date(\\\"#{x.toISOString()}\\\")\"\n                  keys = (k for k of x)\n                  if keys.length is 0\n                    return \"{ }\"\n                  unless (!prev? or typeof prev.x is \"object\" and !@Array.isArray prev.x)\n                    l = [ \"do->\" ]\n                    ind = \"  \"\n                  ni = ind + \"  \"\n                  # keys = (h)@> (x for x of h).sort()\n                  for k in keys\n                    break unless @newline()\n                    v = x[k]\n                    if @global[k] is v\n                      # l.push ind + k + \": eval \" + \"'\" + k + \"'\"\n                      l.push \"#{ind}#{k}: #{@globalName}.#{k}\"\n                    else\n                      v = clean(print v).replace(/\\n/g, '\\n' + ni)\n                      if !/\\n/.test(v) and  ind.length + k.toString().length + 2 + v.length < @columns\n                        l.push ind + k + \": \" + v\n                      else\n                        l.push ind + k + \":\"\n                        l.push ni + v\n                  if l.length\n                    l.join \"\\n\"\n                  else\n                    \"{ }\"\n          ";
-                return x;
-              })(function(x, prev, depth, ind) {
-                var c, cl, clean, hasLines, id, k, keys, l, line, lines, mn, ni, p, packageVersion, print, s, t, v, xx, xxxx, _i, _j, _len, _len1, _ref, _ref1;
-                if (depth == null) {
-                  depth = 0;
-                }
-                if (ind == null) {
-                  ind = "";
-                }
-                p = arguments.callee;
-                depth = depth + 1;
-                print = (function(_this) {
-                  return function(y) {
-                    return p.call(_this, y, {
-                      prev: prev,
-                      x: x
-                    }, depth);
-                  };
-                })(this);
-                clean = function(x) {
-                  if (/^[(]([(@][^\n]*)[)]$/.test(x)) {
-                    return x.substring(1, x.length - 1);
-                  } else {
-                    return x;
-                  }
-                };
-                if (x === null) {
-                  return ind + "null";
-                } else if (x === this.global) {
-                  return ind + this.globalName;
-                } else if (x === void 0) {
-                  return ind + "undefined";
-                } else {
-                  t = typeof x;
-                  if (t === "boolean") {
-                    return ind + (x ? "true" : "false");
-                  } else if (t === "number") {
-                    return ind + this.printNumber(x);
-                  } else if (t === "string") {
-                    if (x.length > 8 && /\n/.test(x)) {
-                      l = x.split("\n");
-                      l = (function() {
-                        var _i, _len, _results;
-                        _results = [];
-                        for (_i = 0, _len = l.length; _i < _len; _i++) {
-                          x = l[_i];
-                          _results.push(x.replace(/\"\"\"/g, '\"\"\"'));
-                        }
-                        return _results;
-                      })();
-                      l.unshift(ind + '"""');
-                      l.push(ind + '"""');
-                      return l.join(ind + "\n");
-                    } else {
-                      return ind + '"' + x.replace(/\"/g, "\\\"") + '"';
-                    }
-                  } else if (t === "function") {
-                    ni = ind + "  ";
-                    if (x.coffee != null) {
-                      s = x.coffee;
-                      if (depth === 1 || /\n/.test(s)) {
-                        lines = s.split("\n");
-                        if (lines.length > 1) {
-                          if ((mn = lines[1].match(/^[ \t]+/)) != null) {
-                            mn = mn[0].length;
-                            id = mn - ni.length;
-                            if (id > 0) {
-                              x = new this.RegExp("[ \\t]{" + id + "}");
-                              lines = (function() {
-                                var _i, _len, _results;
-                                _results = [];
-                                for (_i = 0, _len = lines.length; _i < _len; _i++) {
-                                  line = lines[_i];
-                                  _results.push(line.replace(x, ""));
-                                }
-                                return _results;
-                              })();
-                            } else if (id < 0) {
-                              ni = this.Array(-id + 1).join(" ");
-                              lines = (function() {
-                                var _i, _len, _results;
-                                _results = [];
-                                for (_i = 0, _len = lines.length; _i < _len; _i++) {
-                                  line = lines[_i];
-                                  _results.push(ni + line);
-                                }
-                                return _results;
-                              })();
+                        ].concat(this.$rules.start);
+                        this.$rules.start = (function() {
+                          var _i, _len, _ref, _results;
+                          _ref = this.$rules.start;
+                          _results = [];
+                          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                            x = _ref[_i];
+                            if (((x != null ? x.regex : void 0) != null) && typeof x.regex === 'string') {
+                              x.regex = x.regex.replace(/\[\\-=\]>/, "[\\-=@]>");
                             }
+                            _results.push(x);
                           }
-                        }
-                        return lines.join("\n");
-                      } else {
-                        return ind + "(" + s + ")";
-                      }
-                    } else {
-                      return ind + x.toString().replace(/\n/g, '\n' + ni);
-                    }
-                  } else if ((c = (function(p, c) {
-                    while (p != null) {
-                      if (p.x === x) {
-                        return c;
-                      }
-                      p = p.prev;
-                      c++;
-                    }
-                    return 0;
-                  })(prev, 1))) {
-                    return "<cycle-" + c + "+" + (depth - c - 1) + ">";
-                  } else if (t !== "object") {
-                    return "<" + t + ">";
-                  } else if (this.Array.isArray(x)) {
-                    if (x.length === 0) {
-                      return "[ ]";
-                    } else {
-                      cl = 2;
-                      hasLines = false;
-                      xxxx = (function() {
-                        var _i, _len, _results;
-                        _results = [];
-                        for (_i = 0, _len = x.length; _i < _len; _i++) {
-                          xx = x[_i];
-                          if (!this.newline()) {
-                            break;
-                          }
-                          xx = print(xx);
-                          if (/\n/.test(xx)) {
-                            hasLines = true;
-                          }
-                          cl += 2 + xx.length;
-                          _results.push(xx);
-                        }
-                        return _results;
-                      }).call(this);
-                      if (!hasLines && depth * 2 + cl + 1 < this.columns) {
-                        return "[ " + xxxx.join(", ") + " ]";
-                      } else {
-                        ni = ind + "  ";
-                        l = [ind + "["];
-                        for (_i = 0, _len = xxxx.length; _i < _len; _i++) {
-                          xx = xxxx[_i];
-                          l.push(ni + clean(xx).replace(/\n/g, '\n' + ni));
-                        }
-                        l.push(ind + "]");
-                        return l.join("\n");
-                      }
-                    }
-                  } else {
-                    l = [];
-                    if ((((_ref = this.window) != null ? _ref.document : void 0) != null) && (x.id != null) && typeof x.id === "string" && x === this.window.document.getElementById(x.id)) {
-                      return "" + ind + "window.document.getElementById '" + (x.id.replace(/\'/, "\\'")) + "'";
-                    }
-                    if (this.symbolicPackages && depth > 1 && ((packageVersion = (_ref1 = x.pkgInfo) != null ? _ref1.version : void 0) != null)) {
-                      return ind + "dynmodArchive.load '" + packageVersion.replace(/\ .*/, "") + "'";
-                    }
-                    ind = "";
-                    if (x instanceof this.Date) {
-                      return "new Date(\"" + (x.toISOString()) + "\")";
-                    }
-                    keys = (function() {
-                      var _results;
-                      _results = [];
-                      for (k in x) {
-                        _results.push(k);
-                      }
-                      return _results;
-                    })();
-                    if (keys.length === 0) {
-                      return "{ }";
-                    }
-                    if (!((prev == null) || typeof prev.x === "object" && !this.Array.isArray(prev.x))) {
-                      l = ["do->"];
-                      ind = "  ";
-                    }
-                    ni = ind + "  ";
-                    for (_j = 0, _len1 = keys.length; _j < _len1; _j++) {
-                      k = keys[_j];
-                      if (!this.newline()) {
-                        break;
-                      }
-                      v = x[k];
-                      if (this.global[k] === v) {
-                        l.push("" + ind + k + ": " + this.globalName + "." + k);
-                      } else {
-                        v = clean(print(v)).replace(/\n/g, '\n' + ni);
-                        if (!/\n/.test(v) && ind.length + k.toString().length + 2 + v.length < this.columns) {
-                          l.push(ind + k + ": " + v);
-                        } else {
-                          l.push(ind + k + ":");
-                          l.push(ni + v);
-                        }
-                      }
-                    }
-                    if (l.length) {
-                      return l.join("\n");
-                    } else {
-                      return "{ }";
-                    }
-                  }
-                }
-              }),
-              printNumber: (function(x) {
-                x.coffee = "(x)@> \"#{x}\"";
-                return x;
-              })(function(x) {
-                return "" + x;
-              })
-            };
-            window.coffeecharnia = app = {
-              libs: {
-                CoffeeScript: window.CoffeeScript,
-                aceRefcoffeeMode: globalLibs.aceRefcoffeeMode,
-                ace: window.ace,
-                DynmodPrinter: DynmodPrinter
-              },
-              "eval": window["eval"],
-              setTimeout: window.setTimeout,
-              getInputSelection: window.getInputSelection,
-              global: window["eval"]('window'),
-              window: window,
-              view: (function(x) {
-                var r, v, _i, _len, _ref;
-                r = {};
-                _ref = x.split(",");
-                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                  v = _ref[_i];
-                  r[v] = document.getElementById(v);
-                }
-                return r;
-              })("coffeeArea,runButton,killButton,introFooter,resultFooter,resultDatum,coffeecharniaConsole"),
-              accumulator: [],
-              printHtml: (function(x) {
-                x.coffee = "(s)@>\n            @accumulator.push s\n\n          ";
-                return x;
-              })(function(s) {
-                return this.accumulator.push(s);
-              }),
-              isConverting: false,
-              processSource: (function(x) {
-                x.coffee = "(s)@> \"((x)->x.call(spiritcase)) ()->\" + (\"\\n\" + s).replace(/\\n/g, \"\\n  \")";
-                return x;
-              })(function(s) {
-                return "((x)->x.call(spiritcase)) ()->" + ("\n" + s).replace(/\n/g, "\n  ");
-              }),
-              evalCoffeescript: (function(x) {
-                x.coffee = "(x)@>\n            @eval(@libs.CoffeeScript.compile(@processSource(x), bare:true))\n\n          ";
-                return x;
-              })(function(x) {
-                return this["eval"](this.libs.CoffeeScript.compile(this.processSource(x), {
-                  bare: true
-                }));
-              }),
-              evalWithSourceMap: (function(x) {
-                x.coffee = "(x)@>\n            # This technique does not seem to work properly on Chromium 22\n            { js, sourceMapV3, file_name } = @libs.CoffeeScript.compile x, sourceMap: 1\n            @lastSourceMap = \"\"\n            @eval(js)\n\n          ";
-                return x;
-              })(function(x) {
-                var file_name, js, sourceMapV3, _ref;
-                _ref = this.libs.CoffeeScript.compile(x, {
-                  sourceMap: 1
-                }), js = _ref.js, sourceMapV3 = _ref.sourceMapV3, file_name = _ref.file_name;
-                this.lastSourceMap = "";
-                return this["eval"](js);
-              }),
-              preQuote: (function(x) {
-                x.coffee = "(x)@> \"<pre>#{ x.replace /</g, \"&lt;\" }</pre>\"";
-                return x;
-              })(function(x) {
-                return "<pre>" + (x.replace(/</g, "&lt;")) + "</pre>";
-              }),
-              printVal: (function(x) {
-                x.coffee = "(x)@>\n            @preQuote(@libs.DynmodPrinter.limitLines(1000).print(x))\n            # x.toString()\n\n          ";
-                return x;
-              })(function(x) {
-                return this.preQuote(this.libs.DynmodPrinter.limitLines(1000).print(x));
-              }),
-              recalculateTextareaSize: (function(x) {
-                x.coffee = "@>\n            { setTimeout } = @\n            setTimeout (=>\n              editor = @view.coffeeArea.transformed\n              editor.resize()\n              editor.renderer.scrollCursorIntoView()\n            ), 0\n          \n          ";
-                return x;
-              })(function() {
-                var setTimeout;
-                setTimeout = this.setTimeout;
-                return setTimeout(((function(_this) {
-                  return function() {
-                    var editor;
-                    editor = _this.view.coffeeArea.transformed;
-                    editor.resize();
-                    return editor.renderer.scrollCursorIntoView();
-                  };
-                })(this)), 0);
-              }),
-              runButtonClick: (function(x) {
-                x.coffee = "@>\n            x = @view.coffeeArea.value\n            isError = null\n            val = if true\n              @evalCoffeescript x catch error\n                isError = true\n                val = error.stack ? error?.toString() ? error ? \"Undefined error\"\n            else\n              @evalWithSourceMap x\n            { coffeecharniaConsole: console, introFooter, resultFooter, resultDatum } = @view\n            if val?\n              introFooter.setAttribute \"style\", \"display:none\"\n              # resultFooter.setAttribute \"style\", \"max-height:#{console.getBoundingClientRect().height / 2.6 | 0}px\"\n              resultFooter.setAttribute \"style\", \"\"\n              if isError\n                resultDatum.innerHTML = @preQuote val\n              else\n                resultDatum.innerHTML = @printVal val              \n            else\n              introFooter.setAttribute \"style\", \"\"\n              resultFooter.setAttribute \"style\", \"display:none\"\n              resultDatum.innerHTML = \"\"\n            (@aceEditor())? then\n              @recalculateTextareaSize()\n            else\n              { setTimeout } = @\n              if true\n                # Keep it Simple!\n                setTimeout (=> @view.coffeeArea.scrollTop += 999999), 0\n                return \n              fixUp = =>\n                area = @view.coffeeArea\n                area.focus()\n                (pos = area.selectionEnd)? then\n                  pos--\n                  area.setSelectionRange?(pos, pos)\n              setTimeout fixUp, 0\n          ";
-                return x;
-              })(function() {
-                var console, error, fixUp, introFooter, isError, resultDatum, resultFooter, setTimeout, val, x, _ref;
-                x = this.view.coffeeArea.value;
-                isError = null;
-                val = (function() {
-                  var _ref, _ref1, _ref2;
-                  if (true) {
-                    try {
-                      return this.evalCoffeescript(x);
-                    } catch (_error) {
-                      error = _error;
-                      isError = true;
-                      return val = (_ref = (_ref1 = (_ref2 = error.stack) != null ? _ref2 : error != null ? error.toString() : void 0) != null ? _ref1 : error) != null ? _ref : "Undefined error";
-                    }
-                  } else {
-                    return this.evalWithSourceMap(x);
-                  }
-                }).call(this);
-                _ref = this.view, console = _ref.coffeecharniaConsole, introFooter = _ref.introFooter, resultFooter = _ref.resultFooter, resultDatum = _ref.resultDatum;
-                if (val != null) {
-                  introFooter.setAttribute("style", "display:none");
-                  resultFooter.setAttribute("style", "");
-                  if (isError) {
-                    resultDatum.innerHTML = this.preQuote(val);
-                  } else {
-                    resultDatum.innerHTML = this.printVal(val);
-                  }
-                } else {
-                  introFooter.setAttribute("style", "");
-                  resultFooter.setAttribute("style", "display:none");
-                  resultDatum.innerHTML = "";
-                }
-                if ((this.aceEditor()) != null) {
-                  return this.recalculateTextareaSize();
-                } else {
-                  setTimeout = this.setTimeout;
-                  if (true) {
-                    setTimeout(((function(_this) {
-                      return function() {
-                        return _this.view.coffeeArea.scrollTop += 999999;
+                          return _results;
+                        }).call(this);
+                        this.normalizeRules();
                       };
-                    })(this)), 0);
-                    return;
-                  }
-                  fixUp = (function(_this) {
-                    return function() {
-                      var area, pos;
-                      area = _this.view.coffeeArea;
-                      area.focus();
-                      if ((pos = area.selectionEnd) != null) {
-                        pos--;
-                        return typeof area.setSelectionRange === "function" ? area.setSelectionRange(pos, pos) : void 0;
+                      "use strict";
+                      makeClass = function(p) {
+                        var c;
+                        c = p.constructor;
+                        c.prototype = p;
+                        return c;
+                      };
+                      CoffeeHighlightRules = req("./coffee_highlight_rules").CoffeeHighlightRules;
+                      exports.RefcoffeeHighlightRules = makeClass({
+                        constructor: function() {
+                          CoffeeHighlightRules.call(this);
+                          RefcoffeeHighlightRules.call(this);
+                        },
+                        __proto__: CoffeeHighlightRules.prototype
+                      });
+                    });
+                    return ace.define("ace/mode/refcoffee", ["require", "exports", "module", "ace/mode/coffee", "ace/mode/refcoffee_highlight_rules"], function(req, exports, module) {
+                      var CoffeeMode, Mode, Rules, WorkerClient, makeClass;
+                      WorkerClient = void 0;
+                      CoffeeMode = req("ace/mode/coffee").Mode;
+                      makeClass = function(p) {
+                        var c;
+                        c = p.constructor;
+                        c.prototype = p;
+                        return c;
+                      };
+                      Rules = req("./refcoffee_highlight_rules").RefcoffeeHighlightRules;
+                      Mode = makeClass({
+                        __proto__: CoffeeMode.prototype,
+                        constructor: function() {
+                          CoffeeMode.call(this);
+                          this.HighlightRules = Rules;
+                        }
+                      });
+                      "use strict";
+                      (function() {
+                        this.$id = "ace/mode/refcoffee";
+                        this.createWorker = function(session) {
+                          return null;
+                        };
+                      }).call(Mode.prototype);
+                      exports.Mode = Mode;
+                    });
+                  })
+                }
+              };
+              window.DynmodPrinter = {
+                pkgInfo: {
+                  version: "DynmodPrinter 0.2.7-coffeecharnia",
+                  description: "Generic printer, for data and reflective code",
+                  copyright: "Copyright (c) 2014 Michele Bini",
+                  license: "MIT"
+                },
+                pkgTest: (function(x) {
+                  x.coffee = "@>\n            testPrint = (v, r)=>\n              r2 = @print(v)\n              if r isnt r2\n                throw \"Expected representation: '#{r}', obtained: '#{r2}'\"\n            testPrint [ ], \"[ ]\"\n            testPrint [ { } ], \"[ { } ]\"\n            testPrint new @Date(\"2014-05-12T23:04:24.627Z\"), 'new Date(\"2014-05-12T23:04:24.627Z\")'\n          ";
+                  return x;
+                })(function() {
+                  var testPrint;
+                  testPrint = (function(_this) {
+                    return function(v, r) {
+                      var r2;
+                      r2 = _this.print(v);
+                      if (r !== r2) {
+                        throw "Expected representation: '" + r + "', obtained: '" + r2 + "'";
                       }
                     };
                   })(this);
-                  return setTimeout(fixUp, 0);
-                }
-              }),
-              setup: (function(x) {
-                x.coffee = "@>\n            # @fs.readFileSync = (x)=> @readFileSync(x)\n            # @fs.writeFileSync = (x)=> @readFileSync(x)\n            # @ace? and @setupAce()\n            app = @\n            @view.runButton.onclick = => @runButtonClick()\n            @view.killButton.onclick = => @killButtonClick()\n            area = @view.coffeeArea\n            area.focus()\n            (pos = area.value.length)? then area.setSelectionRange?(pos, pos)\n            area.setupTransform = (editor)->\n              area.transformed = editor\n              app.aceRefcoffeeMode (mode)->\n                editor.getSession().setMode(mode)\n              editor.setTheme(\"ace/theme/merbivore\")\n            window.onkeydown = (event)->\n              return app.handleEnterKey?(event) if event.keyCode and event.keyCode is 13\n              true\n\n          ";
-                return x;
-              })(function() {
-                var app, area, pos;
-                app = this;
-                this.view.runButton.onclick = (function(_this) {
-                  return function() {
-                    return _this.runButtonClick();
-                  };
-                })(this);
-                this.view.killButton.onclick = (function(_this) {
-                  return function() {
-                    return _this.killButtonClick();
-                  };
-                })(this);
-                area = this.view.coffeeArea;
-                area.focus();
-                if ((pos = area.value.length) != null) {
-                  if (typeof area.setSelectionRange === "function") {
-                    area.setSelectionRange(pos, pos);
-                  }
-                }
-                area.setupTransform = function(editor) {
-                  area.transformed = editor;
-                  app.aceRefcoffeeMode(function(mode) {
-                    return editor.getSession().setMode(mode);
-                  });
-                  return editor.setTheme("ace/theme/merbivore");
-                };
-                return window.onkeydown = function(event) {
-                  if (event.keyCode && event.keyCode === 13) {
-                    return typeof app.handleEnterKey === "function" ? app.handleEnterKey(event) : void 0;
-                  }
+                  testPrint([], "[ ]");
+                  testPrint([{}], "[ { } ]");
+                  return testPrint(new this.Date("2014-05-12T23:04:24.627Z"), 'new Date("2014-05-12T23:04:24.627Z")');
+                }),
+                Date: Date,
+                Array: Array,
+                RegExp: RegExp,
+                columns: 74,
+                console: console,
+                window: window,
+                global: window,
+                globalName: "window",
+                symbolicPackages: true,
+                newline: (function(x) {
+                  x.coffee = "@> true";
+                  return x;
+                })(function() {
                   return true;
-                };
-              }),
-              getElement: (function(x) {
-                x.coffee = "@> @view.coffeecharniaConsole";
-                return x;
-              })(function() {
-                return this.view.coffeecharniaConsole;
-              }),
-              killButtonClick: (function(x) {
-                x.coffee = "@> el = @getElement(); el.setAttribute \"style\", el.getAttribute(\"style\") + \";display:none\"";
-                return x;
-              })(function() {
-                var el;
-                el = this.getElement();
-                return el.setAttribute("style", el.getAttribute("style") + ";display:none");
-              }),
-              getSelection: (function(x) {
-                x.coffee = "@>\n            (t = @view.coffeeArea.transformed)? then\n              t.getSelection()\n            else\n              @getInputSelection(@view)\n\n          ";
-                return x;
-              })(function() {
-                var t;
-                if ((t = this.view.coffeeArea.transformed) != null) {
-                  return t.getSelection();
-                } else {
-                  return this.getInputSelection(this.view);
-                }
-              }),
-              aceEditor: (function(x) {
-                x.coffee = "@>\n            @view.coffeeArea.transformed\n    \n          ";
-                return x;
-              })(function() {
-                return this.view.coffeeArea.transformed;
-              }),
-              handleEnterKey: (function(x) {
-                x.coffee = "(event)@>\n            app.captured = event\n            if event.shiftKey\n              return true\n            if event.ctrlKey\n                  @runButtonClick()\n                  return false\n            (editor = @aceEditor())? then\n              alert = @alert\n              cursorPosition = editor.getCursorPosition()\n              doc = editor.session.doc\n              lines = doc.getLength()\n              # lines - 1 <= cursorPosition.row then\n              line = doc.getLine(cursorPosition.row)\n              !/\\S/.test(line) then\n                      line.length is cursorPosition.column then\n                          @runButtonClick()\n                          return false\n            else\n              area = @view.coffeeArea\n              (end = area.selectionEnd)? then\n                text = area.value\n                text.length > 0 and text.length <= end and text[text.length - 1] is \"\\n\" then\n                    @runButtonClick()\n                    return false\n            true\n\n          ";
-                return x;
-              })(function(event) {
-                var alert, area, cursorPosition, doc, editor, end, line, lines, text;
-                app.captured = event;
-                if (event.shiftKey) {
-                  return true;
-                }
-                if (event.ctrlKey) {
-                  this.runButtonClick();
-                  return false;
-                }
-                if ((editor = this.aceEditor()) != null) {
-                  alert = this.alert;
-                  cursorPosition = editor.getCursorPosition();
-                  doc = editor.session.doc;
-                  lines = doc.getLength();
-                  line = doc.getLine(cursorPosition.row);
-                  if (!/\S/.test(line)) {
-                    if (line.length === cursorPosition.column) {
-                      this.runButtonClick();
-                      return false;
-                    }
+                }),
+                limitLines: (function(x) {
+                  x.coffee = "(maxLines)@>\n            lines: 0\n            maxLines: maxLines\n            newline: @> @lines++ < @maxLines\n            __proto__: @\n          ";
+                  return x;
+                })(function(maxLines) {
+                  return {
+                    lines: 0,
+                    maxLines: maxLines,
+                    newline: (function(x) {
+                      x.coffee = "@> @lines++ < @maxLines";
+                      return x;
+                    })(function() {
+                      return this.lines++ < this.maxLines;
+                    }),
+                    __proto__: this
+                  };
+                }),
+                print: (function(x) {
+                  x.coffee = "(x, prev, depth = 0, ind = \"\")@>\n              p = arguments.callee\n              depth = depth + 1\n              print = (y)=> p.call @, y, { prev, x }, depth\n              clean = (x)->\n                if /^[(]([(@][^\\n]*)[)]$/.test x\n                  x.substring(1, x.length - 1)\n                else\n                  x\n              if x == null\n                ind + \"null\"\n              else if x == @global\n                ind + @globalName\n              else if x == undefined\n                ind + \"undefined\"\n              else\n                t = typeof x\n                if t is \"boolean\"\n                  ind + if x then \"true\" else \"false\"\n                else if t is \"number\"\n                  ind + @printNumber x\n                else if t is \"string\"\n                  if x.length > 8 and /\\n/.test x\n                    l = x.split(\"\\n\")\n                    l = (x.replace /\\\"\\\"\\\"/g, '\\\"\\\"\\\"' for x in l)\n                    l.unshift ind + '\"\"\"'\n                    l.push     ind + '\"\"\"'\n                    l.join(ind + \"\\n\")\n                  else\n                    ind + '\"' + x.replace(/\\\"/g, \"\\\\\\\"\") + '\"'\n                else if t is \"function\"\n                  ni = ind + \"  \"\n                  if x.coffee?\n                    # YAY a reflective function!!!\n                    s = x.coffee\n                    if depth is 1 or /\\n/.test s\n                      lines = s.split \"\\n\"\n                      if lines.length > 1\n                        if (mn = lines[1].match(/^[ \\t]+/))?\n                          mn = mn[0].length\n                          id = mn - ni.length\n                          if id > 0\n                            x = new @RegExp(\"[ \\\\t]{#{id}}\")\n                            lines = (line.replace x, \"\" for line in lines)\n                          else if id < 0\n                            ni = @Array(-id + 1).join(\" \")\n                            lines = (ni + line for line in lines)                \n                      lines.join(\"\\n\")\n                    else\n                      ind + \"(\" + s + \")\"\n                  else\n                    ind + x.toString().replace(/\\n/g, '\\n' + ni)\n                else if (c = (do (p = prev, c = 1)-> (return c if p.x == x; p = p.prev; c++) while p?; 0))\n                  # Report cyclic structures\n                  \"<cycle-#{c}+#{depth - c - 1}>\"\n                else if t isnt \"object\"\n                  # print object of odd type\n                  \"<#{t}>\"\n                else if @Array.isArray x\n                  if x.length is 0\n                    \"[ ]\"\n                  else\n                    cl = 2\n                    hasLines = false\n                    xxxx = for xx in x\n                      break unless @newline()\n                      xx = print xx\n                      hasLines = true if /\\n/.test xx\n                      cl += 2 + xx.length\n                      xx\n                    if not hasLines and depth * 2 + cl + 1 < @columns\n                      \"[ \" + xxxx.join(\", \") + \" ]\"\n                    else\n                      ni = ind + \"  \"\n                      l = [ ind + \"[\" ]\n                      for xx in xxxx\n                        l.push ni + clean(xx).replace(/\\n/g, '\\n' + ni)\n                      l.push ind + \"]\"\n                      l.join \"\\n\"\n                else\n                  l = [ ]\n                  @window?.document?   and   x.id?   and   typeof x.id is \"string\"   and   x is @window.document.getElementById x.id   then\n                    return \"#{ind}window.document.getElementById '#{ x.id.replace(/\\'/, \"\\\\'\") }'\"\n                  @symbolicPackages and depth > 1 and (packageVersion = x.pkgInfo?.version)? then\n                    return ind + \"dynmodArchive.load '\" + packageVersion.replace(/\\ .*/, \"\") + \"'\"\n                  ind = \"\"\n                  if x instanceof @Date\n                    return \"new Date(\\\"#{x.toISOString()}\\\")\"\n                  keys = (k for k of x)\n                  if keys.length is 0\n                    return \"{ }\"\n                  unless (!prev? or typeof prev.x is \"object\" and !@Array.isArray prev.x)\n                    l = [ \"do->\" ]\n                    ind = \"  \"\n                  ni = ind + \"  \"\n                  # keys = (h)@> (x for x of h).sort()\n                  for k in keys\n                    break unless @newline()\n                    v = x[k]\n                    if @global[k] is v\n                      # l.push ind + k + \": eval \" + \"'\" + k + \"'\"\n                      l.push \"#{ind}#{k}: #{@globalName}.#{k}\"\n                    else\n                      v = clean(print v).replace(/\\n/g, '\\n' + ni)\n                      if !/\\n/.test(v) and  ind.length + k.toString().length + 2 + v.length < @columns\n                        l.push ind + k + \": \" + v\n                      else\n                        l.push ind + k + \":\"\n                        l.push ni + v\n                  if l.length\n                    l.join \"\\n\"\n                  else\n                    \"{ }\"\n          ";
+                  return x;
+                })(function(x, prev, depth, ind) {
+                  var c, cl, clean, hasLines, id, k, keys, l, line, lines, mn, ni, p, packageVersion, print, s, t, v, xx, xxxx, _i, _j, _len, _len1, _ref, _ref1;
+                  if (depth == null) {
+                    depth = 0;
                   }
-                } else {
-                  area = this.view.coffeeArea;
-                  if ((end = area.selectionEnd) != null) {
-                    text = area.value;
-                    if (text.length > 0 && text.length <= end && text[text.length - 1] === "\n") {
-                      this.runButtonClick();
-                      return false;
-                    }
+                  if (ind == null) {
+                    ind = "";
                   }
-                }
-                return true;
-              }),
-              aceRefcoffeeMode: (function(x) {
-                x.coffee = "(cb)@>\n            cb? then\n              ace = @libs.ace\n              ace.config.loadModule \"ace/mode/coffee\", =>\n                @libs.aceRefcoffeeMode.setup ace: @libs.ace, CoffeeScript: @libs.CoffeeScript\n                cb \"ace/mode/refcoffee\"\n            else\n              try\n                @libs.aceRefcoffeeMode.setup ace: @libs.ace, CoffeeScript: @libs.CoffeeScript\n                @libs.ace.require(\"ace/mode/refcoffee\")\n                \"ace/mode/refcoffee\"\n              catch e\n                \"ace/mode/coffee\"\n\n          # ace: ace ? null\n          # setupAce: @> @ace.edit(@view.coffeeArea)\n\n          ";
-                return x;
-              })(function(cb) {
-                var ace, e;
-                if (cb != null) {
-                  ace = this.libs.ace;
-                  return ace.config.loadModule("ace/mode/coffee", (function(_this) {
-                    return function() {
-                      _this.libs.aceRefcoffeeMode.setup({
-                        ace: _this.libs.ace,
-                        CoffeeScript: _this.libs.CoffeeScript
-                      });
-                      return cb("ace/mode/refcoffee");
+                  p = arguments.callee;
+                  depth = depth + 1;
+                  print = (function(_this) {
+                    return function(y) {
+                      return p.call(_this, y, {
+                        prev: prev,
+                        x: x
+                      }, depth);
                     };
-                  })(this));
-                } else {
-                  try {
-                    this.libs.aceRefcoffeeMode.setup({
-                      ace: this.libs.ace,
-                      CoffeeScript: this.libs.CoffeeScript
-                    });
-                    this.libs.ace.require("ace/mode/refcoffee");
-                    return "ace/mode/refcoffee";
-                  } catch (_error) {
-                    e = _error;
-                    return "ace/mode/coffee";
-                  }
-                }
-              }),
-              Error: Error,
-              files: {}
-            };
-            app.setup();
-            if (false) {
-              if (typeof ace !== "undefined" && ace !== null) {
-                ace.options = {
-                  mode: "coffee",
-                  theme: "cobalt",
-                  gutter: "true"
-                };
-              }
-            }
-            inject = function(options, callback) {
-              var baseUrl, load;
-              baseUrl = options.baseUrl || "../../src-noconflict";
-              load = function(path, callback) {
-                var head, s;
-                head = document.getElementsByTagName("head")[0];
-                s = document.createElement("script");
-                s.src = baseUrl + "/" + path;
-                head.appendChild(s);
-                s.onload = s.onreadystatechange = function(_, isAbort) {
-                  if (isAbort || !s.readyState || s.readyState === "loaded" || s.readyState === "complete") {
-                    s = s.onload = s.onreadystatechange = null;
-                    if (!isAbort) {
-                      callback();
+                  })(this);
+                  clean = function(x) {
+                    if (/^[(]([(@][^\n]*)[)]$/.test(x)) {
+                      return x.substring(1, x.length - 1);
+                    } else {
+                      return x;
                     }
-                  }
-                };
-              };
-              if (typeof ace !== "undefined" && ace !== null) {
-                ace.config.loadModule("ace/ext/textarea", function() {
-                  var areas, event, i;
-                  if (false) {
-                    event = ace.require("ace/lib/event");
-                    areas = document.getElementsByTagName("textarea");
-                    i = 0;
-                    while (i < areas.length) {
-                      event.addListener(areas[i], "click", function(e) {
-                        if (e.detail === 3) {
-                          ace.transformTextarea(e.target, options.ace);
+                  };
+                  if (x === null) {
+                    return ind + "null";
+                  } else if (x === this.global) {
+                    return ind + this.globalName;
+                  } else if (x === void 0) {
+                    return ind + "undefined";
+                  } else {
+                    t = typeof x;
+                    if (t === "boolean") {
+                      return ind + (x ? "true" : "false");
+                    } else if (t === "number") {
+                      return ind + this.printNumber(x);
+                    } else if (t === "string") {
+                      if (x.length > 8 && /\n/.test(x)) {
+                        l = x.split("\n");
+                        l = (function() {
+                          var _i, _len, _results;
+                          _results = [];
+                          for (_i = 0, _len = l.length; _i < _len; _i++) {
+                            x = l[_i];
+                            _results.push(x.replace(/\"\"\"/g, '\"\"\"'));
+                          }
+                          return _results;
+                        })();
+                        l.unshift(ind + '"""');
+                        l.push(ind + '"""');
+                        return l.join(ind + "\n");
+                      } else {
+                        return ind + '"' + x.replace(/\"/g, "\\\"") + '"';
+                      }
+                    } else if (t === "function") {
+                      ni = ind + "  ";
+                      if (x.coffee != null) {
+                        s = x.coffee;
+                        if (depth === 1 || /\n/.test(s)) {
+                          lines = s.split("\n");
+                          if (lines.length > 1) {
+                            if ((mn = lines[1].match(/^[ \t]+/)) != null) {
+                              mn = mn[0].length;
+                              id = mn - ni.length;
+                              if (id > 0) {
+                                x = new this.RegExp("[ \\t]{" + id + "}");
+                                lines = (function() {
+                                  var _i, _len, _results;
+                                  _results = [];
+                                  for (_i = 0, _len = lines.length; _i < _len; _i++) {
+                                    line = lines[_i];
+                                    _results.push(line.replace(x, ""));
+                                  }
+                                  return _results;
+                                })();
+                              } else if (id < 0) {
+                                ni = this.Array(-id + 1).join(" ");
+                                lines = (function() {
+                                  var _i, _len, _results;
+                                  _results = [];
+                                  for (_i = 0, _len = lines.length; _i < _len; _i++) {
+                                    line = lines[_i];
+                                    _results.push(ni + line);
+                                  }
+                                  return _results;
+                                })();
+                              }
+                            }
+                          }
+                          return lines.join("\n");
+                        } else {
+                          return ind + "(" + s + ")";
                         }
-                      });
-                      i++;
+                      } else {
+                        return ind + x.toString().replace(/\n/g, '\n' + ni);
+                      }
+                    } else if ((c = (function(p, c) {
+                      while (p != null) {
+                        if (p.x === x) {
+                          return c;
+                        }
+                        p = p.prev;
+                        c++;
+                      }
+                      return 0;
+                    })(prev, 1))) {
+                      return "<cycle-" + c + "+" + (depth - c - 1) + ">";
+                    } else if (t !== "object") {
+                      return "<" + t + ">";
+                    } else if (this.Array.isArray(x)) {
+                      if (x.length === 0) {
+                        return "[ ]";
+                      } else {
+                        cl = 2;
+                        hasLines = false;
+                        xxxx = (function() {
+                          var _i, _len, _results;
+                          _results = [];
+                          for (_i = 0, _len = x.length; _i < _len; _i++) {
+                            xx = x[_i];
+                            if (!this.newline()) {
+                              break;
+                            }
+                            xx = print(xx);
+                            if (/\n/.test(xx)) {
+                              hasLines = true;
+                            }
+                            cl += 2 + xx.length;
+                            _results.push(xx);
+                          }
+                          return _results;
+                        }).call(this);
+                        if (!hasLines && depth * 2 + cl + 1 < this.columns) {
+                          return "[ " + xxxx.join(", ") + " ]";
+                        } else {
+                          ni = ind + "  ";
+                          l = [ind + "["];
+                          for (_i = 0, _len = xxxx.length; _i < _len; _i++) {
+                            xx = xxxx[_i];
+                            l.push(ni + clean(xx).replace(/\n/g, '\n' + ni));
+                          }
+                          l.push(ind + "]");
+                          return l.join("\n");
+                        }
+                      }
+                    } else {
+                      l = [];
+                      if ((((_ref = this.window) != null ? _ref.document : void 0) != null) && (x.id != null) && typeof x.id === "string" && x === this.window.document.getElementById(x.id)) {
+                        return "" + ind + "window.document.getElementById '" + (x.id.replace(/\'/, "\\'")) + "'";
+                      }
+                      if (this.symbolicPackages && depth > 1 && ((packageVersion = (_ref1 = x.pkgInfo) != null ? _ref1.version : void 0) != null)) {
+                        return ind + "dynmodArchive.load '" + packageVersion.replace(/\ .*/, "") + "'";
+                      }
+                      ind = "";
+                      if (x instanceof this.Date) {
+                        return "new Date(\"" + (x.toISOString()) + "\")";
+                      }
+                      keys = (function() {
+                        var _results;
+                        _results = [];
+                        for (k in x) {
+                          _results.push(k);
+                        }
+                        return _results;
+                      })();
+                      if (keys.length === 0) {
+                        return "{ }";
+                      }
+                      if (!((prev == null) || typeof prev.x === "object" && !this.Array.isArray(prev.x))) {
+                        l = ["do->"];
+                        ind = "  ";
+                      }
+                      ni = ind + "  ";
+                      for (_j = 0, _len1 = keys.length; _j < _len1; _j++) {
+                        k = keys[_j];
+                        if (!this.newline()) {
+                          break;
+                        }
+                        v = x[k];
+                        if (this.global[k] === v) {
+                          l.push("" + ind + k + ": " + this.globalName + "." + k);
+                        } else {
+                          v = clean(print(v)).replace(/\n/g, '\n' + ni);
+                          if (!/\n/.test(v) && ind.length + k.toString().length + 2 + v.length < this.columns) {
+                            l.push(ind + k + ": " + v);
+                          } else {
+                            l.push(ind + k + ":");
+                            l.push(ni + v);
+                          }
+                        }
+                      }
+                      if (l.length) {
+                        return l.join("\n");
+                      } else {
+                        return "{ }";
+                      }
                     }
                   }
-                  callback && callback();
-                });
+                }),
+                printNumber: (function(x) {
+                  x.coffee = "(x)@> \"#{x}\"";
+                  return x;
+                })(function(x) {
+                  return "" + x;
+                })
+              };
+              window.coffeecharnia = app = {
+                libs: {
+                  CoffeeScript: window.CoffeeScript,
+                  aceRefcoffeeMode: globalLibs.aceRefcoffeeMode,
+                  ace: window.ace,
+                  DynmodPrinter: DynmodPrinter
+                },
+                "eval": window["eval"],
+                setTimeout: window.setTimeout,
+                getInputSelection: window.getInputSelection,
+                global: window["eval"]('window'),
+                window: window,
+                view: (function(x) {
+                  var r, v, _i, _len, _ref;
+                  r = {};
+                  _ref = x.split(",");
+                  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                    v = _ref[_i];
+                    r[v] = document.getElementById(v);
+                  }
+                  return r;
+                })("coffeeArea,runButton,killButton,introFooter,resultFooter,resultDatum,coffeecharniaConsole"),
+                accumulator: [],
+                printHtml: (function(x) {
+                  x.coffee = "(s)@>\n            @accumulator.push s\n\n          ";
+                  return x;
+                })(function(s) {
+                  return this.accumulator.push(s);
+                }),
+                isConverting: false,
+                processSource: (function(x) {
+                  x.coffee = "(s)@> \"((x)->x.call(spiritcase)) ()->\" + (\"\\n\" + s).replace(/\\n/g, \"\\n  \")";
+                  return x;
+                })(function(s) {
+                  return "((x)->x.call(spiritcase)) ()->" + ("\n" + s).replace(/\n/g, "\n  ");
+                }),
+                evalCoffeescript: (function(x) {
+                  x.coffee = "(x)@>\n            @eval(@libs.CoffeeScript.compile(@processSource(x), bare:true))\n\n          ";
+                  return x;
+                })(function(x) {
+                  return this["eval"](this.libs.CoffeeScript.compile(this.processSource(x), {
+                    bare: true
+                  }));
+                }),
+                evalWithSourceMap: (function(x) {
+                  x.coffee = "(x)@>\n            # This technique does not seem to work properly on Chromium 22\n            { js, sourceMapV3, file_name } = @libs.CoffeeScript.compile x, sourceMap: 1\n            @lastSourceMap = \"\"\n            @eval(js)\n\n          ";
+                  return x;
+                })(function(x) {
+                  var file_name, js, sourceMapV3, _ref;
+                  _ref = this.libs.CoffeeScript.compile(x, {
+                    sourceMap: 1
+                  }), js = _ref.js, sourceMapV3 = _ref.sourceMapV3, file_name = _ref.file_name;
+                  this.lastSourceMap = "";
+                  return this["eval"](js);
+                }),
+                preQuote: (function(x) {
+                  x.coffee = "(x)@> \"<pre>#{ x.replace /</g, \"&lt;\" }</pre>\"";
+                  return x;
+                })(function(x) {
+                  return "<pre>" + (x.replace(/</g, "&lt;")) + "</pre>";
+                }),
+                printVal: (function(x) {
+                  x.coffee = "(x)@>\n            @preQuote(@libs.DynmodPrinter.limitLines(1000).print(x))\n            # x.toString()\n\n          ";
+                  return x;
+                })(function(x) {
+                  return this.preQuote(this.libs.DynmodPrinter.limitLines(1000).print(x));
+                }),
+                recalculateTextareaSize: (function(x) {
+                  x.coffee = "@>\n            { setTimeout } = @\n            setTimeout (=>\n              editor = @view.coffeeArea.transformed\n              editor.resize()\n              editor.renderer.scrollCursorIntoView()\n            ), 0\n          \n          ";
+                  return x;
+                })(function() {
+                  var setTimeout;
+                  setTimeout = this.setTimeout;
+                  return setTimeout(((function(_this) {
+                    return function() {
+                      var editor;
+                      editor = _this.view.coffeeArea.transformed;
+                      editor.resize();
+                      return editor.renderer.scrollCursorIntoView();
+                    };
+                  })(this)), 0);
+                }),
+                runButtonClick: (function(x) {
+                  x.coffee = "@>\n            x = @view.coffeeArea.value\n            isError = null\n            val = if true\n              @evalCoffeescript x catch error\n                isError = true\n                val = error.stack ? error?.toString() ? error ? \"Undefined error\"\n            else\n              @evalWithSourceMap x\n            { coffeecharniaConsole: console, introFooter, resultFooter, resultDatum } = @view\n            if val?\n              introFooter.setAttribute \"style\", \"display:none\"\n              # resultFooter.setAttribute \"style\", \"max-height:#{console.getBoundingClientRect().height / 2.6 | 0}px\"\n              resultFooter.setAttribute \"style\", \"\"\n              if isError\n                resultDatum.innerHTML = @preQuote val\n              else\n                resultDatum.innerHTML = @printVal val              \n            else\n              introFooter.setAttribute \"style\", \"\"\n              resultFooter.setAttribute \"style\", \"display:none\"\n              resultDatum.innerHTML = \"\"\n            (@aceEditor())? then\n              @recalculateTextareaSize()\n            else\n              { setTimeout } = @\n              if true\n                # Keep it Simple!\n                setTimeout (=> @view.coffeeArea.scrollTop += 999999), 0\n                return \n              fixUp = =>\n                area = @view.coffeeArea\n                area.focus()\n                (pos = area.selectionEnd)? then\n                  pos--\n                  area.setSelectionRange?(pos, pos)\n              setTimeout fixUp, 0\n          ";
+                  return x;
+                })(function() {
+                  var console, error, fixUp, introFooter, isError, resultDatum, resultFooter, setTimeout, val, x, _ref;
+                  x = this.view.coffeeArea.value;
+                  isError = null;
+                  val = (function() {
+                    var _ref, _ref1, _ref2;
+                    if (true) {
+                      try {
+                        return this.evalCoffeescript(x);
+                      } catch (_error) {
+                        error = _error;
+                        isError = true;
+                        return val = (_ref = (_ref1 = (_ref2 = error.stack) != null ? _ref2 : error != null ? error.toString() : void 0) != null ? _ref1 : error) != null ? _ref : "Undefined error";
+                      }
+                    } else {
+                      return this.evalWithSourceMap(x);
+                    }
+                  }).call(this);
+                  _ref = this.view, console = _ref.coffeecharniaConsole, introFooter = _ref.introFooter, resultFooter = _ref.resultFooter, resultDatum = _ref.resultDatum;
+                  if (val != null) {
+                    introFooter.setAttribute("style", "display:none");
+                    resultFooter.setAttribute("style", "");
+                    if (isError) {
+                      resultDatum.innerHTML = this.preQuote(val);
+                    } else {
+                      resultDatum.innerHTML = this.printVal(val);
+                    }
+                  } else {
+                    introFooter.setAttribute("style", "");
+                    resultFooter.setAttribute("style", "display:none");
+                    resultDatum.innerHTML = "";
+                  }
+                  if ((this.aceEditor()) != null) {
+                    return this.recalculateTextareaSize();
+                  } else {
+                    setTimeout = this.setTimeout;
+                    if (true) {
+                      setTimeout(((function(_this) {
+                        return function() {
+                          return _this.view.coffeeArea.scrollTop += 999999;
+                        };
+                      })(this)), 0);
+                      return;
+                    }
+                    fixUp = (function(_this) {
+                      return function() {
+                        var area, pos;
+                        area = _this.view.coffeeArea;
+                        area.focus();
+                        if ((pos = area.selectionEnd) != null) {
+                          pos--;
+                          return typeof area.setSelectionRange === "function" ? area.setSelectionRange(pos, pos) : void 0;
+                        }
+                      };
+                    })(this);
+                    return setTimeout(fixUp, 0);
+                  }
+                }),
+                setup: (function(x) {
+                  x.coffee = "@>\n            # @fs.readFileSync = (x)=> @readFileSync(x)\n            # @fs.writeFileSync = (x)=> @readFileSync(x)\n            # @ace? and @setupAce()\n            app = @\n            @view.runButton.onclick = => @runButtonClick()\n            @view.killButton.onclick = => @killButtonClick()\n            area = @view.coffeeArea\n            area.focus()\n            (pos = area.value.length)? then area.setSelectionRange?(pos, pos)\n            area.setupTransform = (editor)->\n              area.transformed = editor\n              app.aceRefcoffeeMode (mode)->\n                editor.getSession().setMode(mode)\n              editor.setTheme(\"ace/theme/merbivore\")\n            window.onkeydown = (event)->\n              return app.handleEnterKey?(event) if event.keyCode and event.keyCode is 13\n              true\n\n          ";
+                  return x;
+                })(function() {
+                  var app, area, pos;
+                  app = this;
+                  this.view.runButton.onclick = (function(_this) {
+                    return function() {
+                      return _this.runButtonClick();
+                    };
+                  })(this);
+                  this.view.killButton.onclick = (function(_this) {
+                    return function() {
+                      return _this.killButtonClick();
+                    };
+                  })(this);
+                  area = this.view.coffeeArea;
+                  area.focus();
+                  if ((pos = area.value.length) != null) {
+                    if (typeof area.setSelectionRange === "function") {
+                      area.setSelectionRange(pos, pos);
+                    }
+                  }
+                  area.setupTransform = function(editor) {
+                    area.transformed = editor;
+                    app.aceRefcoffeeMode(function(mode) {
+                      return editor.getSession().setMode(mode);
+                    });
+                    return editor.setTheme("ace/theme/merbivore");
+                  };
+                  return window.onkeydown = function(event) {
+                    if (event.keyCode && event.keyCode === 13) {
+                      return typeof app.handleEnterKey === "function" ? app.handleEnterKey(event) : void 0;
+                    }
+                    return true;
+                  };
+                }),
+                getElement: (function(x) {
+                  x.coffee = "@> @view.coffeecharniaConsole";
+                  return x;
+                })(function() {
+                  return this.view.coffeecharniaConsole;
+                }),
+                killButtonClick: (function(x) {
+                  x.coffee = "@> el = @getElement(); el.setAttribute \"style\", el.getAttribute(\"style\") + \";display:none\"";
+                  return x;
+                })(function() {
+                  var el;
+                  el = this.getElement();
+                  return el.setAttribute("style", el.getAttribute("style") + ";display:none");
+                }),
+                getSelection: (function(x) {
+                  x.coffee = "@>\n            (t = @view.coffeeArea.transformed)? then\n              t.getSelection()\n            else\n              @getInputSelection(@view)\n\n          ";
+                  return x;
+                })(function() {
+                  var t;
+                  if ((t = this.view.coffeeArea.transformed) != null) {
+                    return t.getSelection();
+                  } else {
+                    return this.getInputSelection(this.view);
+                  }
+                }),
+                aceEditor: (function(x) {
+                  x.coffee = "@>\n            @view.coffeeArea.transformed\n    \n          ";
+                  return x;
+                })(function() {
+                  return this.view.coffeeArea.transformed;
+                }),
+                handleEnterKey: (function(x) {
+                  x.coffee = "(event)@>\n            app.captured = event\n            if event.shiftKey\n              return true\n            if event.ctrlKey\n                  @runButtonClick()\n                  return false\n            (editor = @aceEditor())? then\n              alert = @alert\n              cursorPosition = editor.getCursorPosition()\n              doc = editor.session.doc\n              lines = doc.getLength()\n              # lines - 1 <= cursorPosition.row then\n              line = doc.getLine(cursorPosition.row)\n              !/\\S/.test(line) then\n                      line.length is cursorPosition.column then\n                          @runButtonClick()\n                          return false\n            else\n              area = @view.coffeeArea\n              (end = area.selectionEnd)? then\n                text = area.value\n                text.length > 0 and text.length <= end and text[text.length - 1] is \"\\n\" then\n                    @runButtonClick()\n                    return false\n            true\n\n          ";
+                  return x;
+                })(function(event) {
+                  var alert, area, cursorPosition, doc, editor, end, line, lines, text;
+                  app.captured = event;
+                  if (event.shiftKey) {
+                    return true;
+                  }
+                  if (event.ctrlKey) {
+                    this.runButtonClick();
+                    return false;
+                  }
+                  if ((editor = this.aceEditor()) != null) {
+                    alert = this.alert;
+                    cursorPosition = editor.getCursorPosition();
+                    doc = editor.session.doc;
+                    lines = doc.getLength();
+                    line = doc.getLine(cursorPosition.row);
+                    if (!/\S/.test(line)) {
+                      if (line.length === cursorPosition.column) {
+                        this.runButtonClick();
+                        return false;
+                      }
+                    }
+                  } else {
+                    area = this.view.coffeeArea;
+                    if ((end = area.selectionEnd) != null) {
+                      text = area.value;
+                      if (text.length > 0 && text.length <= end && text[text.length - 1] === "\n") {
+                        this.runButtonClick();
+                        return false;
+                      }
+                    }
+                  }
+                  return true;
+                }),
+                aceRefcoffeeMode: (function(x) {
+                  x.coffee = "(cb)@>\n            cb? then\n              ace = @libs.ace\n              ace.config.loadModule \"ace/mode/coffee\", =>\n                @libs.aceRefcoffeeMode.setup ace: @libs.ace, CoffeeScript: @libs.CoffeeScript\n                cb \"ace/mode/refcoffee\"\n            else\n              try\n                @libs.aceRefcoffeeMode.setup ace: @libs.ace, CoffeeScript: @libs.CoffeeScript\n                @libs.ace.require(\"ace/mode/refcoffee\")\n                \"ace/mode/refcoffee\"\n              catch e\n                \"ace/mode/coffee\"\n\n          # ace: ace ? null\n          # setupAce: @> @ace.edit(@view.coffeeArea)\n\n          ";
+                  return x;
+                })(function(cb) {
+                  var ace, e;
+                  if (cb != null) {
+                    ace = this.libs.ace;
+                    return ace.config.loadModule("ace/mode/coffee", (function(_this) {
+                      return function() {
+                        _this.libs.aceRefcoffeeMode.setup({
+                          ace: _this.libs.ace,
+                          CoffeeScript: _this.libs.CoffeeScript
+                        });
+                        return cb("ace/mode/refcoffee");
+                      };
+                    })(this));
+                  } else {
+                    try {
+                      this.libs.aceRefcoffeeMode.setup({
+                        ace: this.libs.ace,
+                        CoffeeScript: this.libs.CoffeeScript
+                      });
+                      this.libs.ace.require("ace/mode/refcoffee");
+                      return "ace/mode/refcoffee";
+                    } catch (_error) {
+                      e = _error;
+                      return "ace/mode/coffee";
+                    }
+                  }
+                }),
+                Error: Error,
+                files: {}
+              };
+              app.setup();
+              if (false) {
+                if (typeof ace !== "undefined" && ace !== null) {
+                  ace.options = {
+                    mode: "coffee",
+                    theme: "cobalt",
+                    gutter: "true"
+                  };
+                }
               }
-            };
-            camelcapBookmarklet = function(ace) {
-              if (document.getElementById("ccapcss")) {
-                return;
-              }
-              return ace.require(["ace/layer/text"], function(_arg) {
-                var Text, orig, patched, x;
-                Text = _arg.Text;
+              inject = function(options, callback) {
+                var baseUrl, load;
+                baseUrl = options.baseUrl || "../../src-noconflict";
+                load = function(path, callback) {
+                  var head, s;
+                  head = document.getElementsByTagName("head")[0];
+                  s = document.createElement("script");
+                  s.src = baseUrl + "/" + path;
+                  head.appendChild(s);
+                  s.onload = s.onreadystatechange = function(_, isAbort) {
+                    if (isAbort || !s.readyState || s.readyState === "loaded" || s.readyState === "complete") {
+                      s = s.onload = s.onreadystatechange = null;
+                      if (!isAbort) {
+                        callback();
+                      }
+                    }
+                  };
+                };
+                if (typeof ace !== "undefined" && ace !== null) {
+                  ace.config.loadModule("ace/ext/textarea", function() {
+                    var areas, event, i;
+                    if (false) {
+                      event = ace.require("ace/lib/event");
+                      areas = document.getElementsByTagName("textarea");
+                      i = 0;
+                      while (i < areas.length) {
+                        event.addListener(areas[i], "click", function(e) {
+                          if (e.detail === 3) {
+                            ace.transformTextarea(e.target, options.ace);
+                          }
+                        });
+                        i++;
+                      }
+                    }
+                    callback && callback();
+                  });
+                }
+              };
+              camelcapBookmarklet = function(ace) {
                 if (document.getElementById("ccapcss")) {
                   return;
                 }
-                orig = Text.prototype.$renderToken;
-                patched = (function(rgx) {
-                  return function(builder, col, token, value) {
-                    var match, p, q, s, type, type_c;
-                    if (match = rgx.exec(value)) {
-                      type = token.type;
-                      type_c = type + ".ccap";
-                      p = 0;
-                      while (true) {
-                        q = rgx.lastIndex - 1;
-                        s = value.substring(p, q);
-                        col = orig.call(this, builder, col, {
+                return ace.require(["ace/layer/text"], function(_arg) {
+                  var Text, orig, patched, x;
+                  Text = _arg.Text;
+                  if (document.getElementById("ccapcss")) {
+                    return;
+                  }
+                  orig = Text.prototype.$renderToken;
+                  patched = (function(rgx) {
+                    return function(builder, col, token, value) {
+                      var match, p, q, s, type, type_c;
+                      if (match = rgx.exec(value)) {
+                        type = token.type;
+                        type_c = type + ".ccap";
+                        p = 0;
+                        while (true) {
+                          q = rgx.lastIndex - 1;
+                          s = value.substring(p, q);
+                          col = orig.call(this, builder, col, {
+                            type: type,
+                            value: s
+                          }, s);
+                          s = value.substring(q, p = q + 1);
+                          col = orig.call(this, builder, col, {
+                            type: type_c,
+                            value: s
+                          }, s);
+                          if (!(match = rgx.exec(value))) {
+                            break;
+                          }
+                        }
+                        s = value.substring(p);
+                        return orig.call(this, builder, col, {
                           type: type,
                           value: s
                         }, s);
-                        s = value.substring(q, p = q + 1);
-                        col = orig.call(this, builder, col, {
-                          type: type_c,
-                          value: s
-                        }, s);
-                        if (!(match = rgx.exec(value))) {
-                          break;
-                        }
+                      } else {
+                        return orig.apply(this, arguments);
                       }
-                      s = value.substring(p);
-                      return orig.call(this, builder, col, {
-                        type: type,
-                        value: s
-                      }, s);
-                    } else {
-                      return orig.apply(this, arguments);
-                    }
-                  };
-                })(new RegExp("[a-z][0-9]*[A-Z]", "g"));
-                Text.prototype.$renderToken = patched;
-                x = document.createElement("style");
-                x.id = "ccapcss";
-                x.innerHTML = ".ace_ccap { font-weight: bold; }";
-                return document.head.appendChild(x);
-              });
-            };
-            if (typeof ace !== "undefined" && ace !== null) {
-              camelcapBookmarklet(ace);
-            }
-            return inject({}, function() {
-              var a, x, _fn, _i, _len, _ref;
-              _ref = ((function() {
-                var _j, _len, _ref, _results;
-                _ref = document.getElementsByClassName("editArea");
-                _results = [];
-                for (_j = 0, _len = _ref.length; _j < _len; _j++) {
-                  x = _ref[_j];
-                  _results.push(x);
-                }
-                return _results;
-              })()).reverse();
-              _fn = function(a, e) {
-                e = ace.require("ace/ext/textarea").transformTextarea(a);
-                e.navigateFileEnd();
-                a.setupTransform(e);
-                a.onchange = function() {
-                  e.setValue(this.value, -1);
-                };
-                e.on("change", function() {
-                  a.value = e.getValue();
-                  if (typeof a.oninput === "function") {
-                    a.oninput();
-                  }
-                });
-                e.on("blur", function() {
-                  a.value = e.getValue();
-                  if (typeof a.onblur === "function") {
-                    a.onblur();
-                  }
-                });
-                return e.on("focus", function() {
-                  if (typeof a.onfocus === "function") {
-                    a.onfocus();
-                  }
+                    };
+                  })(new RegExp("[a-z][0-9]*[A-Z]", "g"));
+                  Text.prototype.$renderToken = patched;
+                  x = document.createElement("style");
+                  x.id = "ccapcss";
+                  x.innerHTML = ".ace_ccap { font-weight: bold; }";
+                  return document.head.appendChild(x);
                 });
               };
-              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                a = _ref[_i];
-                _fn(a, ace.require("ace/ext/textarea").transformTextarea(a));
+              if (typeof ace !== "undefined" && ace !== null) {
+                camelcapBookmarklet(ace);
               }
+              return inject({}, function() {
+                var a, x, _fn, _i, _len, _ref;
+                _ref = ((function() {
+                  var _j, _len, _ref, _results;
+                  _ref = document.getElementsByClassName("editArea");
+                  _results = [];
+                  for (_j = 0, _len = _ref.length; _j < _len; _j++) {
+                    x = _ref[_j];
+                    _results.push(x);
+                  }
+                  return _results;
+                })()).reverse();
+                _fn = function(a, e) {
+                  e = ace.require("ace/ext/textarea").transformTextarea(a);
+                  e.navigateFileEnd();
+                  a.setupTransform(e);
+                  a.onchange = function() {
+                    e.setValue(this.value, -1);
+                  };
+                  e.on("change", function() {
+                    a.value = e.getValue();
+                    if (typeof a.oninput === "function") {
+                      a.oninput();
+                    }
+                  });
+                  e.on("blur", function() {
+                    a.value = e.getValue();
+                    if (typeof a.onblur === "function") {
+                      a.onblur();
+                    }
+                  });
+                  return e.on("focus", function() {
+                    if (typeof a.onfocus === "function") {
+                      a.onfocus();
+                    }
+                  });
+                };
+                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                  a = _ref[_i];
+                  _fn(a, ace.require("ace/ext/textarea").transformTextarea(a));
+                }
+              });
             });
           });
-        });
+        };
       })();
 </script></body></html>

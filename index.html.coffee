@@ -850,9 +850,16 @@ htmlcup.html5Page ->
         moreButtonClick: (opts)@>
           control = => @eventControl.apply @, arguments 
           @setDialog "more", ->
-            @label "Scale: "
-            @button onclick:control("doubleScale"), "2X"
-            @button onclick:control("halveScale"), "/2"
+            
+            @div class:"spiritcaseToolbarGroup", ->
+              @label "Scale: "
+              @button onclick:control("doubleScale"), "2X"
+              @button onclick:control("halveScale"), "/2"
+            
+            @div class:"spiritcaseToolbarGroup", ->
+              @button onclick:control("startConsole"), "Console"
+        startConsole: @>
+          @lib.window.coffeecharniaStart()
         setupUndoStep: (v)@>
           v.setAttribute "onclick", "javascript:spiritcase.chooseUndoStep(event,this)"
           v
@@ -1136,6 +1143,7 @@ htmlcup.html5Page ->
     # @script src:"https://github.com/ajaxorg/ace-builds/raw/master/src-min-noconflict/ace.js", type:"text/javascript", charset:"utf-8"
     # @script src:"coffee-script.js", type:"text/javascript"
     @coffeeScript ->
+     window.coffeecharniaStart = ->
       coffeecharniaLayout = ({ header, body, footer, minheight, minwidth, style, innerStyle })->
           # return @div "foobar"
           # This seems rather complex, but it appears to be the simplest effective way to get what I want, flex isn't working as expected

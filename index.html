@@ -1712,7 +1712,7 @@ canvas.pick_tool {
             return _results;
           }),
           swapFrame: (function(x) {
-            x.coffee = "(event, el1, i)@>\n            @updateIcon()\n            event.stopPropagation()\n            event.preventDefault()\n            el0 = @icon.el\n            @icon.el = el1\n            @frames[i] = el0\n            n0 = el0.nextSibling\n            p0 = el0.parentNode\n            n1 = el1.nextSibling\n            p1 = el1.parentNode\n            p0.insertBefore(el1, n0)\n            p1.insertBefore(el0, n1)\n            @setupFrame i, el0\n            @imageData = el1.getContext('2d').getImageData(0, 0, el1.width, el1.height)\n            @updateCanvasSize()            \n            @redraw()\n        \n        ";
+            x.coffee = "(event, el1, i)@>\n            @updateIcon()\n            event.stopPropagation()\n            event.preventDefault()\n            el0 = @icon.el\n            @icon.el = el1\n            @frames[i] = el0\n            n0 = el0.nextSibling\n            p0 = el0.parentNode\n            n1 = el1.nextSibling\n            p1 = el1.parentNode\n            p0.insertBefore(el1, n0)\n            p1.insertBefore(el0, n1)\n            @setupFrame i, el0\n            @modified = true\n            @imageData = el1.getContext('2d').getImageData(0, 0, el1.width, el1.height)\n            @updateCanvasSize()            \n            @redraw()\n        \n        ";
             return x;
           })(function(event, el1, i) {
             var el0, n0, n1, p0, p1;
@@ -1729,6 +1729,7 @@ canvas.pick_tool {
             p0.insertBefore(el1, n0);
             p1.insertBefore(el0, n1);
             this.setupFrame(i, el0);
+            this.modified = true;
             this.imageData = el1.getContext('2d').getImageData(0, 0, el1.width, el1.height);
             this.updateCanvasSize();
             return this.redraw();

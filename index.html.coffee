@@ -964,6 +964,7 @@ htmlcup.html5Page ->
             p0.insertBefore(el1, n0)
             p1.insertBefore(el0, n1)
             @setupFrame i, el0
+            @modified = true
             @imageData = el1.getContext('2d').getImageData(0, 0, el1.width, el1.height)
             @updateCanvasSize()            
             @redraw()

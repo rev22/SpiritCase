@@ -562,12 +562,9 @@ htmlcup.html5Page ->
                         # @spiritcase.unsetPixel x, y, @spiritcase.toolAlpha
                         # @spiritcase.redrawPixel x, y
                       done: @>
-                        @spiritcase.paintButtonClick()
-                        @buttonElement.blur()
+                        @spiritcase.paintButtonClick noSetdialog: 1
                         @x = @y = null
                     @spiritcase.setDialog "selectColor", ->
-                        color = (n)=>
-                            @div style:"font-size:150%;background:##{n};color:#786;width:1.5em;display:inline-block", class:"paletteEntry", onclick:"javascript:spiritcase.setToolColorHex('#{n}')", "#{n}"
                         @div class:"spiritcaseToolbarGroup", ->
                           sliderInput.build
                                     htmlcup: @
@@ -643,6 +640,7 @@ htmlcup.html5Page ->
                           colorComponentSlider i:1, label: "Green",  barColor: "green"
                           colorComponentSlider i:2, label: "Blue",   barColor: "blue"
                         @div class:"spiritcaseToolbarGroup", ->
+                            color = (n)=> @div style:"font-size:150%;background:##{n};color:#786;width:1.5em;display:inline-block", class:"paletteEntry", onclick:"javascript:spiritcase.setToolColorHex('#{n}')", "#{n}"
                             color "000"
                             color "fff"
                             color "f00"
@@ -691,14 +689,12 @@ htmlcup.html5Page ->
         setColorPickerTool: @> # TODO
 
         setToolColorHex: (c)@>
-            if @tool.name is "erase"
-              @paintButtonClick noSetdialog: 1
+            @paintButtonClick noSetdialog: 1
             @toolColor = @lib.color.hex2rgb c
             @colorinput.setColor(c)
             @
         setToolColor: (c)@>
-            if @tool.name is "erase"
-              @paintButtonClick noSetdialog: 1
+            @paintButtonClick noSetdialog: 1
             @toolColor = c
             @colorinput.setColor(@lib.color.rgb2hex(c))
             @
@@ -1131,7 +1127,7 @@ htmlcup.html5Page ->
                                             text: "#{@spiritcase.factor}"
                                         $: @lib.$
                           @div class:"spiritcaseToolbarGroup", ->
-                            @input id:"spiritcaseColorInput", type:"text", placeholder:"Color", size:"7", onfocus:"javascript:spiritcase.withColorinput(this).onfocus(event)", oninput:"javascript:spiritcase.withColorinput(this).oninput(event)", style:"background:#{(spiritcase.lib.color.rgb2hex(spiritcase.toolColor))}"
+                            @input id:"spiritcaseColorInput", type:"text", placeholder:"Color", size:"7", onfocus:"javascript:spiritcase.withColorinput(this).onfocus(event)", onclick:"javascript:spiritcase.withColorinput(this).onfocus(event)", oninput:"javascript:spiritcase.withColorinput(this).oninput(event)", style:"background:#{(spiritcase.lib.color.rgb2hex(spiritcase.toolColor))}"
                       @div id:"spiritcaseDialogs", ->
                 
         # document.body.firstChild.insertBefore htmlcup.div position:"absolute"

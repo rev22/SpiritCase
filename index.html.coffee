@@ -147,7 +147,7 @@ htmlcup.html5Page ->
           color:white;
           font-family: sans;
           text-align:center;
-          cursor:pointer;cursor:hand;
+          cursor:hand;cursor:pointer;
       }
       .sliderInputButton:hover {
           background:rgba(0,0,0,0.2);
@@ -157,7 +157,7 @@ htmlcup.html5Page ->
           cursor: cross;
       }
       .framesList {
-        cursor:pointer;
+        cursor:pointer;cursor:hand;
       }
       .framesList canvas, .undoHistory canvas {
         margin:2px;
@@ -166,6 +166,9 @@ htmlcup.html5Page ->
       }
       .framesList canvas:hover, .undoHistory canvas:hover {
         border:1px solid white;
+      }
+      canvas.pick_tool {
+        cursor:hand;cursor:pointer;
       }
       """
   factorY = factorX = factor = 16
@@ -538,10 +541,11 @@ htmlcup.html5Page ->
                 onfocus: @>
                     { spiritcase }   = @
                     { sliderInput }  = @spiritcase.lib
-                    @spiritcase.tool =
+                    @spiritcase.setTool
                       name: "pick"
                       spiritcase: @spiritcase
                       readOnly: true
+                      buttonElement: @input
                       employ: (x,y)@>
                         x = x|0
                         y = y|0
@@ -554,12 +558,12 @@ htmlcup.html5Page ->
                         c[1]=g
                         c[2]=b
                         @spiritcase.setToolColor c
-                        
                         # @spiritcase.setPixel x, y, @spiritcase.toolColor, @spiritcase.toolAlpha
                         # @spiritcase.unsetPixel x, y, @spiritcase.toolAlpha
                         # @spiritcase.redrawPixel x, y
                       done: @>
                         @spiritcase.paintButtonClick()
+                        @buttonElement.blur()
                         @x = @y = null
                     @spiritcase.setDialog "selectColor", ->
                         color = (n)=>
@@ -664,6 +668,24 @@ htmlcup.html5Page ->
                         finally
                             @editingValue = false
                 lib: @lib
+        toolButtons:
+          # "load": "#spiritcaseLoadButton"
+          # "save": "#spiritcaseSaveButton"
+          "paint": "#spiritcasePaintButton"
+          "erase": "#spiritcaseEraseButton"
+          # "frames": "#spiritcaseFramesButton"
+          # "tools": "#spiritcaseToolsButton"
+          # "undo": "#spiritcaseUndoButton"
+        setTool: (tool)@>
+            { $ } = @lib
+            @lib.$("#spiritcaseToolbar .activated")[0]?.classList.remove("activated")
+            if (x = @tool?.name)? then
+              @el.classList.remove("#{x}_tool")
+            if (x = tool?.name)? then
+              @el.classList.add("#{x}_tool")
+              (x = @toolButtons[x])? and @lib.$(x)[0]?.classList.add("activated")
+            @tool = tool
+
         toolColor: colorLib.hsv2rgb([ Math.random(), 1, 1 ])
         toolAlpha: 0.3
         setColorPickerTool: @> # TODO
@@ -682,10 +704,8 @@ htmlcup.html5Page ->
             @
 
         paintButtonClick: (opts)@>
-          @lib.$("#spiritcaseEraseButton")[0]?.classList.remove("activated")
-          @lib.$("#spiritcasePaintButton")[0]?.classList.add("activated")
           @setDialog() unless opts?.noSetdialog
-          @tool =
+          @setTool
               name: "paint"
               spiritcase: @
               employ: (x,y)@>
@@ -700,10 +720,8 @@ htmlcup.html5Page ->
                   @x = @y = null
 
         eraseButtonClick: @>
-          @lib.$("#spiritcasePaintButton")[0]?.classList.remove("activated")
-          @lib.$("#spiritcaseEraseButton")[0]?.classList.add("activated")
           @setDialog()
-          @tool =
+          @setTool
               name: "erase"
               spiritcase: @
               employ: (x,y)@>
@@ -1077,7 +1095,7 @@ htmlcup.html5Page ->
                       .spiritcaseToolbar button, .spiritcaseToolbar .button { min-width:5%; font-size:150%; border: 2px outset grey; }
                       .spiritcaseToolbar button.activated:not(:hover), .spiritcaseToolbar button:active, .spiritcaseToolbar .button.button-on { border: 2px inset grey; background:#248; }
                       .spiritcaseToolbar      .button input[type="checkbox"] { display:none; }
-                      .spiritcaseToolbar .paletteEntry { cursor:pointer; }
+                      .spiritcaseToolbar .paletteEntry { cursor:hand;cursor:pointer; }
                   @div style:"text-align:center;width:100%", ->
                       @div id:"spiritcaseToolbar", style:"display:inline-block;text-align:initial", ->
                           @div class:"spiritcaseToolbarGroup", style:"font-size:initial;text-align:initial", ->

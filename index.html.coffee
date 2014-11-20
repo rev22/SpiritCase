@@ -973,7 +973,7 @@ htmlcup.html5Page ->
     
         doubleScale: @>
           @updateIcon()
-          @load @intScale2X(@icon.el)
+          @load @intScale(@icon.el, 2, 2)
           
         halveScale: @>
           { document } = @lib.window
@@ -1034,7 +1034,71 @@ htmlcup.html5Page ->
                 x2 += 2
 
           c3c.getImageData(0, 0, w, h * 2)
-        
+
+        intScale: (c, mx, my)@>
+          { document } = @lib.window
+          w = c.width
+          h = c.height
+          
+          c2 = document.createElement "canvas"
+          c2.width = w * 2
+          c2.height = h
+          
+          c2c = c2.getContext "2d"
+          
+          x = 0
+          x2 = 0
+          
+          while x < w
+                c2c.drawImage c,  x, 0, 1, h,  x2, 0, mx, h
+                x++
+                x2 += mx
+
+          # return c2c.getImageData(0, 0, w * 2, h)
+          c3 = document.createElement "canvas"
+          c3c = c3.getContext "2d"
+          c3.width = w = w * 2
+          c3.height = h * 2
+          
+          x = 0
+          x2 = 0
+          
+          while x < h
+                c3c.drawImage c2,  0, x, w, 1,  0, x2, w, my
+                x++
+                x2 += my
+
+          c3c.getImageData(0, 0, w, h * 2)
+                
+        intScaleBleeding: (c, mx, my)@>
+          { document } = @lib.window
+          w = c.width
+          h = c.height
+          
+          c2 = document.createElement "canvas"
+          c2.width   = nw = w * mx
+          c2.height  = nh = h * my
+          
+          c2c = c2.getContext "2d"
+          
+          x = 0
+          x2 = 0
+          
+          while x < w
+                c2c.drawImage c,  x, 0, 1, h,  x2, 0, mx, h
+                x++
+                x2 += mx
+          
+          x = h - 1
+          x2 = x * 2
+          
+          while x >= 0
+                c2c.drawImage c2,  0, x, w, 1,  0, x2, w, my
+                x--
+                x2 -= my
+
+          c2c.getImageData(0, 0, nw, nh)
+                
       spiritcase.setup()
     # @table id:"overlay", style:"position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;overflow:hidden:",
     #   @div style:"position:absolute;top:0;left:0;right:0;color:white;width:100%;overflow:hidden;background:rgba(0,0,255,0.1);border:1px solid white", "top"

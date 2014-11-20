@@ -1739,11 +1739,11 @@ canvas.pick_tool {
             return v.setAttribute("onclick", "javascript:spiritcase.swapFrame(event,this," + k + ")");
           }),
           doubleScale: (function(x) {
-            x.coffee = "@>\n          @updateIcon()\n          @load @intScale2X(@icon.el)\n          \n        ";
+            x.coffee = "@>\n          @updateIcon()\n          @load @intScale(@icon.el, 2, 2)\n          \n        ";
             return x;
           })(function() {
             this.updateIcon();
-            return this.load(this.intScale2X(this.icon.el));
+            return this.load(this.intScale(this.icon.el, 2, 2));
           }),
           halveScale: (function(x) {
             x.coffee = "@>\n          { document } = @lib.window\n          @updateIcon()\n          c = @icon.el\n          c2 = document.createElement \"canvas\"\n          c2.width   = nw = c.width / 2   | 0\n          c2.height  = nh = c.height / 2  | 0\n          c2c = c2.getContext \"2d\"\n          c2c.drawImage c, 0, 0, nw, nh\n          @load c2c.getImageData(0,0,nw,nh)\n          \n        ";
@@ -1761,7 +1761,7 @@ canvas.pick_tool {
             return this.load(c2c.getImageData(0, 0, nw, nh));
           }),
           intScale2X: (function(x) {
-            x.coffee = "(c)@>\n          { document } = @lib.window\n          w = c.width\n          h = c.height\n          \n          c2 = document.createElement \"canvas\"\n          c2.width = w * 2\n          c2.height = h\n          \n          c2c = c2.getContext \"2d\"\n          \n          x = 0\n          x2 = 0\n          \n          while x < w\n            if false\n                c2c.drawImage c,  x, 0, x + 1, h,  x2, 0, x2 + 1, h\n                x2++\n                c2c.drawImage c,  x, 0, x + 1, h,  x2, 0, x2 + 1, h\n                x++\n                x2++\n            else\n                c2c.drawImage c,  x, 0, 1, h,  x2, 0, 2, h\n                x++\n                x2 += 2\n\n          # return c2c.getImageData(0, 0, w * 2, h)\n          c3 = document.createElement \"canvas\"\n          c3c = c3.getContext \"2d\"\n          c3.width = w = w * 2\n          c3.height = h * 2\n          \n          x = 0\n          x2 = 0\n          \n          while x < h\n            if false\n                c3c.drawImage c2,  0, x, w, x + 1,  0, x2, w, x2 + 1\n                x2++\n                c3c.drawImage c2,  0, x, w, x + 1,  0, x2, w, x2 + 1\n                x++\n                x2++\n            else\n                c3c.drawImage c2,  0, x, w, 1,  0, x2, w, 2\n                x++\n                x2 += 2\n\n          c3c.getImageData(0, 0, w, h * 2)\n        \n      ";
+            x.coffee = "(c)@>\n          { document } = @lib.window\n          w = c.width\n          h = c.height\n          \n          c2 = document.createElement \"canvas\"\n          c2.width = w * 2\n          c2.height = h\n          \n          c2c = c2.getContext \"2d\"\n          \n          x = 0\n          x2 = 0\n          \n          while x < w\n            if false\n                c2c.drawImage c,  x, 0, x + 1, h,  x2, 0, x2 + 1, h\n                x2++\n                c2c.drawImage c,  x, 0, x + 1, h,  x2, 0, x2 + 1, h\n                x++\n                x2++\n            else\n                c2c.drawImage c,  x, 0, 1, h,  x2, 0, 2, h\n                x++\n                x2 += 2\n\n          # return c2c.getImageData(0, 0, w * 2, h)\n          c3 = document.createElement \"canvas\"\n          c3c = c3.getContext \"2d\"\n          c3.width = w = w * 2\n          c3.height = h * 2\n          \n          x = 0\n          x2 = 0\n          \n          while x < h\n            if false\n                c3c.drawImage c2,  0, x, w, x + 1,  0, x2, w, x2 + 1\n                x2++\n                c3c.drawImage c2,  0, x, w, x + 1,  0, x2, w, x2 + 1\n                x++\n                x2++\n            else\n                c3c.drawImage c2,  0, x, w, 1,  0, x2, w, 2\n                x++\n                x2 += 2\n\n          c3c.getImageData(0, 0, w, h * 2)\n\n        ";
             return x;
           })(function(c) {
             var c2, c2c, c3, c3c, document, h, w, x, x2;
@@ -1807,6 +1807,66 @@ canvas.pick_tool {
               }
             }
             return c3c.getImageData(0, 0, w, h * 2);
+          }),
+          intScale: (function(x) {
+            x.coffee = "(c, mx, my)@>\n          { document } = @lib.window\n          w = c.width\n          h = c.height\n          \n          c2 = document.createElement \"canvas\"\n          c2.width = w * 2\n          c2.height = h\n          \n          c2c = c2.getContext \"2d\"\n          \n          x = 0\n          x2 = 0\n          \n          while x < w\n                c2c.drawImage c,  x, 0, 1, h,  x2, 0, mx, h\n                x++\n                x2 += mx\n\n          # return c2c.getImageData(0, 0, w * 2, h)\n          c3 = document.createElement \"canvas\"\n          c3c = c3.getContext \"2d\"\n          c3.width = w = w * 2\n          c3.height = h * 2\n          \n          x = 0\n          x2 = 0\n          \n          while x < h\n                c3c.drawImage c2,  0, x, w, 1,  0, x2, w, my\n                x++\n                x2 += my\n\n          c3c.getImageData(0, 0, w, h * 2)\n                \n        ";
+            return x;
+          })(function(c, mx, my) {
+            var c2, c2c, c3, c3c, document, h, w, x, x2;
+            document = this.lib.window.document;
+            w = c.width;
+            h = c.height;
+            c2 = document.createElement("canvas");
+            c2.width = w * 2;
+            c2.height = h;
+            c2c = c2.getContext("2d");
+            x = 0;
+            x2 = 0;
+            while (x < w) {
+              c2c.drawImage(c, x, 0, 1, h, x2, 0, mx, h);
+              x++;
+              x2 += mx;
+            }
+            c3 = document.createElement("canvas");
+            c3c = c3.getContext("2d");
+            c3.width = w = w * 2;
+            c3.height = h * 2;
+            x = 0;
+            x2 = 0;
+            while (x < h) {
+              c3c.drawImage(c2, 0, x, w, 1, 0, x2, w, my);
+              x++;
+              x2 += my;
+            }
+            return c3c.getImageData(0, 0, w, h * 2);
+          }),
+          intScaleBleeding: (function(x) {
+            x.coffee = "(c, mx, my)@>\n          { document } = @lib.window\n          w = c.width\n          h = c.height\n          \n          c2 = document.createElement \"canvas\"\n          c2.width   = nw = w * mx\n          c2.height  = nh = h * my\n          \n          c2c = c2.getContext \"2d\"\n          \n          x = 0\n          x2 = 0\n          \n          while x < w\n                c2c.drawImage c,  x, 0, 1, h,  x2, 0, mx, h\n                x++\n                x2 += mx\n          \n          x = h - 1\n          x2 = x * 2\n          \n          while x >= 0\n                c2c.drawImage c2,  0, x, w, 1,  0, x2, w, my\n                x--\n                x2 -= my\n\n          c2c.getImageData(0, 0, nw, nh)\n                \n      ";
+            return x;
+          })(function(c, mx, my) {
+            var c2, c2c, document, h, nh, nw, w, x, x2;
+            document = this.lib.window.document;
+            w = c.width;
+            h = c.height;
+            c2 = document.createElement("canvas");
+            c2.width = nw = w * mx;
+            c2.height = nh = h * my;
+            c2c = c2.getContext("2d");
+            x = 0;
+            x2 = 0;
+            while (x < w) {
+              c2c.drawImage(c, x, 0, 1, h, x2, 0, mx, h);
+              x++;
+              x2 += mx;
+            }
+            x = h - 1;
+            x2 = x * 2;
+            while (x >= 0) {
+              c2c.drawImage(c2, 0, x, w, 1, 0, x2, w, my);
+              x--;
+              x2 -= my;
+            }
+            return c2c.getImageData(0, 0, nw, nh);
           })
         });
         return spiritcase.setup();

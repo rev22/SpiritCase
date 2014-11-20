@@ -1596,8 +1596,8 @@ body { border:0;margin:0;padding:0; }
           })(function(name) {
             return "javascript:" + this.webmodule + "." + name + "(event,this)";
           }),
-          moreButtonClick: (function(x) {
-            x.coffee = "(opts)@>\n          control = => @eventControl.apply @, arguments \n          @setDialog \"more\", ->\n            \n            @div class:\"spiritcaseToolbarGroup\", ->\n              @label \"Scale: \"\n              @button onclick:control(\"doubleScale\"), \"2X\"\n              @button onclick:control(\"halveScale\"), \"/2\"\n            \n            @div class:\"spiritcaseToolbarGroup\", ->\n              @button onclick:control(\"startConsole\"), \"Console\"\n        ";
+          toolsButtonClick: (function(x) {
+            x.coffee = "(opts)@>\n          control = => @eventControl.apply @, arguments \n          @setDialog \"tools\", ->\n            \n            @div class:\"spiritcaseToolbarGroup\", ->\n              @label \"Scale: \"\n              @button onclick:control(\"doubleScale\"), \"2X\"\n              @button onclick:control(\"halveScale\"), \"/2\"\n            \n            @div class:\"spiritcaseToolbarGroup\", ->\n              @button onclick:control(\"startConsole\"), \"Console\"\n        ";
             return x;
           })(function(opts) {
             var control;
@@ -1606,7 +1606,7 @@ body { border:0;margin:0;padding:0; }
                 return _this.eventControl.apply(_this, arguments);
               };
             })(this);
-            return this.setDialog("more", function() {
+            return this.setDialog("tools", function() {
               this.div({
                 "class": "spiritcaseToolbarGroup"
               }, function() {
@@ -1844,10 +1844,6 @@ body { border:0;margin:0;padding:0; }
                       id: "spiritcaseFramesButton",
                       onclick: "javascript:spiritcase.framesButtonClick(this)"
                     }, "Frames");
-                    this.button({
-                      id: "spiritcaseFramesButton",
-                      onclick: "javascript:spiritcase.moreButtonClick(this)"
-                    }, "More");
                     return this.button({
                       id: "spiritcaseUndoButton",
                       onclick: "javascript:spiritcase.undoButtonClick(this)"

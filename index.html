@@ -786,13 +786,14 @@ canvas.pick_tool {
             }
           }),
           load: (function(x) {
-            x.coffee = "(imageData)@>\n            @addFrame?()\n            @icon.setImage(imageData)\n            @imageData = imageData\n            @updateCanvasSize()\n            @redraw()\n        ";
+            x.coffee = "(imageData)@>\n            @addFrame?()\n            @icon.setImage(imageData)\n            @modified = true\n            @imageData = imageData\n            @updateCanvasSize()\n            @redraw()\n        ";
             return x;
           })(function(imageData) {
             if (typeof this.addFrame === "function") {
               this.addFrame();
             }
             this.icon.setImage(imageData);
+            this.modified = true;
             this.imageData = imageData;
             this.updateCanvasSize();
             return this.redraw();

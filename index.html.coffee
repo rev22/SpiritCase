@@ -458,6 +458,7 @@ htmlcup.html5Page ->
         load: (imageData)@>
             @addFrame?()
             @icon.setImage(imageData)
+            @modified = true
             @imageData = imageData
             @updateCanvasSize()
             @redraw()

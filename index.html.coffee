@@ -785,7 +785,7 @@ htmlcup.html5Page ->
         mousedown: 0
 
         employMouse: (el, location, isFirst)@>
-          @checkpoint("employMouse") if @modified and isFirst and @modified isnt "doneMouse"
+          @checkpoint("employMouse") if !@tool?.readOnly and @modified and isFirst and @modified isnt "doneMouse"
           { gridSize, factor, factorY, sizeY, factorX, sizeX, checkersSize } = @
           h = gridSize / 2
           x = location.clientX - el.offsetLeft - gridSize
@@ -794,6 +794,7 @@ htmlcup.html5Page ->
 
         doneMouse: (el, event, isLast)@>
           @tool?.done?()
+          return if @tool?.readOnly
           @updateIcon()
           if isLast
             @modified = "doneMouse"

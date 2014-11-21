@@ -1388,28 +1388,31 @@ canvas.pick_tool {
           modified: true,
           mousedown: 0,
           employMouse: (function(x) {
-            x.coffee = "(el, location, isFirst)@>\n          @checkpoint(\"employMouse\") if @modified and isFirst and @modified isnt \"doneMouse\"\n          { gridSize, factor, factorY, sizeY, factorX, sizeX, checkersSize } = @\n          h = gridSize / 2\n          x = location.clientX - el.offsetLeft - gridSize\n          y = location.clientY - el.offsetTop - gridSize\n          @tool?.employ(x / factorX, y / factorY)\n\n        ";
+            x.coffee = "(el, location, isFirst)@>\n          @checkpoint(\"employMouse\") if !@tool?.readOnly and @modified and isFirst and @modified isnt \"doneMouse\"\n          { gridSize, factor, factorY, sizeY, factorX, sizeX, checkersSize } = @\n          h = gridSize / 2\n          x = location.clientX - el.offsetLeft - gridSize\n          y = location.clientY - el.offsetTop - gridSize\n          @tool?.employ(x / factorX, y / factorY)\n\n        ";
             return x;
           })(function(el, location, isFirst) {
-            var checkersSize, factor, factorX, factorY, gridSize, h, sizeX, sizeY, x, y, _ref;
-            if (this.modified && isFirst && this.modified !== "doneMouse") {
+            var checkersSize, factor, factorX, factorY, gridSize, h, sizeX, sizeY, x, y, _ref, _ref1;
+            if (!((_ref = this.tool) != null ? _ref.readOnly : void 0) && this.modified && isFirst && this.modified !== "doneMouse") {
               this.checkpoint("employMouse");
             }
             gridSize = this.gridSize, factor = this.factor, factorY = this.factorY, sizeY = this.sizeY, factorX = this.factorX, sizeX = this.sizeX, checkersSize = this.checkersSize;
             h = gridSize / 2;
             x = location.clientX - el.offsetLeft - gridSize;
             y = location.clientY - el.offsetTop - gridSize;
-            return (_ref = this.tool) != null ? _ref.employ(x / factorX, y / factorY) : void 0;
+            return (_ref1 = this.tool) != null ? _ref1.employ(x / factorX, y / factorY) : void 0;
           }),
           doneMouse: (function(x) {
-            x.coffee = "(el, event, isLast)@>\n          @tool?.done?()\n          @updateIcon()\n          if isLast\n            @modified = \"doneMouse\"\n            @scheduleCheckpoint(\"doneMouse\")\n\n        ";
+            x.coffee = "(el, event, isLast)@>\n          @tool?.done?()\n          return if @tool?.readOnly\n          @updateIcon()\n          if isLast\n            @modified = \"doneMouse\"\n            @scheduleCheckpoint(\"doneMouse\")\n\n        ";
             return x;
           })(function(el, event, isLast) {
-            var _ref;
+            var _ref, _ref1;
             if ((_ref = this.tool) != null) {
               if (typeof _ref.done === "function") {
                 _ref.done();
               }
+            }
+            if ((_ref1 = this.tool) != null ? _ref1.readOnly : void 0) {
+              return;
             }
             this.updateIcon();
             if (isLast) {

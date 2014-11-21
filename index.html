@@ -1415,7 +1415,7 @@ canvas.pick_tool {
             }
           }),
           setup: (function(x) {
-            x.coffee = "@>\n          @el.spiritcase = @\n          @imageData = @icon.getData()\n            # width: @sizeX\n            # height: @sizeY\n            # data: do=>\n            #   m = @sizeX * @sizeY * 4\n            #   x = [ ]\n            #   x.push 0 while m-- > 0\n            #   x\n\n          @redraw()\n          @paintButtonClick()\n\n          @el.onmousemove = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            if @spiritcase.mousedown > 0\n                @spiritcase.employMouse @, event, false\n          @el.ontouchmove = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            if @spiritcase.mousedown > 0\n                @spiritcase.employMouse @, event.touches[0], false\n          @el.onmouseup = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event, false\n            unless @spiritcase.mousedown <= 0\n              @spiritcase.mousedown--\n              unless @spiritcase.mousedown > 0\n                @spiritcase.doneMouse(@, event, true)\n          @el.ontouchend = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event.touches[0], false\n            unless @spiritcase.mousedown <= 0\n              @spiritcase.mousedown--\n              unless @spiritcase.mousedown > 0\n                @spiritcase.doneMouse(@, event, true)\n          @el.onmousedown = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event, 0 is @spiritcase.mousedown++\n          @el.ontouchstart = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event.touches[0], 0 is @spiritcase.mousedown++\n          @el.ontouchcancel = @el.onmouseout = (event)@>\n            @spiritcase.doneMouse(@, event, @spiritcase.mousedown > 0)\n            @spiritcase.mousedown = 0\n          @\n        ";
+            x.coffee = "@>\n          @el.spiritcase = @\n          @imageData = @icon.getData()\n            # width: @sizeX\n            # height: @sizeY\n            # data: do=>\n            #   m = @sizeX * @sizeY * 4\n            #   x = [ ]\n            #   x.push 0 while m-- > 0\n            #   x\n\n          @redraw()\n          @paintButtonClick()\n\n          @el.onmousemove = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            if @spiritcase.mousedown > 0\n                @spiritcase.employMouse @, event, false\n          @el.ontouchmove = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            if @spiritcase.mousedown > 0\n                @spiritcase.employMouse @, event.touches[0], false\n          @el.onmouseup = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event, false\n            unless @spiritcase.mousedown <= 0\n              @spiritcase.mousedown--\n              unless @spiritcase.mousedown > 0\n                @spiritcase.doneMouse(@, event, true)\n          # @el.ontouchend = (event)@>\n          #   event.stopPropagation()\n          #   event.preventDefault()\n          #   @spiritcase.employMouse @, event.touches[0], false\n          #   unless @spiritcase.mousedown <= 0\n          #     @spiritcase.mousedown--\n          #     unless @spiritcase.mousedown > 0\n          #       @spiritcase.doneMouse(@, event, true)\n          @el.onmousedown = (event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event, 0 is @spiritcase.mousedown++\n          # @el.ontouchstart = (event)@>\n          #   event.stopPropagation()\n          #   event.preventDefault()\n          #   @spiritcase.employMouse @, event.touches[0], 0 is @spiritcase.mousedown++\n          # @el.ontouchcancel = @el.onmouseout = (event)@>\n          #   @spiritcase.doneMouse(@, event, @spiritcase.mousedown > 0)\n          #   @spiritcase.mousedown = 0\n          @\n        ";
             return x;
           })(function() {
             this.el.spiritcase = this;
@@ -1443,7 +1443,7 @@ canvas.pick_tool {
               }
             });
             this.el.onmouseup = (function(x) {
-              x.coffee = "(event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event, false\n            unless @spiritcase.mousedown <= 0\n              @spiritcase.mousedown--\n              unless @spiritcase.mousedown > 0\n                @spiritcase.doneMouse(@, event, true)\n          ";
+              x.coffee = "(event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event, false\n            unless @spiritcase.mousedown <= 0\n              @spiritcase.mousedown--\n              unless @spiritcase.mousedown > 0\n                @spiritcase.doneMouse(@, event, true)\n          # @el.ontouchend = (event)@>\n          #   event.stopPropagation()\n          #   event.preventDefault()\n          #   @spiritcase.employMouse @, event.touches[0], false\n          #   unless @spiritcase.mousedown <= 0\n          #     @spiritcase.mousedown--\n          #     unless @spiritcase.mousedown > 0\n          #       @spiritcase.doneMouse(@, event, true)\n          ";
               return x;
             })(function(event) {
               event.stopPropagation();
@@ -1456,42 +1456,13 @@ canvas.pick_tool {
                 }
               }
             });
-            this.el.ontouchend = (function(x) {
-              x.coffee = "(event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event.touches[0], false\n            unless @spiritcase.mousedown <= 0\n              @spiritcase.mousedown--\n              unless @spiritcase.mousedown > 0\n                @spiritcase.doneMouse(@, event, true)\n          ";
-              return x;
-            })(function(event) {
-              event.stopPropagation();
-              event.preventDefault();
-              this.spiritcase.employMouse(this, event.touches[0], false);
-              if (!(this.spiritcase.mousedown <= 0)) {
-                this.spiritcase.mousedown--;
-                if (!(this.spiritcase.mousedown > 0)) {
-                  return this.spiritcase.doneMouse(this, event, true);
-                }
-              }
-            });
             this.el.onmousedown = (function(x) {
-              x.coffee = "(event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event, 0 is @spiritcase.mousedown++\n          ";
+              x.coffee = "(event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event, 0 is @spiritcase.mousedown++\n          # @el.ontouchstart = (event)@>\n          #   event.stopPropagation()\n          #   event.preventDefault()\n          #   @spiritcase.employMouse @, event.touches[0], 0 is @spiritcase.mousedown++\n          # @el.ontouchcancel = @el.onmouseout = (event)@>\n          #   @spiritcase.doneMouse(@, event, @spiritcase.mousedown > 0)\n          #   @spiritcase.mousedown = 0\n          ";
               return x;
             })(function(event) {
               event.stopPropagation();
               event.preventDefault();
               return this.spiritcase.employMouse(this, event, 0 === this.spiritcase.mousedown++);
-            });
-            this.el.ontouchstart = (function(x) {
-              x.coffee = "(event)@>\n            event.stopPropagation()\n            event.preventDefault()\n            @spiritcase.employMouse @, event.touches[0], 0 is @spiritcase.mousedown++\n          ";
-              return x;
-            })(function(event) {
-              event.stopPropagation();
-              event.preventDefault();
-              return this.spiritcase.employMouse(this, event.touches[0], 0 === this.spiritcase.mousedown++);
-            });
-            this.el.ontouchcancel = this.el.onmouseout = (function(x) {
-              x.coffee = "(event)@>\n            @spiritcase.doneMouse(@, event, @spiritcase.mousedown > 0)\n            @spiritcase.mousedown = 0\n          ";
-              return x;
-            })(function(event) {
-              this.spiritcase.doneMouse(this, event, this.spiritcase.mousedown > 0);
-              return this.spiritcase.mousedown = 0;
             });
             return this;
           }),

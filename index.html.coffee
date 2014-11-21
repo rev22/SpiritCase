@@ -830,25 +830,25 @@ htmlcup.html5Page ->
               @spiritcase.mousedown--
               unless @spiritcase.mousedown > 0
                 @spiritcase.doneMouse(@, event, true)
-          @el.ontouchend = (event)@>
-            event.stopPropagation()
-            event.preventDefault()
-            @spiritcase.employMouse @, event.touches[0], false
-            unless @spiritcase.mousedown <= 0
-              @spiritcase.mousedown--
-              unless @spiritcase.mousedown > 0
-                @spiritcase.doneMouse(@, event, true)
+          # @el.ontouchend = (event)@>
+          #   event.stopPropagation()
+          #   event.preventDefault()
+          #   @spiritcase.employMouse @, event.touches[0], false
+          #   unless @spiritcase.mousedown <= 0
+          #     @spiritcase.mousedown--
+          #     unless @spiritcase.mousedown > 0
+          #       @spiritcase.doneMouse(@, event, true)
           @el.onmousedown = (event)@>
             event.stopPropagation()
             event.preventDefault()
             @spiritcase.employMouse @, event, 0 is @spiritcase.mousedown++
-          @el.ontouchstart = (event)@>
-            event.stopPropagation()
-            event.preventDefault()
-            @spiritcase.employMouse @, event.touches[0], 0 is @spiritcase.mousedown++
-          @el.ontouchcancel = @el.onmouseout = (event)@>
-            @spiritcase.doneMouse(@, event, @spiritcase.mousedown > 0)
-            @spiritcase.mousedown = 0
+          # @el.ontouchstart = (event)@>
+          #   event.stopPropagation()
+          #   event.preventDefault()
+          #   @spiritcase.employMouse @, event.touches[0], 0 is @spiritcase.mousedown++
+          # @el.ontouchcancel = @el.onmouseout = (event)@>
+          #   @spiritcase.doneMouse(@, event, @spiritcase.mousedown > 0)
+          #   @spiritcase.mousedown = 0
           @
         makeWebmodule: (name, build)@>
             @webmodule ?= { }

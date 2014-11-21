@@ -559,11 +559,12 @@ htmlcup.html5Page ->
                         c[1]=g
                         c[2]=b
                         @spiritcase.setToolColor c
+                        @aColorWasSelected = true
                         # @spiritcase.setPixel x, y, @spiritcase.toolColor, @spiritcase.toolAlpha
                         # @spiritcase.unsetPixel x, y, @spiritcase.toolAlpha
                         # @spiritcase.redrawPixel x, y
                       done: @>
-                        @spiritcase.paintButtonClick noSetdialog: 1
+                        @spiritcase.paintButtonClick noSetdialog: 1 if @aColorWasSelected
                         @x = @y = null
                     @spiritcase.setDialog "selectColor", ->
                         @div class:"spiritcaseToolbarGroup", ->

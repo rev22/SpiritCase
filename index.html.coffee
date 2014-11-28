@@ -298,7 +298,7 @@ htmlcup.html5Page ->
               when 3 then [ Math.round(a * 255), Math.round(b * 255), Math.round(v * 255) ]
               when 4 then [ Math.round(c * 255), Math.round(a * 255), Math.round(v * 255) ]
               when 5 then [ Math.round(v * 255), Math.round(a * 255), Math.round(b * 255) ]
-          
+
       sliderInput =
         $: $
         terminateEvent: (ev)@>
@@ -344,7 +344,7 @@ htmlcup.html5Page ->
           el = $(el).up(".sliderInput")[0]
           text?  then $(".sliderInputValue", el)[0].textContent = text
           bar?   then $(".sliderInputBar", el).set("$width", "#{bar*100}%")
-        build: ({htmlcup, label, onclick, barColor, bgColor, buildModule, module, value, width, noBar, bar })@>
+        build: ({htmlcup, label, barColor, bgColor, buildModule, module, value, width, noBar, bar })@>
           buildModule? then module = buildModule @
           control = (name)-> "javascript:#{module}.#{name}(event,this)"
           barColor ?= "#888"
@@ -467,6 +467,25 @@ htmlcup.html5Page ->
                 i = (d.width * y + x) * 4
                 b = d.data
                 [ b[i], b[i+1], b[i+2], b[i+3] ]
+        mapPixels: (f)@>
+          { imageData: d } = @
+          b = d.data
+          xs = d.width
+          ys = d.height
+          y = 0
+          i = 0
+          while y < ys
+            x = 0
+            while x < xs
+              r = f([ b[i], b[i+1], b[i+2], b[i+3] ])
+              if r?
+                b[i]    = r[0]
+                b[i+1]  = r[1]
+                b[i+2]  = r[2]
+                b[i+3]  = r[3]
+              i += 4
+              x++
+            y++
         zoomIn: @>
           @factorX = @factorY = ++@factor
           @redraw()
@@ -499,12 +518,14 @@ htmlcup.html5Page ->
                     @div style:"display:inline-block", onclick:"deleteNode(this.parentNode)", class:"spiritcaseDeleteDialog", "×"
             @view.dialogs.appendChild d
 
-        loadButtonClick: @>
-            spiritcase = @
-            @setDialog "loadFile", ->
-                @label "Load file: "
-                @input type:"file", onchange:"javascript:spiritcase.loadFile(event)"
+        
+        eventPath: "spiritcase"
+        eventHandler: (methodName)@> "javascript:#{@eventPath}.#{methodName}(event,this)"
 
+        pasteLoad: (ev,el)@>
+          { alert } = @iib.window
+          alert "x" if ev.clipboardData?
+  
         saveButtonClick: @>
             @load @imageData
             uri = @icon.el.toDataURL()
@@ -914,6 +935,9 @@ htmlcup.html5Page ->
               @button onclick:control("halveScale"), "/2"
             
             @div class:"spiritcaseToolbarGroup", ->
+              @button onclick:control("makeTransparent"), title:"Make background of image transparent", "Make transparent"
+            
+            @div class:"spiritcaseToolbarGroup", ->
               @button onclick:control("startConsole"), "Console"
         startConsole: @>
           @lib.window.coffeecharniaStart()
@@ -978,6 +1002,14 @@ htmlcup.html5Page ->
         doubleScale: @>
           @updateIcon()
           @load @intScale(@icon.el, 2, 2)
+          
+        makeTransparent: @>
+          bg = @pixelColor 0, 0
+          @mapPixels (p)->
+            p[0] is bg[0] and p[1] is bg[1] and p[2] is bg[2] then p[3] = 0
+            p
+          @updateIcon()
+          @redraw()
           
         halveScale: @>
           { document } = @lib.window
@@ -1102,6 +1134,54 @@ htmlcup.html5Page ->
                 x2 -= my
 
           c2c.getImageData(0, 0, nw, nh)
+
+        eventPath: "spiritcase"
+        eventHandler: (methodName)@> "javascript:#{@eventPath}.#{methodName}(event,this)"
+
+        loadFiles: (files)@>
+            for file in files
+              do (file)=>
+                  r = new @lib.FileReader
+                  r.onload = (event)=>
+                       @loadDataUrl event.target.result
+                  r.readAsDataURL(file)
+        pasteLoad: (ev,el)@>
+          { alert, console, JSON, FileReader } = @lib.window
+          (d = ev.clipboardData)? then
+            ((items = d.items)? and items.length) then
+              for i in items
+                i.type is "image/png" and i.kind is "file" then
+                  (blob = i.getAsFile())? then
+                    r = new FileReader
+                    r.onload = (event)=>
+                      @loadDataUrl event.target.result # event.target.results contains the base64 code to create the image.
+                    r.readAsDataURL(blob) 
+    
+                    # @getIt = f
+                    # @loadDataUrl "data:image/png;base64,#{f.toString("base64")}"
+                    # console.log i
+                    # console.log i.getAsFile()
+                    # console.log i.getAsString()
+            return
+            console.log JSON.stringify(d) # {"items":{"0":{"type":"text/html","kind":"string"},"1":{"type":"image/png","kind":"file"},"length":2},"files":{"length":0},"types":["text/html","Files"],"effectAllowed":"uninitialized","dropEffect":"none"}
+            (data = ev.clipboardData.getData("image/png"))? and data isnt "" then
+              alert "png data! #{data}"
+            else (data = ev.clipboardData.getData("image/gif"))? and data isnt "" then
+              alert "gif data!"
+            else (files = d.files)? then # and d.files.length
+              console.log "hmm"
+              console.log files
+              for f in files
+                  console.log f
+              @loadFiles files
+  
+        loadButtonClick: @>
+            t = spiritcase = @
+            @setDialog "loadFile", ->
+                @label "Load file: "
+                @input type:"file", onchange:"javascript:spiritcase.loadFile(event)"
+                @input contentEditable:"true", onpaste:t.eventHandler("pasteLoad"), style:"border:1px solid black", placeholder:"Click and paste image here"
+
                 
       spiritcase.setup()
     # @table id:"overlay", style:"position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;overflow:hidden:",

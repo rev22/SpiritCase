@@ -1994,3 +1994,6 @@ htmlcup.html5Page ->
         
     @coffeeScript ->
       spiritcase.loadDataUrl window.cuteluh_terror
+      setTimeout (-> spiritcase.loadDataUrl window.cuteluh_terror), 1000
+      setTimeout (-> spiritcase.loadDataUrl window.cuteluh_terror), 3000
+      setTimeout (-> spiritcase.loadDataUrl window.cuteluh_terror), 10000

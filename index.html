@@ -473,7 +473,7 @@ canvas.pick_tool {
             return [h, s, v];
           }),
           hsv2rgb: (function(x) {
-            x.coffee = "([h,s,v])@>\n            return [v,v,v] if s is 0\n            h  = if h >= 1 then h - 1 else h\n            { Math } = @\n            hh = h * 6\n            hhh = Math.floor hh\n            f = hh - hhh\n            a = v * (1.0 - s)\n            b = v * (1.0 - s * f)\n            c = v * (1.0 - s * (1 - f))\n            return switch hhh\n              when 0 then [ Math.round(v * 255), Math.round(c * 255), Math.round(a * 255) ]\n              when 1 then [ Math.round(b * 255), Math.round(v * 255), Math.round(a * 255) ]\n              when 2 then [ Math.round(a * 255), Math.round(v * 255), Math.round(c * 255) ]\n              when 3 then [ Math.round(a * 255), Math.round(b * 255), Math.round(v * 255) ]\n              when 4 then [ Math.round(c * 255), Math.round(a * 255), Math.round(v * 255) ]\n              when 5 then [ Math.round(v * 255), Math.round(a * 255), Math.round(b * 255) ]\n          \n      ";
+            x.coffee = "([h,s,v])@>\n            return [v,v,v] if s is 0\n            h  = if h >= 1 then h - 1 else h\n            { Math } = @\n            hh = h * 6\n            hhh = Math.floor hh\n            f = hh - hhh\n            a = v * (1.0 - s)\n            b = v * (1.0 - s * f)\n            c = v * (1.0 - s * (1 - f))\n            return switch hhh\n              when 0 then [ Math.round(v * 255), Math.round(c * 255), Math.round(a * 255) ]\n              when 1 then [ Math.round(b * 255), Math.round(v * 255), Math.round(a * 255) ]\n              when 2 then [ Math.round(a * 255), Math.round(v * 255), Math.round(c * 255) ]\n              when 3 then [ Math.round(a * 255), Math.round(b * 255), Math.round(v * 255) ]\n              when 4 then [ Math.round(c * 255), Math.round(a * 255), Math.round(v * 255) ]\n              when 5 then [ Math.round(v * 255), Math.round(a * 255), Math.round(b * 255) ]\n\n      ";
             return x;
           })(function(_arg) {
             var Math, a, b, c, f, h, hh, hhh, s, v;
@@ -561,11 +561,11 @@ canvas.pick_tool {
             }
           }),
           build: (function(x) {
-            x.coffee = "({htmlcup, label, onclick, barColor, bgColor, buildModule, module, value, width, noBar, bar })@>\n          buildModule? then module = buildModule @\n          control = (name)-> \"javascript:#{module}.#{name}(event,this)\"\n          barColor ?= \"#888\"\n          background = if bgColor? then \"background:#{bgColor}\" else \"\"\n          value ?= \"100%\"\n          width ?= \"5em\"\n          bar ?= 0\n          mouseControls = onclick:control(\"barClick\"), onmousedown:control(\"ignoreEv\") # onmousedown:control(\"mouseDown\") # , onmousemove:control(\"mouseMove\") # , onmouseup:control(\"mouseUp\"), onmouseout:control(\"mouseOut\"), onmouseover:control(\"mouseOver\")\n          htmlcup.div class:\"sliderInput\", style:\"display:inline-block;position:relative;border:1px solid #{barColor}\", ->\n              noBar or @div style:\"position:absolute;left:0;top:0;bottom:0;right:0;z-index:-1\", ->\n                  @div class:\"sliderInputBar\", style:\"position:absolute;left:0;top:0;bottom:0;width:#{bar * 100}%;background:#{barColor}\"\n              @div style:\"display:inline-table\", mouseControls, ->\n                  @div class:\"sliderInputButton\", style:\"display:table-cell;width:1.5em;font-weight:bold\", onclick:control(\"decButton\"), onmousedown:control(\"terminateEvent\"), \"-\"\n                  @div style:\"display:table-cell;width:#{width};max-width:#{width};text-align:center;overflow:visible;position:relative;background:#{bgColor}\", ->\n                      @span class:\"sliderInputLabel\", style:\"position:absolute;left:0;top:0\", ->\n                          @span label\n                      @div class:\"sliderInputValue\", style:\"position:absolute;bottom:0;right:0\", value\n                  @div class:\"sliderInputButton\", style:\"display:table-cell;width:1.5em\", onclick:control(\"incButton\"), onmousedown:control(\"terminateEvent\"), \"+\"\n  \n      ";
+            x.coffee = "({htmlcup, label, barColor, bgColor, buildModule, module, value, width, noBar, bar })@>\n          buildModule? then module = buildModule @\n          control = (name)-> \"javascript:#{module}.#{name}(event,this)\"\n          barColor ?= \"#888\"\n          background = if bgColor? then \"background:#{bgColor}\" else \"\"\n          value ?= \"100%\"\n          width ?= \"5em\"\n          bar ?= 0\n          mouseControls = onclick:control(\"barClick\"), onmousedown:control(\"ignoreEv\") # onmousedown:control(\"mouseDown\") # , onmousemove:control(\"mouseMove\") # , onmouseup:control(\"mouseUp\"), onmouseout:control(\"mouseOut\"), onmouseover:control(\"mouseOver\")\n          htmlcup.div class:\"sliderInput\", style:\"display:inline-block;position:relative;border:1px solid #{barColor}\", ->\n              noBar or @div style:\"position:absolute;left:0;top:0;bottom:0;right:0;z-index:-1\", ->\n                  @div class:\"sliderInputBar\", style:\"position:absolute;left:0;top:0;bottom:0;width:#{bar * 100}%;background:#{barColor}\"\n              @div style:\"display:inline-table\", mouseControls, ->\n                  @div class:\"sliderInputButton\", style:\"display:table-cell;width:1.5em;font-weight:bold\", onclick:control(\"decButton\"), onmousedown:control(\"terminateEvent\"), \"-\"\n                  @div style:\"display:table-cell;width:#{width};max-width:#{width};text-align:center;overflow:visible;position:relative;background:#{bgColor}\", ->\n                      @span class:\"sliderInputLabel\", style:\"position:absolute;left:0;top:0\", ->\n                          @span label\n                      @div class:\"sliderInputValue\", style:\"position:absolute;bottom:0;right:0\", value\n                  @div class:\"sliderInputButton\", style:\"display:table-cell;width:1.5em\", onclick:control(\"incButton\"), onmousedown:control(\"terminateEvent\"), \"+\"\n  \n      ";
             return x;
           })(function(_arg) {
-            var background, bar, barColor, bgColor, buildModule, control, htmlcup, label, module, mouseControls, noBar, onclick, value, width;
-            htmlcup = _arg.htmlcup, label = _arg.label, onclick = _arg.onclick, barColor = _arg.barColor, bgColor = _arg.bgColor, buildModule = _arg.buildModule, module = _arg.module, value = _arg.value, width = _arg.width, noBar = _arg.noBar, bar = _arg.bar;
+            var background, bar, barColor, bgColor, buildModule, control, htmlcup, label, module, mouseControls, noBar, value, width;
+            htmlcup = _arg.htmlcup, label = _arg.label, barColor = _arg.barColor, bgColor = _arg.bgColor, buildModule = _arg.buildModule, module = _arg.module, value = _arg.value, width = _arg.width, noBar = _arg.noBar, bar = _arg.bar;
             if (buildModule != null) {
               module = buildModule(this);
             }
@@ -808,6 +808,35 @@ canvas.pick_tool {
             b = d.data;
             return [b[i], b[i + 1], b[i + 2], b[i + 3]];
           }),
+          mapPixels: (function(x) {
+            x.coffee = "(f)@>\n          { imageData: d } = @\n          b = d.data\n          xs = d.width\n          ys = d.height\n          y = 0\n          i = 0\n          while y < ys\n            x = 0\n            while x < xs\n              r = f([ b[i], b[i+1], b[i+2], b[i+3] ])\n              if r?\n                b[i]    = r[0]\n                b[i+1]  = r[1]\n                b[i+2]  = r[2]\n                b[i+3]  = r[3]\n              i += 4\n              x++\n            y++\n        ";
+            return x;
+          })(function(f) {
+            var b, d, i, r, x, xs, y, ys, _results;
+            d = this.imageData;
+            b = d.data;
+            xs = d.width;
+            ys = d.height;
+            y = 0;
+            i = 0;
+            _results = [];
+            while (y < ys) {
+              x = 0;
+              while (x < xs) {
+                r = f([b[i], b[i + 1], b[i + 2], b[i + 3]]);
+                if (r != null) {
+                  b[i] = r[0];
+                  b[i + 1] = r[1];
+                  b[i + 2] = r[2];
+                  b[i + 3] = r[3];
+                }
+                i += 4;
+                x++;
+              }
+              _results.push(y++);
+            }
+            return _results;
+          }),
           zoomIn: (function(x) {
             x.coffee = "@>\n          @factorX = @factorY = ++@factor\n          @redraw()\n        ";
             return x;
@@ -836,7 +865,7 @@ canvas.pick_tool {
           },
           currentDialog: null,
           setDialog: (function(x) {
-            x.coffee = "(name, x)@>\n            return unless @view?.dialogs?\n            c = @view.dialogs.firstChild then @lib.window.deleteNode c\n            @currentDialog = name\n            return unless x?\n            d = @lib.htmlcup.captureFirstTag ->\n              @div class:\"spiritcaseDialog\", ->\n                # @div style:\"width:0\", ->\n                    @div style:\"display:inline-block\", ->\n                        x.call @\n                    @div style:\"display:inline-block\", onclick:\"deleteNode(this.parentNode)\", class:\"spiritcaseDeleteDialog\", \"×\"\n            @view.dialogs.appendChild d\n\n        ";
+            x.coffee = "(name, x)@>\n            return unless @view?.dialogs?\n            c = @view.dialogs.firstChild then @lib.window.deleteNode c\n            @currentDialog = name\n            return unless x?\n            d = @lib.htmlcup.captureFirstTag ->\n              @div class:\"spiritcaseDialog\", ->\n                # @div style:\"width:0\", ->\n                    @div style:\"display:inline-block\", ->\n                        x.call @\n                    @div style:\"display:inline-block\", onclick:\"deleteNode(this.parentNode)\", class:\"spiritcaseDeleteDialog\", \"×\"\n            @view.dialogs.appendChild d\n\n        \n        ";
             return x;
           })(function(name, x) {
             var c, d, _ref;
@@ -868,19 +897,22 @@ canvas.pick_tool {
             });
             return this.view.dialogs.appendChild(d);
           }),
-          loadButtonClick: (function(x) {
-            x.coffee = "@>\n            spiritcase = @\n            @setDialog \"loadFile\", ->\n                @label \"Load file: \"\n                @input type:\"file\", onchange:\"javascript:spiritcase.loadFile(event)\"\n\n        ";
+          eventPath: "spiritcase",
+          eventHandler: (function(x) {
+            x.coffee = "(methodName)@> \"javascript:#{@eventPath}.#{methodName}(event,this)\"";
             return x;
-          })(function() {
-            var spiritcase;
-            spiritcase = this;
-            return this.setDialog("loadFile", function() {
-              this.label("Load file: ");
-              return this.input({
-                type: "file",
-                onchange: "javascript:spiritcase.loadFile(event)"
-              });
-            });
+          })(function(methodName) {
+            return "javascript:" + this.eventPath + "." + methodName + "(event,this)";
+          }),
+          pasteLoad: (function(x) {
+            x.coffee = "(ev,el)@>\n          { alert } = @iib.window\n          alert \"x\" if ev.clipboardData?\n  \n        ";
+            return x;
+          })(function(ev, el) {
+            var alert;
+            alert = this.iib.window.alert;
+            if (ev.clipboardData != null) {
+              return alert("x");
+            }
           }),
           saveButtonClick: (function(x) {
             x.coffee = "@>\n            @load @imageData\n            uri = @icon.el.toDataURL()\n            spiritcase = @\n            @setDialog \"saveFile\", ->\n                @label \"Download: \"\n                @a download:\"file\", href:uri, style:\"font-size:150%\", \"file.png\"\n                \n        ";
@@ -1585,7 +1617,7 @@ canvas.pick_tool {
             return "javascript:" + this.webmoduleName + "." + name + "(event,this)";
           }),
           toolsButtonClick: (function(x) {
-            x.coffee = "(opts)@>\n          control = => @eventControl.apply @, arguments \n          @setDialog \"tools\", ->\n            \n            @div class:\"spiritcaseToolbarGroup\", ->\n              @label \"Scale: \"\n              @button onclick:control(\"doubleScale\"), \"2X\"\n              @button onclick:control(\"halveScale\"), \"/2\"\n            \n            @div class:\"spiritcaseToolbarGroup\", ->\n              @button onclick:control(\"startConsole\"), \"Console\"\n        ";
+            x.coffee = "(opts)@>\n          control = => @eventControl.apply @, arguments \n          @setDialog \"tools\", ->\n            \n            @div class:\"spiritcaseToolbarGroup\", ->\n              @label \"Scale: \"\n              @button onclick:control(\"doubleScale\"), \"2X\"\n              @button onclick:control(\"halveScale\"), \"/2\"\n            \n            @div class:\"spiritcaseToolbarGroup\", ->\n              @button onclick:control(\"makeTransparent\"), title:\"Make background of image transparent\", \"Make transparent\"\n            \n            @div class:\"spiritcaseToolbarGroup\", ->\n              @button onclick:control(\"startConsole\"), \"Console\"\n        ";
             return x;
           })(function(opts) {
             var control;
@@ -1605,6 +1637,14 @@ canvas.pick_tool {
                 return this.button({
                   onclick: control("halveScale")
                 }, "/2");
+              });
+              this.div({
+                "class": "spiritcaseToolbarGroup"
+              }, function() {
+                return this.button({
+                  onclick: control("makeTransparent"),
+                  title: "Make background of image transparent"
+                }, "Make transparent");
               });
               return this.div({
                 "class": "spiritcaseToolbarGroup"
@@ -1724,6 +1764,21 @@ canvas.pick_tool {
             this.updateIcon();
             return this.load(this.intScale(this.icon.el, 2, 2));
           }),
+          makeTransparent: (function(x) {
+            x.coffee = "@>\n          bg = @pixelColor 0, 0\n          @mapPixels (p)->\n            p[0] is bg[0] and p[1] is bg[1] and p[2] is bg[2] then p[3] = 0\n            p\n          @updateIcon()\n          @redraw()\n          \n        ";
+            return x;
+          })(function() {
+            var bg;
+            bg = this.pixelColor(0, 0);
+            this.mapPixels(function(p) {
+              if (p[0] === bg[0] && p[1] === bg[1] && p[2] === bg[2]) {
+                p[3] = 0;
+              }
+              return p;
+            });
+            this.updateIcon();
+            return this.redraw();
+          }),
           halveScale: (function(x) {
             x.coffee = "@>\n          { document } = @lib.window\n          @updateIcon()\n          c = @icon.el\n          c2 = document.createElement \"canvas\"\n          c2.width   = nw = c.width / 2   | 0\n          c2.height  = nh = c.height / 2  | 0\n          c2c = c2.getContext \"2d\"\n          c2c.drawImage c, 0, 0, nw, nh\n          @load c2c.getImageData(0,0,nw,nh)\n          \n        ";
             return x;
@@ -1820,7 +1875,7 @@ canvas.pick_tool {
             return c3c.getImageData(0, 0, w, h * 2);
           }),
           intScaleBleeding: (function(x) {
-            x.coffee = "(c, mx, my)@>\n          { document } = @lib.window\n          w = c.width\n          h = c.height\n          \n          c2 = document.createElement \"canvas\"\n          c2.width   = nw = w * mx\n          c2.height  = nh = h * my\n          \n          c2c = c2.getContext \"2d\"\n          \n          x = 0\n          x2 = 0\n          \n          while x < w\n                c2c.drawImage c,  x, 0, 1, h,  x2, 0, mx, h\n                x++\n                x2 += mx\n          \n          x = h - 1\n          x2 = x * 2\n          \n          while x >= 0\n                c2c.drawImage c2,  0, x, w, 1,  0, x2, w, my\n                x--\n                x2 -= my\n\n          c2c.getImageData(0, 0, nw, nh)\n                \n      ";
+            x.coffee = "(c, mx, my)@>\n          { document } = @lib.window\n          w = c.width\n          h = c.height\n          \n          c2 = document.createElement \"canvas\"\n          c2.width   = nw = w * mx\n          c2.height  = nh = h * my\n          \n          c2c = c2.getContext \"2d\"\n          \n          x = 0\n          x2 = 0\n          \n          while x < w\n                c2c.drawImage c,  x, 0, 1, h,  x2, 0, mx, h\n                x++\n                x2 += mx\n          \n          x = h - 1\n          x2 = x * 2\n          \n          while x >= 0\n                c2c.drawImage c2,  0, x, w, 1,  0, x2, w, my\n                x--\n                x2 -= my\n\n          c2c.getImageData(0, 0, nw, nh)\n\n        ";
             return x;
           })(function(c, mx, my) {
             var c2, c2c, document, h, nh, nw, w, x, x2;
@@ -1846,6 +1901,94 @@ canvas.pick_tool {
               x2 -= my;
             }
             return c2c.getImageData(0, 0, nw, nh);
+          }),
+          eventPath: "spiritcase",
+          eventHandler: (function(x) {
+            x.coffee = "(methodName)@> \"javascript:#{@eventPath}.#{methodName}(event,this)\"";
+            return x;
+          })(function(methodName) {
+            return "javascript:" + this.eventPath + "." + methodName + "(event,this)";
+          }),
+          loadFiles: (function(x) {
+            x.coffee = "(files)@>\n            for file in files\n              do (file)=>\n                  r = new @lib.FileReader\n                  r.onload = (event)=>\n                       @loadDataUrl event.target.result\n                  r.readAsDataURL(file)\n        ";
+            return x;
+          })(function(files) {
+            var file, _i, _len, _results;
+            _results = [];
+            for (_i = 0, _len = files.length; _i < _len; _i++) {
+              file = files[_i];
+              _results.push((function(_this) {
+                return function(file) {
+                  var r;
+                  r = new _this.lib.FileReader;
+                  r.onload = function(event) {
+                    return _this.loadDataUrl(event.target.result);
+                  };
+                  return r.readAsDataURL(file);
+                };
+              })(this)(file));
+            }
+            return _results;
+          }),
+          pasteLoad: (function(x) {
+            x.coffee = "(ev,el)@>\n          { alert, console, JSON, FileReader } = @lib.window\n          (d = ev.clipboardData)? then\n            ((items = d.items)? and items.length) then\n              for i in items\n                i.type is \"image/png\" and i.kind is \"file\" then\n                  (blob = i.getAsFile())? then\n                    r = new FileReader\n                    r.onload = (event)=>\n                      @loadDataUrl event.target.result # event.target.results contains the base64 code to create the image.\n                    r.readAsDataURL(blob) \n    \n                    # @getIt = f\n                    # @loadDataUrl \"data:image/png;base64,#{f.toString(\"base64\")}\"\n                    # console.log i\n                    # console.log i.getAsFile()\n                    # console.log i.getAsString()\n            return\n            console.log JSON.stringify(d) # {\"items\":{\"0\":{\"type\":\"text/html\",\"kind\":\"string\"},\"1\":{\"type\":\"image/png\",\"kind\":\"file\"},\"length\":2},\"files\":{\"length\":0},\"types\":[\"text/html\",\"Files\"],\"effectAllowed\":\"uninitialized\",\"dropEffect\":\"none\"}\n            (data = ev.clipboardData.getData(\"image/png\"))? and data isnt \"\" then\n              alert \"png data! #{data}\"\n            else (data = ev.clipboardData.getData(\"image/gif\"))? and data isnt \"\" then\n              alert \"gif data!\"\n            else (files = d.files)? then # and d.files.length\n              console.log \"hmm\"\n              console.log files\n              for f in files\n                  console.log f\n              @loadFiles files\n  \n        ";
+            return x;
+          })(function(ev, el) {
+            var FileReader, JSON, alert, blob, console, d, data, f, files, i, items, r, _i, _j, _len, _len1, _ref;
+            _ref = this.lib.window, alert = _ref.alert, console = _ref.console, JSON = _ref.JSON, FileReader = _ref.FileReader;
+            if ((d = ev.clipboardData) != null) {
+              if (((items = d.items) != null) && items.length) {
+                for (_i = 0, _len = items.length; _i < _len; _i++) {
+                  i = items[_i];
+                  if (i.type === "image/png" && i.kind === "file") {
+                    if ((blob = i.getAsFile()) != null) {
+                      r = new FileReader;
+                      r.onload = (function(_this) {
+                        return function(event) {
+                          return _this.loadDataUrl(event.target.result);
+                        };
+                      })(this);
+                      r.readAsDataURL(blob);
+                    }
+                  }
+                }
+              }
+              return;
+              console.log(JSON.stringify(d));
+              if (((data = ev.clipboardData.getData("image/png")) != null) && data !== "") {
+                return alert("png data! " + data);
+              } else if (((data = ev.clipboardData.getData("image/gif")) != null) && data !== "") {
+                return alert("gif data!");
+              } else if ((files = d.files) != null) {
+                console.log("hmm");
+                console.log(files);
+                for (_j = 0, _len1 = files.length; _j < _len1; _j++) {
+                  f = files[_j];
+                  console.log(f);
+                }
+                return this.loadFiles(files);
+              }
+            }
+          }),
+          loadButtonClick: (function(x) {
+            x.coffee = "@>\n            t = spiritcase = @\n            @setDialog \"loadFile\", ->\n                @label \"Load file: \"\n                @input type:\"file\", onchange:\"javascript:spiritcase.loadFile(event)\"\n                @input contentEditable:\"true\", onpaste:t.eventHandler(\"pasteLoad\"), style:\"border:1px solid black\", placeholder:\"Click and paste image here\"\n\n                \n      ";
+            return x;
+          })(function() {
+            var spiritcase, t;
+            t = spiritcase = this;
+            return this.setDialog("loadFile", function() {
+              this.label("Load file: ");
+              this.input({
+                type: "file",
+                onchange: "javascript:spiritcase.loadFile(event)"
+              });
+              return this.input({
+                contentEditable: "true",
+                onpaste: t.eventHandler("pasteLoad"),
+                style: "border:1px solid black",
+                placeholder: "Click and paste image here"
+              });
+            });
           })
         });
         return spiritcase.setup();
